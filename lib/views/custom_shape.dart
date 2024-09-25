@@ -9,7 +9,7 @@ class Customshape extends CustomClipper<Path> {
     var path = Path();
     path.lineTo(0, 0);
     path.lineTo(0, height - 50);
-    path.cubicTo(width * 0.3, height - 50, width * 0.68, height, width, height - 5);
+    path.cubicTo(width * 0.4, height - 80, width * 0.68, height, width, height - 5);
     path.lineTo(width, 0);
     path.close();
     return path;

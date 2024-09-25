@@ -128,20 +128,11 @@ class _ChampionsLeagueAppState extends State<QatarWorldCup> with SingleTickerPro
           ),
         ],
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
-              /* image: DecorationImage(
-              image: AssetImage(
-                'assets/pattern.png',
-              ),
-              fit: BoxFit.cover,
-              repeat: ImageRepeat.repeat,
-            ), */
-              ),
+          decoration: const BoxDecoration(),
         ),
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
