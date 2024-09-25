@@ -1,4 +1,4 @@
-package com.ymrabtiapps.fifa_worldcup;
+package com.ymrabtiapps.uefa_chamions_league;
 
 import io.flutter.embedding.android.FlutterActivity;
 

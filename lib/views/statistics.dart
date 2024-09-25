@@ -1,5 +1,6 @@
-import 'package:fifa_worldcup/lib.dart';
+import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class GoalRankk extends StatelessWidget {
@@ -32,7 +33,7 @@ class GoalRankk extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ExpansionTile(
-          title: const Text('إحصائيات'),
+          title: const Text('Statistics'),
           children: sortDownToUpScored.map((e) {
             var indexOf = sortDownToUpScored.indexOf(e);
             var elementAt = sortDownToUpReceived.elementAt(indexOf);
@@ -48,15 +49,15 @@ class GoalRankk extends StatelessWidget {
                     : 'استقبل';
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: SizedBox(
-                height: 100,
+              child: LimitedBox(
+                maxHeight: 100,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      RoundedTeam(team: e),
-                      CenterContent(teamLeft: e, teamLeftText: tLTxt2, teamRight: elementAt, teamRightText: tRTxt2),
                       RoundedTeam(team: elementAt, left: false),
+                      CenterContent(teamLeft: e, teamLeftText: tLTxt2, teamRight: elementAt, teamRightText: tRTxt2),
+                      RoundedTeam(team: e),
                     ],
                   ),
                 ),
@@ -65,7 +66,7 @@ class GoalRankk extends StatelessWidget {
           }).toList(),
         ),
         ExpansionTile(
-          title: const Text('إحصائيات سريعة'),
+          title: const Text('Quick statistics'),
           children: [
             SizedBox(
               height: 100,
@@ -73,7 +74,7 @@ class GoalRankk extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                 child: Row(
                   children: [
-                    if (mostScored != null) RoundedTeam(team: mostScored),
+                    if (leastReceived != null) RoundedTeam(team: leastReceived, left: false),
                     if (mostScored != null && leastReceived != null)
                       CenterContent(
                         teamLeft: mostScored,
@@ -81,7 +82,7 @@ class GoalRankk extends StatelessWidget {
                         teamRight: leastReceived,
                         teamRightText: 'الأقل استقبالا',
                       ),
-                    if (leastReceived != null) RoundedTeam(team: leastReceived, left: false),
+                    if (mostScored != null) RoundedTeam(team: mostScored),
                   ],
                 ),
               ),
@@ -94,7 +95,7 @@ class GoalRankk extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      if (leastScored != null) RoundedTeam(team: leastScored),
+                      if (mostReceived != null) RoundedTeam(team: mostReceived, left: false),
                       if (leastScored != null && mostReceived != null)
                         CenterContent(
                           teamLeft: leastScored,
@@ -102,7 +103,7 @@ class GoalRankk extends StatelessWidget {
                           teamRight: mostReceived,
                           teamRightText: 'لأكثر استقبالا',
                         ),
-                      if (mostReceived != null) RoundedTeam(team: mostReceived, left: false),
+                      if (leastScored != null) RoundedTeam(team: leastScored),
                     ],
                   ),
                 ),
@@ -116,7 +117,7 @@ class GoalRankk extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      if (leastDifference != null) RoundedTeam(team: leastDifference),
+                      if (mostDifference != null) RoundedTeam(team: mostDifference, left: false),
                       if (leastDifference != null && mostDifference != null)
                         CenterContent(
                           teamLeft: leastDifference,
@@ -124,7 +125,7 @@ class GoalRankk extends StatelessWidget {
                           teamRight: mostDifference,
                           teamRightText: 'لأكثر فارقا',
                         ),
-                      if (mostDifference != null) RoundedTeam(team: mostDifference, left: false),
+                      if (leastDifference != null) RoundedTeam(team: leastDifference),
                     ],
                   ),
                 ),
@@ -133,12 +134,12 @@ class GoalRankk extends StatelessWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('إحصائيات الأهداف'),
+          title: const Text('Goal statistics'),
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: GoalStatistic(
-                text: 'الوقت الأصلي',
+                text: 'Full-Time',
                 intvalueScored: gls.fold(0, (previousValue, element) => previousValue + element.scoredRT),
                 intvalueReceived: gls.fold(0, (previousValue, element) => previousValue + element.receivedRT),
               ),
@@ -146,7 +147,7 @@ class GoalRankk extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: GoalStatistic(
-                text: 'الوقت الاضافي',
+                text: 'Extra-Time',
                 intvalueScored: gls.fold(0, (previousValue, element) => previousValue + element.scoredET),
                 intvalueReceived: gls.fold(0, (previousValue, element) => previousValue + element.receivedET),
               ),
@@ -154,7 +155,7 @@ class GoalRankk extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: GoalStatistic(
-                text: 'ركلات الترجيح',
+                text: 'Penalty-Shootout',
                 intvalueScored: gls.fold(0, (previousValue, element) => previousValue + element.scoredPT),
                 intvalueReceived: gls.fold(0, (previousValue, element) => previousValue + element.receivedPT),
               ),
@@ -297,12 +298,13 @@ class RoundedTeam extends StatelessWidget {
           ),
         ),
         alignment: Alignment.center,
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
+        child: FittedBox(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TeamAvatar(team: team.team),
+              const Gap(5),
               Text(
                 team.team.tla,
                 style: const TextStyle(color: Colors.white),

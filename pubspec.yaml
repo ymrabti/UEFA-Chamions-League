@@ -1,5 +1,5 @@
-name: fifa_worldcup
-description: Fifa World cup competitions, matches and much more
+name: uefa_champions_league
+description: UEFA Champions League competitions, matches and much more
 
 publish_to: "none"
 
@@ -15,17 +15,20 @@ dependencies:
   cupertino_icons: ^1.0.2
   console_tools: ^1.0.0
   http: ^0.13.5
-  just_audio: ^0.9.30
-  
+  just_audio: ^0.9.37
   get: ^4.6.5
-  video_player: ^2.4.8
+  video_player: ^2.8.5
   provider: ^6.0.4
   flutter_svg: ^1.1.6
   path_provider: ^2.0.11
   path: ^1.8.2
   intl: ^0.17.0
   get_time_ago: ^1.1.8
-  native_video_player: ^1.1.0+2
+  flutter_form_builder: ^8.0.0
+  gap: ^3.0.1
+  wakelock_plus: ^1.1.4
+  visibility_detector: ^0.4.0+2
+  timeago: ^3.3.0
 
 dev_dependencies:
   flutter_test:
@@ -35,37 +38,36 @@ dev_dependencies:
   flutter_launcher_icons: ^0.10.0
   flutter_native_splash: ^2.2.10+1
 
-
-# flutter pub run flutter_launcher_icons:main
+# dart run flutter_launcher_icons:main
 flutter_icons:
-  image_path: assets/android12.png
+  image_path: assets/logo-dark.png
   android: true
   ios: true
   remove_alpha_ios: true
-  adaptive_icon_background: "#FFFFFFFF"
-  adaptive_icon_foreground: assets/android12.png
+  adaptive_icon_background: "#FF00004B"
+  adaptive_icon_foreground: assets/logo-dark.png
 
   flutter_lints: ^1.0.0
 
-# flutter pub run flutter_native_splash:create
+# dart run flutter_native_splash:create
 flutter_native_splash:
-  image: assets/logo.png
-  branding: assets/qatar-word.png
-  color: "#FAFAFA"
-  color_dark: "#0A0A0A"
-  # image_dark: assets/splash-dark.png
+  image: assets/logo-light.png
+  image_dark: assets/logo-dark.png
+  #   branding: assets/qatar-word.png
+  color: "#00004b"
+  color_dark: "#d8d8d8"
   #background_image: "assets/background.png"
   #background_image_dark: "assets/dark-background.png"
 
   android_12:
-    image: assets/android12hq.png
-    branding: assets/qatar-word.png
-    color: "#FAFAFA"
-    color_dark: "#0A0A0A"
+    image: assets/logo-light.png
+    image_dark: assets/logo-dark.png
+    # branding: assets/qatar-word.png
+    color: "#00004b"
+    color_dark: "#d8d8d8"
 
     # icon_background_color: "#111111"
     # icon_background_color_dark: "#eeeeee"
-
 
 flutter:
   uses-material-design: true
@@ -77,5 +79,5 @@ flutter:
       fonts:
         - asset: assets/Qatar2022/Qatar2022Arabic-Bold.ttf
         - asset: assets/Qatar2022/Qatar2022Arabic-Heavy.ttf
-        
+
   #

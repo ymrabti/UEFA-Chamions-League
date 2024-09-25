@@ -1,49 +1,68 @@
 import 'dart:async';
-
-import 'package:console_tools/console_tools.dart';
-import 'package:fifa_worldcup/lib.dart';
+import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:native_video_player/native_video_player.dart';
+import 'package:video_player/video_player.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key, required this.seek}) : super(key: key);
+  const SplashPage({Key? key, required this.seek, required this.matchesAndStandings}) : super(key: key);
+  final MatchesAndStandings matchesAndStandings;
   final bool seek;
   @override
   State<StatefulWidget> createState() => _SplashPageState();
 }
 
 class _SplashPageState extends State<SplashPage> {
-//   late VideoPlayerController _controller;
+  late VideoPlayerController _controller;
   bool _visible = false;
 
+  bool _ended = false;
   @override
   void initState() {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
+    _controller = VideoPlayerController.networkUrl(
+      Uri(
+        scheme: 'https',
+        host: 'node-auth-master.youmrabti.com',
+        path: 'uefa-cl-intro.mp4',
+      ),
+    ) //
+      ..initialize().then((_) {
+        _controller.seekTo(const Duration(seconds: 20));
+        // _controller.setVolume(0);
+        // _controller.setPlaybackSpeed(3);
+        _controller.play().then((value) => setState(() {}));
+      });
 
-    /* _controller = VideoPlayerController.asset("assets/videosplash.mp4");
-    _controller.initialize().then((_) { */
-    //   _controller.setLooping(true);
+    _controller.addListener(() async {
+      bool ended = _controller.value.position == _controller.value.duration;
+      if (ended) {
+        if (!_ended) {
+          setState(() {
+            _ended = ended;
+          });
+        } else {
+          await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+
+          await Get.offUntil(
+            MaterialPageRoute(
+              builder: (context) => QatarWorldCup(
+                matchesAndStandings: widget.matchesAndStandings,
+              ),
+            ),
+            (e) => false,
+          );
+        }
+      }
+    });
     Timer(const Duration(milliseconds: 100), () async {
-      /* await _controller.seekTo(Duration(seconds: widget.seek ? 20 : 0));
-        await _controller.play(); */
       setState(() {
         _visible = true;
       });
     });
-    /* }); */
-
-    /* Future.delayed(Duration(seconds: widget.seek ? 8 : 27), () {
-      Get.offUntil(
-        MaterialPageRoute(
-          builder: (context) => const QatarWorldCup(title: 'كأس العالم فيفا'),
-        ),
-        (e) => false,
-      );
-    }); */
 
     super.initState();
   }
@@ -54,69 +73,25 @@ class _SplashPageState extends State<SplashPage> {
     super.dispose();
   }
 
-  double videoH = Get.height;
-  double videoW = Get.width;
   @override
   Widget build(BuildContext context) {
-    return FittedBox(
-      // If your background video doesn't look right, try changing the BoxFit property.
-      // BoxFit.fill created the look I was going for.
-      fit: BoxFit.fill,
-      child: SizedBox(
+    return AnimatedOpacity(
+      opacity: _visible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 1000),
+      //   child: VideoPlayer(_controller),
+      // scaleY: Get.height / (videoH),
+      // scaleX: Get.width / (videoW),
+      child: Container(
+        color: Colors.green,
         width: Get.width,
         height: Get.height,
-        child: AnimatedOpacity(
-          opacity: _visible ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 1000),
-          //   child: VideoPlayer(_controller),
-          // scaleY: Get.height / (videoH),
-          // scaleX: Get.width / (videoW),
-          child: NativeVideoPlayerView(
-            onViewReady: (controller) async {
-              final videoSource = await VideoSource.init(path: 'assets/videosplash.mp4', type: VideoSourceType.asset);
-              await controller.loadVideoSource(videoSource);
-              await controller.seekForward(widget.seek ? 20 : 0);
-              await controller.setVolume(1);
-              await controller.play();
-              controller.onPlaybackReady.addListener(() {
-                final videoInfo = controller.videoInfo;
-                if (videoInfo != null) {
-                  final videoHeight = videoInfo.height;
-                  final videoWidth = videoInfo.width;
-                  setState(() {
-                    videoH = videoHeight + 0.0;
-                    videoW = videoWidth + 0.0;
-                  });
-                  /* 
-                  final videoDuration = videoInfo.duration; */
-                }
-              });
-              controller.onPlaybackStatusChanged.addListener(() {
-                var playbackInfo = controller.playbackInfo;
-                if (playbackInfo != null) {
-                  final playbackStatus = playbackInfo.status;
-                  if (playbackStatus == PlaybackStatus.stopped) {
-                    Get.offUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const QatarWorldCup(title: 'كأس العالم فيفا'),
-                      ),
-                      (e) => false,
-                    );
-                  }
-                }
-                // playbackStatus can be playing, paused, or stopped.
-              });
-              controller.onPlaybackPositionChanged.addListener(() {
-                var playbackInfo = controller.playbackInfo;
-                if (playbackInfo != null) {
-                  final playbackPosition = playbackInfo.position;
-                  Console.log(playbackPosition, color: ConsoleColors.greenSap);
-                }
-              });
-              controller.onPlaybackEnded.addListener(() {});
-            },
-          ),
-        ),
+        child: _controller.value.isInitialized
+            ? AnimatedOpacity(
+                opacity: _visible ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 1000),
+                child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller)),
+              ) //
+            : Container(color: primarycolor, width: Get.width, height: Get.height),
       ),
     );
   }

@@ -1,4 +1,4 @@
-export 'controllers/controllers.dart';
+export 'logic/logic.dart';
 export 'credentials.dart';
 export 'intro/intro.dart';
 export 'main.dart';

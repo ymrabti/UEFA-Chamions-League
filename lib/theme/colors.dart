@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
 
 const MaterialColor primarycolor = MaterialColor(primarycolorPrimaryValue, <int, Color>{
-  50: Color(0xFFF1E3E7),
-  100: Color(0xFFDCB9C3),
-  200: Color(0xFFC58A9C),
-  300: Color(0xFFAD5B74),
-  400: Color(0xFF9C3856),
-  500: Color(primarycolorPrimaryValue),
-  600: Color(0xFF821232),
-  700: Color(0xFF770F2B),
-  800: Color(0xFF6D0C24),
-  900: Color(0xFF5A0617),
+  50: Color(0xFFe3e4ef),
+  100: Color(0xFFbabbd7),
+  200: Color(0xFF8d90bc),
+  300: Color(0xFF6366a1),
+  400: Color(0xFF454890),
+  500: Color(0xFF242b7e),
+  600: Color(0xFF1f2576),
+  700: Color(0xFF171c6b),
+  800: Color(0xFF0d135f),
+  900: Color(primarycolorPrimaryValue),
 });
-const int primarycolorPrimaryValue = 0xFF8A1538;
-
-const MaterialColor primarycolorAccent = MaterialColor(primarycolorAccentValue, <int, Color>{
-  100: Color(0xFFFF8C9D),
-  200: Color(primarycolorAccentValue),
-  400: Color(0xFFFF2647),
-  700: Color(0xFFFF0D31),
-});
-const int primarycolorAccentValue = 0xFFFF5972;
+const int primarycolorPrimaryValue = 0xFF00004b;
