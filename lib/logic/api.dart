@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -10,7 +8,7 @@ abstract class AppLogic {
 
   static Future<MatchesAndStandings> uefaCLStandingsAndMatches() async {
     ChampionsStandings standings = await _uefaCLStandings();
-    WorldcupMatches matches = await _uefaCLMatches();
+    ChampionsLeagueMatches matches = await _uefaCLMatches();
     return MatchesAndStandings(matches: matches.matches, standings: standings.standings);
   }
 
@@ -22,24 +20,22 @@ abstract class AppLogic {
       if (getGet.isOk) {
         var fromJson = ChampionsStandings.fromJson(getGet.body);
         return fromJson;
-      } else {
-        log(getGet.statusText.toString());
       }
     }
     return ChampionsStandings.fromJson(testStandings);
   }
 
-  static Future<WorldcupMatches> _uefaCLMatches() async {
+  static Future<ChampionsLeagueMatches> _uefaCLMatches() async {
     if (!kDebugMode) {
       var connect = GetConnect();
       var getGet = await connect.get('$_CL_API/matches', headers: _headers);
 
       if (getGet.isOk) {
-        var fromJson = WorldcupMatches.fromJson(getGet.body);
+        var fromJson = ChampionsLeagueMatches.fromJson(getGet.body);
         return fromJson;
       }
     }
-    return WorldcupMatches.fromJson(testMatches);
+    return ChampionsLeagueMatches.fromJson(testMatches);
   }
 }
 

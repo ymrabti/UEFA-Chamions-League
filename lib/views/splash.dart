@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,17 +24,15 @@ class _SplashPageState extends State<SplashPage> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    _controller = VideoPlayerController.networkUrl(
-      Uri(
-        scheme: 'https',
-        host: 'node-auth-master.youmrabti.com',
-        path: 'uefa-cl-intro.mp4',
-      ),
+    _controller = VideoPlayerController.asset(
+      'assets/uefa-cl-intro.mp4',
     ) //
       ..initialize().then((_) {
-        _controller.seekTo(const Duration(seconds: 20));
-        // _controller.setVolume(0);
-        // _controller.setPlaybackSpeed(3);
+        if (kDebugMode) {
+          _controller.seekTo(const Duration(seconds: 30));
+          _controller.setVolume(0);
+          _controller.setPlaybackSpeed(3);
+        }
         _controller.play().then((value) => setState(() {}));
       });
 
@@ -91,7 +90,7 @@ class _SplashPageState extends State<SplashPage> {
                 duration: const Duration(milliseconds: 1000),
                 child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller)),
               ) //
-            : Container(color: primarycolor, width: Get.width, height: Get.height),
+            : Container(color: primaryColor, width: Get.width, height: Get.height),
       ),
     );
   }

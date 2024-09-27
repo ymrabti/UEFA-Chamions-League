@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class TableStanding extends StatelessWidget {
           Container(
             width: Get.width,
             decoration: BoxDecoration(
-              color: primarycolor.shade700,
+              color: primaryColor.shade700,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -61,16 +62,15 @@ class TableStanding extends StatelessWidget {
             ),
           ),
           Container(
-            decoration: BoxDecoration(color: primarycolor.shade50),
+            decoration: BoxDecoration(color: primaryColor.shade50),
             width: Get.width,
             alignment: Alignment.center,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: standing.table.map(
-                  (e) {
-                    var index = standing.table.indexOf(e);
+                children: standing.table.mapIndexed(
+                  (index, e) {
                     return Container(
                       width: Get.width,
                       alignment: Alignment.center,
@@ -90,7 +90,7 @@ class TableStanding extends StatelessWidget {
                                           alignment: Alignment.bottomRight,
                                           child: Icon(
                                             Icons.verified,
-                                            color: primarycolor,
+                                            color: primaryColor,
                                             size: 15,
                                             shadows: [Shadow(blurRadius: 5, color: Colors.white)],
                                           ),
