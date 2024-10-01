@@ -35,7 +35,10 @@ class GoalRankk extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         ExpansionTile(
-          title: const Text('Statistics'),
+          title: const Text(
+            'Statistics',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           children: sortDownToUpScored.mapIndexed((index, teamLeft) {
             GoalRanking teamRight = sortDownToUpReceived[index];
             return Padding(
@@ -50,8 +53,8 @@ class GoalRankk extends StatelessWidget {
                       CenterContent(
                         valueLeft: teamLeft.allScored,
                         valueRight: teamRight.allReceived,
-                        teamLeftText: _scoringText(index, sortDownToUpScored.length),
-                        teamRightText: _receiveText(index, sortDownToUpScored.length),
+                        textLeft: _scoringText(index, sortDownToUpScored.length),
+                        textRight: _receiveText(index, sortDownToUpScored.length),
                       ),
                       RoundedTeam(team: teamRight, left: true),
                     ],
@@ -62,7 +65,10 @@ class GoalRankk extends StatelessWidget {
           }).toList(),
         ),
         ExpansionTile(
-          title: const Text('Quick statistics'),
+          title: const Text(
+            'Quick statistics',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           children: [
             SizedBox(
               height: 100,
@@ -72,10 +78,10 @@ class GoalRankk extends StatelessWidget {
                   children: [
                     RoundedTeam(team: mostScored, left: false),
                     CenterContent(
+                      textLeft: 'لأكثر تسجيلا', //
+                      textRight: 'الأقل استقبالا',
                       valueLeft: mostScored.allScored,
-                      teamLeftText: 'لأكثر تسجيلا', //
                       valueRight: leastReceived.allReceived,
-                      teamRightText: 'الأقل استقبالا',
                     ),
                     RoundedTeam(team: leastReceived, left: true),
                   ],
@@ -92,10 +98,10 @@ class GoalRankk extends StatelessWidget {
                     children: [
                       RoundedTeam(team: leastScored, left: false),
                       CenterContent(
+                        textLeft: 'الأقل تسجيلا',
+                        textRight: 'لأكثر استقبالا',
                         valueLeft: leastScored.allScored,
-                        teamLeftText: 'الأقل تسجيلا',
                         valueRight: mostReceived.allReceived,
-                        teamRightText: 'لأكثر استقبالا',
                       ),
                       RoundedTeam(team: mostReceived, left: true),
                     ],
@@ -113,10 +119,10 @@ class GoalRankk extends StatelessWidget {
                     children: [
                       RoundedTeam(team: leastDifference, left: false),
                       CenterContent(
+                        textLeft: 'Less difference',
+                        textRight: 'Most difference',
                         valueLeft: leastDifference.difference,
-                        teamLeftText: 'الأقل فارقا',
                         valueRight: mostDifference.difference,
-                        teamRightText: 'لأكثر فارقا',
                       ),
                       RoundedTeam(team: mostDifference, left: true),
                     ],
@@ -127,57 +133,33 @@ class GoalRankk extends StatelessWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('Goal statistics'),
+          title: const Text(
+            'Goal statistics',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           initiallyExpanded: true,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GoalStatistic(
-                text: 'الوقت الأصلي',
-                intvalueScored: goals.map((e) => e.scoredRT).reduce((a, b) => a + b),
-                intvalueReceived: goals.map((e) => e.receivedRT).reduce((a, b) => a + b),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GoalStatistic(
-                text: 'الوقت الاضافي',
-                intvalueScored: goals.map((e) => e.scoredET).reduce((a, b) => a + b),
-                intvalueReceived: goals.map((e) => e.receivedET).reduce((a, b) => a + b),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GoalStatistic(
-                text: 'ركلات الترجيح',
-                intvalueScored: goals.map((e) => e.scoredPT).reduce((a, b) => a + b),
-                intvalueReceived: goals.map((e) => e.receivedPT).reduce((a, b) => a + b),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GoalStatistic(
-                text: 'المبارات',
-                intvalueScored: goalRanking.scoredFT,
-                intvalueReceived: goalRanking.scoredFT,
-              ),
-            ),
+            GoalStatistic(text: 'regular time', home: goalRanking.scoredRTHome, away: goalRanking.scoredRTAway),
+            GoalStatistic(text: 'extra time', home: goalRanking.scoredETHome, away: goalRanking.scoredETAway),
+            GoalStatistic(text: 'penalty shootout', home: goalRanking.scoredPTHome, away: goalRanking.scoredPTAway),
+            GoalStatistic(total: true, text: '', home: goalRanking.scoredFT, away: goalRanking.scoredFT),
           ],
-        )
+        ),
+        Gap(20),
       ],
     );
   }
 
   String _scoringText(int index, int len) {
-    if (index == 0) return 'لأكثر تسجيلا';
-    if (index == len - 1) return 'الأقل تسجيلا';
-    return 'سجل';
+    if (index == 0) return 'Most scorer';
+    if (index == len - 1) return 'Less scorer';
+    return 'Score';
   }
 
   String _receiveText(int index, int len) {
-    if (index == 0) return 'الأقل استقبالا';
-    if (index == len - 1) return 'لأكثر استقبالا';
-    return 'استقبل';
+    if (index == 0) return 'Less receiving';
+    if (index == len - 1) return 'Most receiving';
+    return 'Receive';
   }
 }
 
@@ -185,62 +167,114 @@ class GoalStatistic extends StatelessWidget {
   const GoalStatistic({
     Key? key,
     required this.text,
-    required this.intvalueScored,
-    required this.intvalueReceived,
+    required this.home,
+    required this.away,
+    this.total = false,
   }) : super(key: key);
 
   final String text;
-  final int intvalueScored;
-  final int intvalueReceived;
+  final bool total;
+  final int home;
+  final int away;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                text: 'مجموع الأهداف المسجلة في ',
+    if (home + away != 0) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 4),
+        child: Visibility(
+          visible: total,
+          replacement: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text.rich(
+                TextSpan(
+                  text: 'The total number of goals scored during ',
+                  style: TextStyle(),
+                  children: [
+                    TextSpan(
+                      text: text,
+                      style: TextStyle(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Row(
                 children: [
-                  TextSpan(
-                    text: text,
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Home',
+                        children: [
+                          TextSpan(text: ' : '),
+                          TextSpan(
+                            text: '$home',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
                   ),
-                  TextSpan(text: ' : '),
-                  TextSpan(
-                    text: '$intvalueScored',
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+                  const Divider(height: 50, thickness: 5),
+                  Expanded(
+                    child: Text.rich(
+                      TextSpan(
+                        text: 'Away',
+                        children: [
+                          TextSpan(text: ' : '),
+                          TextSpan(
+                            text: '$away',
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ],
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
                   ),
                 ],
               ),
-              textAlign: TextAlign.left,
-            ),
+              Divider(height: 5, color: Theme.of(context).primaryColor)
+            ],
           ),
-          const Divider(height: 50, thickness: 5),
-          Expanded(
-            child: Text.rich(
-              TextSpan(
-                text: 'إجمالي الأهداف التي تم تلقيها في ',
-                children: [
-                  TextSpan(
-                    text: text,
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          child: Text.rich(
+            TextSpan(
+              text: 'Total goals : ',
+              children: [
+                TextSpan(
+                  text: '$home',
+                  style: TextStyle(
+                    color: primaryColor,
+                    fontWeight: FontWeight.bold,
+                    fontStyle: FontStyle.italic,
+                    decoration: TextDecoration.underline,
                   ),
-                  TextSpan(text: ' : '),
-                  TextSpan(
-                    text: '$intvalueReceived',
-                    style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              textAlign: TextAlign.right,
+                ),
+              ],
             ),
+            textAlign: TextAlign.left,
           ),
-        ],
-      ),
-    );
+        ),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 }
 
@@ -249,14 +283,14 @@ class CenterContent extends StatelessWidget {
     Key? key,
     required this.valueLeft,
     required this.valueRight,
-    required this.teamLeftText,
-    required this.teamRightText,
+    required this.textLeft,
+    required this.textRight,
   }) : super(key: key);
 
   final int valueLeft;
   final int valueRight;
-  final String teamLeftText;
-  final String teamRightText;
+  final String textLeft;
+  final String textRight;
 
   @override
   Widget build(BuildContext context) {
@@ -278,7 +312,7 @@ class CenterContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(teamLeftText, textAlign: TextAlign.right),
+                    Text(textLeft, textAlign: TextAlign.right),
                     Text('$valueLeft', textAlign: TextAlign.right),
                   ],
                 ),
@@ -289,7 +323,7 @@ class CenterContent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(teamRightText, textAlign: TextAlign.right),
+                    Text(textRight, textAlign: TextAlign.right),
                     Text('$valueRight', textAlign: TextAlign.left),
                   ],
                 ),

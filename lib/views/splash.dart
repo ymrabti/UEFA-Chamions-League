@@ -7,8 +7,8 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key, required this.seek, required this.matchesAndStandings}) : super(key: key);
-  final MatchesAndStandings matchesAndStandings;
+  const SplashPage({Key? key, required this.seek, required this.model}) : super(key: key);
+  final ChampionshipModel model;
   final bool seek;
   @override
   State<StatefulWidget> createState() => _SplashPageState();
@@ -21,12 +21,8 @@ class _SplashPageState extends State<SplashPage> {
   bool _ended = false;
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    _controller = VideoPlayerController.asset(
-      'assets/uefa-cl-intro.mp4',
-    ) //
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    _controller = VideoPlayerController.asset('assets/uefa-cl-intro.mp4') //
       ..initialize().then((_) {
         if (kDebugMode) {
           _controller.seekTo(const Duration(seconds: 30));
@@ -45,15 +41,7 @@ class _SplashPageState extends State<SplashPage> {
           });
         } else {
           await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-
-          await Get.offUntil(
-            MaterialPageRoute(
-              builder: (context) => QatarWorldCup(
-                matchesAndStandings: widget.matchesAndStandings,
-              ),
-            ),
-            (e) => false,
-          );
+          await Get.offUntil(MaterialPageRoute(builder: (_) => AppChampionsLeague(model: widget.model)), (e) => false);
         }
       }
     });
@@ -68,7 +56,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void dispose() {
-    // _controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -77,11 +65,7 @@ class _SplashPageState extends State<SplashPage> {
     return AnimatedOpacity(
       opacity: _visible ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 1000),
-      //   child: VideoPlayer(_controller),
-      // scaleY: Get.height / (videoH),
-      // scaleX: Get.width / (videoW),
-      child: Container(
-        color: Colors.green,
+      child: SizedBox(
         width: Get.width,
         height: Get.height,
         child: _controller.value.isInitialized

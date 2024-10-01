@@ -1,27 +1,27 @@
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
 
-class ChampionsStandings {
+class BotolaStandings {
   final Filters filters;
   final Area area;
   final Competition competition;
   final Season season;
   final List<Standings> standings;
-  const ChampionsStandings({
+  const BotolaStandings({
     required this.filters,
     required this.area,
     required this.competition,
     required this.season,
     required this.standings,
   });
-  ChampionsStandings copyWith({
+  BotolaStandings copyWith({
     Filters? filters,
     Area? area,
     Competition? competition,
     Season? season,
     List<Standings>? standings,
   }) {
-    return ChampionsStandings(
+    return BotolaStandings(
       filters: filters ?? this.filters,
       area: area ?? this.area,
       competition: competition ?? this.competition,
@@ -34,8 +34,8 @@ class ChampionsStandings {
     return {'filters': filters.toJson(), 'area': area.toJson(), 'competition': competition.toJson(), 'season': season.toJson(), 'standings': standings.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
   }
 
-  static ChampionsStandings fromJson(Map<String, Object?> json) {
-    return ChampionsStandings(
+  static BotolaStandings fromJson(Map<String, Object?> json) {
+    return BotolaStandings(
       filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
       area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
       competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
@@ -51,7 +51,7 @@ class ChampionsStandings {
 
   @override
   bool operator ==(Object other) {
-    return other is ChampionsStandings && other.runtimeType == runtimeType && other.filters == filters && other.area == area && other.competition == competition && other.season == season && other.standings == standings;
+    return other is BotolaStandings && other.runtimeType == runtimeType && other.filters == filters && other.area == area && other.competition == competition && other.season == season && other.standings == standings;
   }
 
   @override
@@ -74,9 +74,7 @@ class Standings {
     return {'stage': stage, 'type': type, 'group': group, 'table': table.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
   }
 
-  Widget toView() {
-    return TableStanding(standing: this);
-  }
+  Widget toView() => TableStanding(standing: this);
 
   static Standings fromJson(Map<String, Object?> json) {
     return Standings(

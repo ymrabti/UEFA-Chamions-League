@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:uefa_champions_league/lib.dart';
 
-class ChampionsLeagueMatches {
+class BotolaLeagueMatches {
   final Filters filters;
   final ResultSet resultSet;
   final Competition competition;
   final List<Matche> matches;
-  const ChampionsLeagueMatches({
+  const BotolaLeagueMatches({
     required this.filters,
     required this.resultSet,
     required this.competition,
     required this.matches,
   });
-  ChampionsLeagueMatches copyWith({Filters? filters, ResultSet? resultSet, Competition? competition, List<Matche>? matches}) {
-    return ChampionsLeagueMatches(
+  BotolaLeagueMatches copyWith({Filters? filters, ResultSet? resultSet, Competition? competition, List<Matche>? matches}) {
+    return BotolaLeagueMatches(
       filters: filters ?? this.filters,
       resultSet: resultSet ?? this.resultSet,
       competition: competition ?? this.competition,
@@ -25,8 +25,8 @@ class ChampionsLeagueMatches {
     return {'filters': filters.toJson(), 'resultSet': resultSet.toJson(), 'competition': competition.toJson(), 'matches': matches.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
   }
 
-  static ChampionsLeagueMatches fromJson(Map<String, Object?> json) {
-    return ChampionsLeagueMatches(filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>), resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>), competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>), matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList());
+  static BotolaLeagueMatches fromJson(Map<String, Object?> json) {
+    return BotolaLeagueMatches(filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>), resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>), competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>), matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList());
   }
 
   @override
@@ -36,7 +36,7 @@ class ChampionsLeagueMatches {
 
   @override
   bool operator ==(Object other) {
-    return other is ChampionsLeagueMatches && other.runtimeType == runtimeType && other.filters == filters && other.resultSet == resultSet && other.competition == competition && other.matches == matches;
+    return other is BotolaLeagueMatches && other.runtimeType == runtimeType && other.filters == filters && other.resultSet == resultSet && other.competition == competition && other.matches == matches;
   }
 
   @override
@@ -119,7 +119,6 @@ class Matche {
   }
 
   static Matche fromJson(Map<String, Object?> json) {
-    var score2 = json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>);
     var id2 = json['id'] == null ? 0 : json['id'] as int;
     return Matche(
         area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
@@ -134,14 +133,7 @@ class Matche {
         lastUpdated: DateTime.parse(json['lastUpdated'] as String),
         homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
         awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
-        score: id2 == 523940
-            ? Score.fromJson({
-                "winner": "HOME_TEAM",
-                "duration": "REGULAR",
-                "fullTime": {"home": 2, "away": 9},
-                "halfTime": {"home": 1, "away": 1}
-              })
-            : score2,
+        score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
         odds: json['odds'] == null ? Odds.fromJson({}) : Odds.fromJson(json['odds'] as Map<String, Object?>),
         referees: json['referees'] == null ? [] : (json['referees'] as List).map<Referees>((data) => Referees.fromJson(data as Map<String, Object?>)).toList());
   }
@@ -151,9 +143,7 @@ class Matche {
     return 'Matches(area:${area.toString()},competition:${competition.toString()},season:${season.toString()},id:$id,utcDate:$utcDate,status:$status,matchday:$matchday,stage:$stage,group:$group,lastUpdated:$lastUpdated,homeTeam:${homeTeam.toString()},awayTeam:${awayTeam.toString()},score:${score.toString()},odds:${odds.toString()},referees:${referees.toString()})';
   }
 
-  Widget toView() {
-    return MatchView(match: this);
-  }
+  Widget toView() => MatchView(match: this);
 
   @override
   bool operator ==(Object other) {

@@ -3,6 +3,14 @@ import 'package:get/get.dart';
 import 'package:uefa_champions_league/lib.dart';
 
 class GlobalGoalRanking {
+  int scoredFTHome;
+  int scoredRTHome;
+  int scoredETHome;
+  int scoredPTHome;
+  int scoredFTAway;
+  int scoredRTAway;
+  int scoredETAway;
+  int scoredPTAway;
   int scoredFT;
   int scoredRT;
   int scoredET;
@@ -12,39 +20,17 @@ class GlobalGoalRanking {
     this.scoredRT = 0,
     this.scoredET = 0,
     this.scoredPT = 0,
+    this.scoredFTHome = 0,
+    this.scoredRTHome = 0,
+    this.scoredETHome = 0,
+    this.scoredPTHome = 0,
+    this.scoredFTAway = 0,
+    this.scoredRTAway = 0,
+    this.scoredETAway = 0,
+    this.scoredPTAway = 0,
   });
-}
 
-class GroupMatches {
-  String group;
-  List<Matche> matches;
-  GroupMatches({required this.group, required this.matches});
-}
-
-class StageWithMatches {
-  String stage;
-  List<Matche> matches;
-  List<GroupMatches> groupMatches = [];
-  StageWithMatches({required this.stage, required this.matches, this.groupMatches = const []});
-  Widget view() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            stage,
-            style: const TextStyle(
-              fontSize: 36,
-              color: Color(0xFFA9A9A9),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        ...matches.where((e) => e.homeTeam.crest.isNotEmpty).map((e) => e.toView())
-      ],
-    );
-  }
+  int get allScored => scoredRT + scoredET + scoredPT;
 }
 
 class GoalRanking {
@@ -74,26 +60,91 @@ class GoalRanking {
   int get difference => allScored - allReceived;
 }
 
+// Phase: Group, Stage, Matchday
+class PhaseMatches {
+  String phase;
+  List<Matche> matches;
+  PhaseMatches({required this.phase, required this.matches});
+}
+
 class MonthMatches {
   DateTime month;
   List<Matche> matches;
   MonthMatches({required this.month, required this.matches});
 }
 
+class StageWithMatches {
+  String stage;
+  List<Matche> matches;
+  List<PhaseMatches> groupMatches = [];
+  StageWithMatches({required this.stage, required this.matches, this.groupMatches = const []});
+  Widget view() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            stage,
+            style: const TextStyle(
+              fontSize: 36,
+              color: Color(0xFFA9A9A9),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        ...matches.where((e) => e.homeTeam.crest.isNotEmpty).map((e) => e.toView())
+      ],
+    );
+  }
+}
+
 extension ListMatchesX on List<Matche> {
-  GlobalGoalRanking goalsRanking2() {
+  GlobalGoalRanking get goalsStatistics {
+    int scoreRTHome = 0;
+    int scoreRTAway = 0;
+    int scoreETHome = 0;
+    int scoreETAway = 0;
+    int scorePTHome = 0;
+    int scorePTAway = 0;
+    int scoreFTHome = 0;
+    int scoreFTAway = 0;
     int scoredFT = 0;
     int scoredRT = 0;
     int scoredET = 0;
     int scoredPT = 0;
     for (var match in this) {
-      scoredRT += match.score.regularTime.home + match.score.regularTime.away;
-      scoredET += match.score.extraTime.home + match.score.extraTime.away;
-      scoredPT += match.score.penalties.home + match.score.penalties.away;
-      scoredFT += match.score.fullTime.home + match.score.fullTime.away;
+      int _scoreRTHome = match.score.regularTime.home;
+      int _scoreRTAway = match.score.regularTime.away;
+      int _scoreETHome = match.score.extraTime.home;
+      int _scoreETAway = match.score.extraTime.away;
+      int _scorePTHome = match.score.penalties.home;
+      int _scorePTAway = match.score.penalties.away;
+      int _scoreFTHome = match.score.fullTime.home;
+      int _scoreFTAway = match.score.fullTime.away;
+      scoreRTHome += _scoreRTHome;
+      scoreRTAway += _scoreRTAway;
+      scoreETHome += _scoreETHome;
+      scoreETAway += _scoreETAway;
+      scorePTHome += _scorePTHome;
+      scorePTAway += _scorePTAway;
+      scoreFTHome += _scoreFTHome;
+      scoreFTAway += _scoreFTAway;
+      scoredRT += _scoreRTHome + _scoreRTAway;
+      scoredET += _scoreETHome + _scoreETAway;
+      scoredPT += _scorePTHome + _scorePTAway;
+      scoredFT += _scoreFTHome + _scoreFTAway;
     }
 
     return GlobalGoalRanking(
+      scoredRTHome: scoreRTHome,
+      scoredRTAway: scoreRTAway,
+      scoredETHome: scoreETHome,
+      scoredETAway: scoreETAway,
+      scoredPTHome: scorePTHome,
+      scoredPTAway: scorePTAway,
+      scoredFTHome: scoreFTHome,
+      scoredFTAway: scoreFTAway,
       scoredFT: scoredFT,
       scoredRT: scoredRT,
       scoredET: scoredET,
@@ -101,7 +152,7 @@ extension ListMatchesX on List<Matche> {
     );
   }
 
-  List<GoalRanking> goalsRanking() {
+  List<GoalRanking> get teamGoalRanking {
     List<GoalRanking> teams = fold(
       <GoalRanking>[],
       (List<GoalRanking> pmm, Matche cmm) {
@@ -147,7 +198,7 @@ extension ListMatchesX on List<Matche> {
     return gls;
   }
 
-  List<StageWithMatches> get modelData {
+  List<StageWithMatches> modelDataCup() {
     var vari = fold<List<StageWithMatches>>(
       [],
       (previousValue, element) {
@@ -163,23 +214,22 @@ extension ListMatchesX on List<Matche> {
     List<StageWithMatches> groupStage = vari.where((e) => e.stage == 'LEAGUE_STAGE').toList();
     bool groupStageNotEmpty = groupStage.isNotEmpty;
     if (groupStageNotEmpty) {
-      var expansionGroups = groupStage.first.matches.fold<List<GroupMatches>>([], (previousValue, element) {
-        var wheras = previousValue.where((e) => e.group == element.group);
+      var expansionGroups = groupStage.first.matches.fold<List<PhaseMatches>>([], (previousValue, element) {
+        var wheras = previousValue.where((e) => e.phase == element.group);
         if (wheras.isEmpty) {
-          previousValue.add(GroupMatches(group: element.group, matches: [element]));
+          previousValue.add(PhaseMatches(phase: element.group, matches: [element]));
         } else {
           wheras.first.matches.add(element);
         }
         return previousValue;
       });
-      expansionGroups.sort((a, b) => Comparable.compare(a.group, b.group));
+      expansionGroups.sort((a, b) => Comparable.compare(a.phase, b.phase));
       groupStage.first.groupMatches = expansionGroups;
     }
     return vari;
   }
 }
 
-// SizedBox(width: Get.width * .75, child: Image.asset('assets/qatar_word.png')),
 // ...widgets(widget.matches.matches).map((e) => e.view()),
 /* ListView.builder(
     itemCount: widgets2.length,

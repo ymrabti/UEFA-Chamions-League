@@ -71,7 +71,7 @@ class _MatchViewState extends State<MatchView> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     TeamAvatar(
-                      team: Team.fromJson({}).copyWith(
+                      team: Team(
                         crest: widget.match.awayTeam.crest,
                         id: widget.match.awayTeam.id,
                         name: widget.match.awayTeam.name,
@@ -100,8 +100,9 @@ class _MatchViewState extends State<MatchView> {
                     Expanded(
                       flex: 1,
                       child: Text(
-                        '${isStarted || widget.match.id == 523940 ? widget.match.score.fullTime.away : '•'}',
+                        '${isStarted ? widget.match.score.fullTime.away : '•'}',
                         textAlign: TextAlign.center,
+                        style: TextStyle(fontFamily: 'Muli', fontSize: 24),
                       ),
                     ),
                     Expanded(
@@ -119,8 +120,9 @@ class _MatchViewState extends State<MatchView> {
                     Expanded(
                       flex: 1,
                       child: Text(
-                        '${isStarted || widget.match.id == 523940 ? widget.match.score.fullTime.home : '•'}',
+                        '${isStarted ? widget.match.score.fullTime.home : '•'}',
                         textAlign: TextAlign.center,
+                        style: TextStyle(fontFamily: 'Muli', fontSize: 24),
                       ),
                     ),
                   ],

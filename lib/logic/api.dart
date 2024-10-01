@@ -1,41 +1,55 @@
+import 'dart:convert';
+
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' show get;
+import 'package:uefa_champions_league/models/all_competitions.dart';
 
 abstract class AppLogic {
-  static const String _CL_API = 'https://api.football-data.org/v4/competitions/CL';
+  static const String _CL_API = 'https://api.football-data.org/v4/competitions';
   static final Map<String, String> _headers = {'X-Auth-Token': token};
 
-  static Future<MatchesAndStandings> uefaCLStandingsAndMatches() async {
-    ChampionsStandings standings = await _uefaCLStandings();
-    ChampionsLeagueMatches matches = await _uefaCLMatches();
-    return MatchesAndStandings(matches: matches.matches, standings: standings.standings);
+  static Future<MatchesAndStandings> getStandingsAndMatches(String competionID) async {
+    BotolaStandings standings = await _getStandings(competionID);
+    BotolaLeagueMatches matches = await _getMatches(competionID);
+    return MatchesAndStandings(
+      matches: matches.matches,
+      standings: standings.standings,
+    );
   }
 
-  static Future<ChampionsStandings> _uefaCLStandings() async {
-    if (!kDebugMode) {
-      var connect = GetConnect();
-      var getGet = await connect.get('$_CL_API/standings', headers: _headers);
+  static Future<ElBotolaChampionsList> getCompetitions() async {
+    var getGet = await get(Uri.parse('$_CL_API/competitions'), headers: _headers);
 
-      if (getGet.isOk) {
-        var fromJson = ChampionsStandings.fromJson(getGet.body);
+    if (getGet.statusCode == 200) {
+      var fromJson = ElBotolaChampionsList.fromJson(jsonDecode(getGet.body));
+      return fromJson;
+    }
+    return ElBotolaChampionsList.fromJson(testStandings);
+  }
+
+  static Future<BotolaStandings> _getStandings(String competionID) async {
+    if (!kDebugMode) {
+      var getGet = await get(Uri.parse('$_CL_API/$competionID/standings'), headers: _headers);
+
+      if (getGet.statusCode == 200) {
+        var fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
         return fromJson;
       }
     }
-    return ChampionsStandings.fromJson(testStandings);
+    return BotolaStandings.fromJson(testStandings);
   }
 
-  static Future<ChampionsLeagueMatches> _uefaCLMatches() async {
+  static Future<BotolaLeagueMatches> _getMatches(String competionID) async {
     if (!kDebugMode) {
-      var connect = GetConnect();
-      var getGet = await connect.get('$_CL_API/matches', headers: _headers);
+      var getGet = await get(Uri.parse('$_CL_API/$competionID/matches'), headers: _headers);
 
-      if (getGet.isOk) {
-        var fromJson = ChampionsLeagueMatches.fromJson(getGet.body);
+      if (getGet.statusCode == 200) {
+        var fromJson = BotolaLeagueMatches.fromJson(jsonDecode(getGet.body));
         return fromJson;
       }
     }
-    return ChampionsLeagueMatches.fromJson(testMatches);
+    return BotolaLeagueMatches.fromJson(testChampionsLeagueMatches);
   }
 }
 
