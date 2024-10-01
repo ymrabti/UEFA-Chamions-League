@@ -6,7 +6,7 @@ class BotolaStandings {
   final Area area;
   final Competition competition;
   final Season season;
-  final List<Standings> standings;
+  final List<Standing> standings;
   const BotolaStandings({
     required this.filters,
     required this.area,
@@ -19,7 +19,7 @@ class BotolaStandings {
     Area? area,
     Competition? competition,
     Season? season,
-    List<Standings>? standings,
+    List<Standing>? standings,
   }) {
     return BotolaStandings(
       filters: filters ?? this.filters,
@@ -40,7 +40,7 @@ class BotolaStandings {
       area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
       competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
       season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
-      standings: json['standings'] == null ? [] : (json['standings'] as List).map<Standings>((data) => Standings.fromJson(data as Map<String, Object?>)).toList(),
+      standings: json['standings'] == null ? [] : (json['standings'] as List).map<Standing>((data) => Standing.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -60,14 +60,14 @@ class BotolaStandings {
   }
 }
 
-class Standings {
+class Standing {
   final String stage;
   final String type;
   final String group;
   final List<Tabla> table;
-  const Standings({required this.stage, required this.type, required this.group, required this.table});
-  Standings copyWith({String? stage, String? type, String? group, List<Tabla>? table}) {
-    return Standings(stage: stage ?? this.stage, type: type ?? this.type, group: group ?? this.group, table: table ?? this.table);
+  const Standing({required this.stage, required this.type, required this.group, required this.table});
+  Standing copyWith({String? stage, String? type, String? group, List<Tabla>? table}) {
+    return Standing(stage: stage ?? this.stage, type: type ?? this.type, group: group ?? this.group, table: table ?? this.table);
   }
 
   Map<String, Object?> toJson() {
@@ -76,8 +76,8 @@ class Standings {
 
   Widget toView() => TableStanding(standing: this);
 
-  static Standings fromJson(Map<String, Object?> json) {
-    return Standings(
+  static Standing fromJson(Map<String, Object?> json) {
+    return Standing(
       stage: json['stage'] == null ? '' : json['stage'] as String,
       type: json['type'] == null ? '' : json['type'] as String,
       group: json['group'] == null ? '' : json['group'] as String,
@@ -92,7 +92,7 @@ class Standings {
 
   @override
   bool operator ==(Object other) {
-    return other is Standings && other.runtimeType == runtimeType && other.stage == stage && other.type == type && other.group == group && other.table == table;
+    return other is Standing && other.runtimeType == runtimeType && other.stage == stage && other.type == type && other.group == group && other.table == table;
   }
 
   @override

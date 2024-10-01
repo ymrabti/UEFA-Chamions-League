@@ -3,3 +3,4 @@ export 'match.dart';
 export 'home.dart';
 export 'splash.dart';
 export 'statistics.dart';
+export 'painter.dart';

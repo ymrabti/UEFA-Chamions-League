@@ -1,6 +1,10 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:uefa_champions_league/lib.dart';
+import 'package:uefa_champions_league/models/state.dart';
 
 class GlobalGoalRanking {
   int scoredFTHome;
@@ -60,43 +64,29 @@ class GoalRanking {
   int get difference => allScored - allReceived;
 }
 
-// Phase: Group, Stage, Matchday
+// LEAGUE
 class PhaseMatches {
-  String phase;
+  int matchday;
+
   List<Matche> matches;
-  PhaseMatches({required this.phase, required this.matches});
+  PhaseMatches({required this.matchday, required this.matches});
 }
 
+// Champions league
 class MonthMatches {
   DateTime month;
   List<Matche> matches;
   MonthMatches({required this.month, required this.matches});
 }
 
+// Cup
 class StageWithMatches {
   String stage;
   List<Matche> matches;
-  List<PhaseMatches> groupMatches = [];
-  StageWithMatches({required this.stage, required this.matches, this.groupMatches = const []});
-  Widget view() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            stage,
-            style: const TextStyle(
-              fontSize: 36,
-              color: Color(0xFFA9A9A9),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        ...matches.where((e) => e.homeTeam.crest.isNotEmpty).map((e) => e.toView())
-      ],
-    );
-  }
+  StageWithMatches({
+    required this.stage,
+    required this.matches,
+  });
 }
 
 extension ListMatchesX on List<Matche> {
@@ -198,8 +188,8 @@ extension ListMatchesX on List<Matche> {
     return gls;
   }
 
-  List<StageWithMatches> modelDataCup() {
-    var vari = fold<List<StageWithMatches>>(
+  List<Widget> get modelDataCL {
+    var folding = fold<List<StageWithMatches>>(
       [],
       (previousValue, element) {
         var wheras = previousValue.where((e) => e.stage == element.stage);
@@ -211,22 +201,158 @@ extension ListMatchesX on List<Matche> {
         return previousValue;
       },
     );
-    List<StageWithMatches> groupStage = vari.where((e) => e.stage == 'LEAGUE_STAGE').toList();
-    bool groupStageNotEmpty = groupStage.isNotEmpty;
-    if (groupStageNotEmpty) {
-      var expansionGroups = groupStage.first.matches.fold<List<PhaseMatches>>([], (previousValue, element) {
-        var wheras = previousValue.where((e) => e.phase == element.group);
+    return folding.map(
+      (e) {
+        return ExpansionTile(
+          title: Text(
+            stageName(e.stage),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          children: [
+            if (e.stage == AppConstants.LEAGUESTAGE)
+              ...e.matches.fold(
+                <MonthMatches>[],
+                (value, element) {
+                  if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
+                  var sameMonth = value.last.month.sameMonth(element.utcDate);
+                  if (sameMonth) {
+                    value.last.matches.add(element);
+                  } else {
+                    value.add(MonthMatches(month: element.utcDate, matches: [element]));
+                  }
+                  return value;
+                },
+              ).map(
+                (f) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 10),
+                    child: ExpansionTile(
+                      title: Text(DateFormat.yMMMM().format(f.month)),
+                      children: f.matches.map((e) => e.toView()).toList(),
+                    ),
+                  );
+                },
+              ),
+            if (e.stage != AppConstants.LEAGUESTAGE) ...e.matches.map((e) => e.toView()).toList()
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<Widget> modelDataCup(List<Standing> standings) {
+    var reducing = fold<List<StageWithMatches>>(
+      [],
+      (previousValue, element) {
+        var wheras = previousValue.where((e) => e.stage == element.stage);
         if (wheras.isEmpty) {
-          previousValue.add(PhaseMatches(phase: element.group, matches: [element]));
+          previousValue.add(StageWithMatches(stage: element.stage, matches: [element]));
         } else {
           wheras.first.matches.add(element);
         }
         return previousValue;
-      });
-      expansionGroups.sort((a, b) => Comparable.compare(a.phase, b.phase));
-      groupStage.first.groupMatches = expansionGroups;
-    }
-    return vari;
+      },
+    );
+
+    return reducing.map(
+      (e) {
+        return ExpansionTile(
+          title: Text(
+            stageName(e.stage),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          children: [
+            if (e.stage == AppConstants.GROUPSTAGE)
+              ...e.matches.fold(
+                <StageWithMatches>[],
+                (value, element) {
+                  if (value.isEmpty) return value..add(StageWithMatches(stage: element.group, matches: [element]));
+                  bool foldCondition = value.map((e) => e.stage).contains(element.group);
+                  if (foldCondition) {
+                    value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
+                  } else {
+                    value.add(StageWithMatches(stage: element.group, matches: [element]));
+                  }
+                  return value;
+                },
+              ).map(
+                (f) {
+                  Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 18.0, right: 10),
+                    child: ExpansionTile(
+                      title: Text(f.stage.replaceAll('GROUP_', 'Group ')),
+                      children: [
+                        ...f.matches.map((e) => e.toView()),
+                        if (groupStanding != null) groupStanding.toView(),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            if (e.stage != AppConstants.GROUPSTAGE) ...e.matches.map((e) => e.toView()).toList()
+          ],
+        );
+      },
+    ).toList();
+  }
+
+  List<Widget> get modelDataLeague {
+    var reducing = fold<List<PhaseMatches>>(
+      [],
+      (previousValue, element) {
+        var wheras = previousValue.where((e) => e.matchday == element.matchday);
+        if (wheras.isEmpty) {
+          previousValue.add(PhaseMatches(matchday: element.matchday, matches: [element]));
+        } else {
+          wheras.first.matches.add(element);
+        }
+        return previousValue;
+      },
+    );
+
+    return reducing.map(
+      (e) {
+        return ExpansionTile(
+          title: Text(
+            stageName('Matchday ${e.matchday}'),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          children: e.matches.map((e) => e.toView()).toList(),
+        );
+      },
+    ).toList();
+  }
+}
+
+class WidgetWithWaiter extends StatelessWidget {
+  WidgetWithWaiter({
+    super.key,
+    required this.child,
+  });
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        child,
+        if (context.watch<AppState>().loading)
+          AbsorbPointer(
+            child: Container(
+              color: Theme.of(context).cardColor.withOpacity(0.4),
+              width: Get.width,
+              height: Get.height,
+              child: Center(
+                child: LoadingAnimationWidget.discreteCircle(
+                  color: primaryColor,
+                  size: 125,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 

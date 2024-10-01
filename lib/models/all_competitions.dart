@@ -1,5 +1,3 @@
-import "package:power_geojson/power_geojson.dart";
-
 class ElBotolaChampionsList {
   final int count;
 
@@ -49,10 +47,6 @@ class ElBotolaChampionsList {
 
   @override
   String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
     return 'ElBotolaChampionsList(count:$count, competitions:${competitions.toString()})';
   }
 
@@ -221,12 +215,9 @@ class Competitions {
       lastUpdated: json[CompetitionsEnum.lastUpdated.name] as DateTime,
     );
   }
+
   @override
   String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
     return 'Competitions(id:$id, area:${area.toString()}, name:$name, code:$code, type:$type, emblem:$emblem, plan:$plan, currentSeason:${currentSeason.toString()}, numberOfAvailableSeasons:$numberOfAvailableSeasons, lastUpdated:$lastUpdated)';
   }
 
@@ -376,7 +367,7 @@ class CurrentSeason {
 
   final int currentMatchday;
 
-  final String? winner;
+  final dynamic winner;
   CurrentSeason({
     required this.id,
     required this.startDate,
@@ -427,7 +418,7 @@ class CurrentSeason {
       startDate: DateTime.parse('${json[CurrentSeasonEnum.startDate.name]}'),
       endDate: DateTime.parse('${json[CurrentSeasonEnum.endDate.name]}'),
       currentMatchday: int.parse('${json[CurrentSeasonEnum.currentMatchday.name]}'),
-      winner: json[CurrentSeasonEnum.winner.name] as String?,
+      winner: json[CurrentSeasonEnum.winner.name],
     );
   }
 
@@ -437,16 +428,12 @@ class CurrentSeason {
       startDate: json[CurrentSeasonEnum.startDate.name] as DateTime,
       endDate: json[CurrentSeasonEnum.endDate.name] as DateTime,
       currentMatchday: json[CurrentSeasonEnum.currentMatchday.name] as int,
-      winner: json[CurrentSeasonEnum.winner.name] as String?,
+      winner: json[CurrentSeasonEnum.winner.name],
     );
   }
 
   @override
   String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
     return 'CurrentSeason(id:$id, startDate:$startDate, endDate:$endDate, currentMatchday:$currentMatchday, winner:$winner)';
   }
 
@@ -541,7 +528,7 @@ class Area {
 
   final String code;
 
-  final String flag;
+  final String? flag;
   Area({
     required this.id,
     required this.name,
@@ -586,7 +573,7 @@ class Area {
       id: int.parse('${json[AreaEnum.id.name]}'),
       name: json[AreaEnum.name.name] as String,
       code: json[AreaEnum.code.name] as String,
-      flag: json[AreaEnum.flag.name] as String,
+      flag: json[AreaEnum.flag.name] as String?,
     );
   }
 
@@ -595,16 +582,12 @@ class Area {
       id: json[AreaEnum.id.name] as int,
       name: json[AreaEnum.name.name] as String,
       code: json[AreaEnum.code.name] as String,
-      flag: json[AreaEnum.flag.name] as String,
+      flag: json[AreaEnum.flag.name] as String?,
     );
   }
 
   @override
   String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
     return 'Area(id:$id, name:$name, code:$code, flag:$flag)';
   }
 
@@ -667,15 +650,6 @@ extension AreaSort on List<Area> {
 
           String akey = a.code;
           String bkey = b.code;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == AreaEnum.flag.name) {
-          // unsortable
-
-          String akey = a.flag;
-          String bkey = b.flag;
 
           return fact * (bkey.compareTo(akey));
         }

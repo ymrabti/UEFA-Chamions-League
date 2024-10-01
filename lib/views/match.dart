@@ -95,35 +95,39 @@ class _MatchViewState extends State<MatchView> {
                   color: primaryColor.shade50,
                 ),
                 alignment: Alignment.center,
-                child: Row(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        '${isStarted ? widget.match.score.fullTime.away : '•'}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontFamily: 'Muli', fontSize: 24),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text('${statusMatch(matchStat)}${durationMatch(machDura, matchStat: matchStat)}'),
-                          Text(convertNumbers(localeTime)),
-                          Text(convertNumbers(localeDate)),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        '${isStarted ? widget.match.score.fullTime.home : '•'}',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontFamily: 'Muli', fontSize: 24),
-                      ),
+                    Text('${statusMatch(matchStat)}${durationMatch(machDura, matchStat: matchStat)}'),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            '${isStarted ? widget.match.score.fullTime.away : '•'}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(convertNumbers(localeTime)),
+                              Text(convertNumbers(localeDate)),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            '${isStarted ? widget.match.score.fullTime.home : '•'}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 24),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -144,7 +148,7 @@ class _MatchViewState extends State<MatchView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TeamAvatar(
-                      team: Team.fromJson({}).copyWith(
+                      team: Team(
                         crest: widget.match.homeTeam.crest,
                         id: widget.match.homeTeam.id,
                         name: widget.match.homeTeam.name,

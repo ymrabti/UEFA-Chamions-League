@@ -1,16 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:uefa_champions_league/lib.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
-
-import 'package:path/path.dart';
 
 class TableStanding extends StatelessWidget {
   const TableStanding({super.key, required this.standing});
-  final Standings standing;
+  final Standing standing;
   TextStyle get textStyle => const TextStyle(color: Colors.white);
 
   @override
@@ -51,12 +46,12 @@ class TableStanding extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(flex: 2, child: Text('الفريق', style: textStyle, textAlign: TextAlign.center)),
-                  Expanded(flex: 1, child: Text('ل', style: textStyle, textAlign: TextAlign.center)),
-                  Expanded(flex: 1, child: Text('ر', style: textStyle, textAlign: TextAlign.center)),
-                  Expanded(flex: 1, child: Text('خ', style: textStyle, textAlign: TextAlign.center)),
-                  Expanded(flex: 1, child: Text('ت', style: textStyle, textAlign: TextAlign.center)),
-                  Expanded(flex: 1, child: Text('نقاط', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 2, child: Text('Team', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text('P', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text('W', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text('L', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text('D', style: textStyle, textAlign: TextAlign.center)),
+                  Expanded(flex: 1, child: Text('Pts', style: textStyle, textAlign: TextAlign.center)),
                 ],
               ),
             ),
@@ -139,49 +134,24 @@ class TeamAvatar extends StatelessWidget {
       height: size,
       child: ClipOval(
         clipBehavior: Clip.hardEdge,
-        child: team.crest.isEmpty
-            ? const Icon(
-                Icons.sports_soccer_sharp,
-                size: size - 8,
-                color: Colors.white,
-                shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-              )
-            : extension(team.crest) == '.svg'
-                ? FutureBuilder(
-                    future: svgNetwork(team.crest),
-                    builder: (context, snapshot) {
-                      return snapshot.hasData
-                          ? SvgPicture.string(
-                              snapshot.data!,
-                              width: size,
-                              height: size,
-                              fit: BoxFit.cover,
-                            )
-                          : const Center(child: CupertinoActivityIndicator());
-                    },
-                  )
-                : Image.network(
-                    team.crest,
-                    width: size,
-                    fit: BoxFit.fitHeight,
-                    height: size,
-                  ),
+        child: () {
+          if (team.crest.isEmpty) {
+            return const Icon(
+              Icons.sports_soccer_sharp,
+              size: size - 8,
+              color: Colors.white,
+              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+            );
+          } else {
+            return AppImageViewer(
+              url: team.crest,
+              width: size,
+              height: size,
+              boxFit: BoxFit.fitHeight,
+            );
+          }
+        }(),
       ),
     );
-  }
-}
-
-Future<String?> svgNetwork(String url) async {
-  var request = Request('GET', Uri.parse(url));
-
-  StreamedResponse response = await request.send();
-
-  if (response.statusCode == 200) {
-    var svgtext = await response.stream.bytesToString();
-    var regExp1 = RegExp(r"<use (.+)\/>");
-    var regExp2 = RegExp(r'xlink:href="#[a-zA-Z]{1,}"');
-    return svgtext.replaceAll(regExp1, '').replaceAll(regExp2, '');
-  } else {
-    return null;
   }
 }
