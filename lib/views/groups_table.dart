@@ -132,26 +132,23 @@ class TeamAvatar extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: ClipOval(
-        clipBehavior: Clip.hardEdge,
-        child: () {
-          if (team.crest.isEmpty) {
-            return const Icon(
-              Icons.sports_soccer_sharp,
-              size: size - 8,
-              color: Colors.white,
-              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-            );
-          } else {
-            return AppImageViewer(
-              url: team.crest,
-              width: size,
-              height: size,
-              boxFit: BoxFit.fitHeight,
-            );
-          }
-        }(),
-      ),
+      child: () {
+        if (team.crest.isEmpty) {
+          return const Icon(
+            Icons.sports_soccer_sharp,
+            size: size - 8,
+            color: Colors.white,
+            shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+          );
+        } else {
+          return AppImageViewer(
+            url: team.crest,
+            width: size,
+            height: size,
+            boxFit: BoxFit.fitHeight,
+          );
+        }
+      }(),
     );
   }
 }
