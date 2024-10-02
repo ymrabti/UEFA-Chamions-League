@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -209,29 +210,39 @@ extension ListMatchesX on List<Matche> {
           ),
           children: [
             if (e.stage == AppConstants.LEAGUESTAGE)
-              ...e.matches.fold(
-                <MonthMatches>[],
-                (value, element) {
-                  if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
-                  var sameMonth = value.last.month.sameMonth(element.utcDate);
-                  if (sameMonth) {
-                    value.last.matches.add(element);
-                  } else {
-                    value.add(MonthMatches(month: element.utcDate, matches: [element]));
-                  }
-                  return value;
-                },
-              ).map(
-                (f) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 18.0, right: 10),
-                    child: ExpansionTile(
-                      title: Text(DateFormat.yMMMM().format(f.month)),
-                      children: f.matches.map((e) => e.toView()).toList(),
-                    ),
-                  );
-                },
-              ),
+              ...() {
+                var folded = e.matches.fold(
+                  <MonthMatches>[],
+                  (value, element) {
+                    if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
+                    bool sameMonth = value.last.month.sameMonth(element.utcDate);
+                    if (sameMonth) {
+                      value.last.matches.add(element);
+                    } else {
+                      value.add(MonthMatches(month: element.utcDate, matches: [element]));
+                    }
+                    return value;
+                  },
+                )..sort((a, b) => a.month.compareTo(b.month));
+                return folded.mapIndexed(
+                  (i, f) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 18.0, right: 10),
+                      child: Builder(builder: (context) {
+                        var matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
+                        var everyThisFinished = matches.every((er) => er.status == 'FINISHED');
+                        var initiallyExpanded2 = i == 0 ? !everyThisFinished : folded.elementAt(i - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
+                        logg(initiallyExpanded2);
+                        return ExpansionTile(
+                          initiallyExpanded: initiallyExpanded2,
+                          title: Text(DateFormat.yMMMM().format(f.month)),
+                          children: matches.map((e) => e.toView()).toList(),
+                        );
+                      }),
+                    );
+                  },
+                );
+              }(),
             if (e.stage != AppConstants.LEAGUESTAGE) ...e.matches.map((e) => e.toView()).toList()
           ],
         );
@@ -262,33 +273,37 @@ extension ListMatchesX on List<Matche> {
           ),
           children: [
             if (e.stage == AppConstants.GROUPSTAGE)
-              ...e.matches.fold(
-                <StageWithMatches>[],
-                (value, element) {
-                  if (value.isEmpty) return value..add(StageWithMatches(stage: element.group, matches: [element]));
-                  bool foldCondition = value.map((e) => e.stage).contains(element.group);
-                  if (foldCondition) {
-                    value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
-                  } else {
-                    value.add(StageWithMatches(stage: element.group, matches: [element]));
-                  }
-                  return value;
-                },
-              ).map(
-                (f) {
-                  Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 18.0, right: 10),
-                    child: ExpansionTile(
-                      title: Text(f.stage.replaceAll('GROUP_', 'Group ')),
-                      children: [
-                        ...f.matches.map((e) => e.toView()),
-                        if (groupStanding != null) groupStanding.toView(),
-                      ],
-                    ),
-                  );
-                },
-              ),
+              ...() {
+                var fold = e.matches.fold(
+                  <StageWithMatches>[],
+                  (value, element) {
+                    if (value.isEmpty) return value..add(StageWithMatches(stage: element.group, matches: [element]));
+                    bool foldCondition = value.map((e) => e.stage).contains(element.group);
+                    if (foldCondition) {
+                      value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
+                    } else {
+                      value.add(StageWithMatches(stage: element.group, matches: [element]));
+                    }
+                    return value;
+                  },
+                );
+                var fold2 = fold..sort((a, b) => a.stage.compareTo(b.stage));
+                return fold2.map(
+                  (f) {
+                    Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 18.0, right: 10),
+                      child: ExpansionTile(
+                        title: Text(f.stage.replaceAll('GROUP_', 'Group ')),
+                        children: [
+                          ...f.matches.map((e) => e.toView()),
+                          if (groupStanding != null) groupStanding.toView(),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }(),
             if (e.stage != AppConstants.GROUPSTAGE) ...e.matches.map((e) => e.toView()).toList()
           ],
         );
@@ -310,7 +325,8 @@ extension ListMatchesX on List<Matche> {
       },
     );
 
-    return reducing.map(
+    var reducingSort = reducing..sort((a, b) => a.matchday - b.matchday);
+    return reducingSort.map(
       (e) {
         return ExpansionTile(
           title: Text(

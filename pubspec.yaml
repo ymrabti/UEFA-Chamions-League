@@ -34,32 +34,11 @@ dependencies:
 
 dev_dependencies:
   flutter_lints: ^2.0.0
-  flutter_launcher_icons:
-    path: ../../my-edited-packages/flutter_launcher_icons-master
+  flutter_launcher_icons: ^0.13.0
   flutter_native_splash: ^2.2.10+1
 
 # dart pub global run rename setAppName --value ""
 # dart pub global run rename setBundleId --value com.ymrabtiapps.botola_max
-# dart run flutter_native_splash:create
-flutter_launcher_icons:
-  image_path: "src/logo-botola-max.png"
-  android: true
-  ios: false
-  remove_alpha_ios: true
-  #   adaptive_icon_background: "#FF00004B"
-  adaptive_icon_foreground: "src/logo-botola-max.png"
-
-flutter_native_splash:
-  image: src/logo-max-botola.png
-  image_dark: src/logo-max-botola.png
-  color: "#080808"
-  color_dark: "#080808"
-
-  android_12:
-    image: src/logo-max-botola.png
-    image_dark: src/logo-max-botola.png
-    color: "#383838"
-    color_dark: "#383838"
 
 flutter:
   uses-material-design: true

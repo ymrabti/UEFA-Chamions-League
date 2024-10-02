@@ -55,7 +55,7 @@ class MatchesAndStandings {
 }
 
 void logg(dynamic message, {String name = 'BOTOLA'}) {
-  log(message, name: name);
+  log('$message', name: name);
 }
 
 abstract class AppConstants {
