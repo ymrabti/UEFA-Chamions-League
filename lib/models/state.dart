@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:uefa_champions_league/lib.dart';
 
 class AppState extends ChangeNotifier {
@@ -12,8 +11,9 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addCompetition(String compID, MatchesAndStandings data) {
-    this.data.assign(compID, data);
+  void addCompetition(String compID, MatchesAndStandings datum) {
+    data.addAll({compID: datum});
+    logg('$data');
     notifyListeners();
   }
 
@@ -21,6 +21,7 @@ class AppState extends ChangeNotifier {
 
   MatchesAndStandings getCompetition(String cID) {
     MatchesAndStandings? dataAt = data[cID];
+    logg('$dataAt');
     return dataAt as MatchesAndStandings;
   }
 

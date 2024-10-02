@@ -6,7 +6,6 @@ import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:uefa_champions_league/models/state.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
@@ -16,19 +15,24 @@ Future<void> main() async {
     // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
 //   MatchesAndStandings matchesAndStands = await AppLogic.getStandingsAndMatches('CL');
-//   ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
+  late ElBotolaChampionsList competitions;
+  if (kDebugMode) {
+    competitions = ElBotolaChampionsList.fromJson(testAllCompetitions);
+  } else {
+    competitions = await AppLogic.getCompetitions();
+  }
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppState(),
       child: GetMaterialApp(
-        title: 'El Botola Max',
+        title: 'Botola Max',
         locale: const Locale('en'),
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           fontFamily: 'Qatar2022',
           primarySwatch: primaryColor,
         ),
-        home: HomeScreen(),
+        home: HomeScreen(competitions),
         /* home: SplashPage(
           seek: true,
           matchesAndStandings: matchesAndStands,

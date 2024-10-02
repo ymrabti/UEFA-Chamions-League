@@ -5,8 +5,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uefa_champions_league/lib.dart';
-import 'package:uefa_champions_league/models/all_competitions.dart';
-import 'package:uefa_champions_league/models/state.dart';
 
 class ChampionshipModel extends ChampionshipModelParent {
   MatchesAndStandings matchesStandings;
@@ -34,18 +32,16 @@ class ChampionshipModelParent {
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen(
-      // this.competitions,
-      {
+    this.competitions, {
     super.key,
   });
-//   final ElBotolaChampionsList competitions;
+  final ElBotolaChampionsList competitions;
   @override
   Widget build(BuildContext context) {
-    final ElBotolaChampionsList competitions = ElBotolaChampionsList.fromJson(testAllCompetitions);
     return WidgetWithWaiter(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('El Botola Max'),
+          title: Text('Botola Max'),
         ),
         body: ListView(
           physics: BouncingScrollPhysics(),
@@ -71,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                     context.read<AppState>().setLoading(false);
 
                     await Get.to(
-                      () => AppChampionsLeague(
+                      () => AppLeague(
                         model: ChampionshipModel(
                           assetAnthem: 'assets/bg_audio.mp3',
                           competion: e,
@@ -94,15 +90,18 @@ class HomeScreen extends StatelessWidget {
                               text: e.name,
                               children: [
                                 if (e.type == 'LEAGUE') ...[
-                                  TextSpan(text: ' (Matchday: '),
                                   TextSpan(
-                                    text: '${e.currentSeason.currentMatchday})',
-                                    style: TextStyle(color: primaryColor),
+                                    text: '\nMatchday: ',
+                                    style: TextStyle(fontSize: 10),
+                                  ),
+                                  TextSpan(
+                                    text: '${e.currentSeason.currentMatchday}',
+                                    style: TextStyle(color: primaryColor, fontSize: 10),
                                   ),
                                 ],
                                 TextSpan(
-                                  text: '\n($startYear/$endYear)',
-                                  style: TextStyle(fontSize: 9),
+                                  text: '\nSeason: $startYear/$endYear',
+                                  style: TextStyle(fontSize: 10),
                                 ),
                               ],
                             ),
@@ -111,7 +110,7 @@ class HomeScreen extends StatelessWidget {
                             // style: TextStyle(color: e.colorText),
                           ),
                         ),
-                        ClipOval(child: AppImageViewer(url: e.area.flag, width: 40, height: 40)),
+                        Text(e.area.name)
                       ],
                     ),
                   ),

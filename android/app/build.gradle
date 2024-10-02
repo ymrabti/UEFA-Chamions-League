@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    namespace "com.ymrabtiapps.uefa_chamions_league"
+    namespace "com.ymrabtiapps.botola_max"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
     // cls && gradlew clean && gradlew build
@@ -38,7 +38,7 @@ android {
         baseline = file("lint-baseline.xml")
     }
     defaultConfig {
-        applicationId "com.ymrabtiapps.uefa_chamions_league"
+        applicationId "com.ymrabtiapps.botola_max"
         minSdkVersion 19
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()

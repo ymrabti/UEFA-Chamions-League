@@ -6,14 +6,14 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-class AppChampionsLeague extends StatefulWidget {
-  const AppChampionsLeague({super.key, required this.model});
+class AppLeague extends StatefulWidget {
+  const AppLeague({super.key, required this.model});
   final ChampionshipModel model;
   @override
-  State<AppChampionsLeague> createState() => _ChampionsLeagueAppState();
+  State<AppLeague> createState() => _ChampionsLeagueAppState();
 }
 
-class _ChampionsLeagueAppState extends State<AppChampionsLeague> with SingleTickerProviderStateMixin {
+class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProviderStateMixin {
   double _visiblePercentage = 100.0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
@@ -118,18 +118,21 @@ class _ChampionsLeagueAppState extends State<AppChampionsLeague> with SingleTick
                             setState(() {});
                           }
                         },
-                        child: SizedBox(
-                          width: Get.width * .35,
-                          child: CustomPaint(
-                            painter: BorderedRadiusBoxPainter(
-                              backgroundColor: Colors.white,
-                              borderColor: Colors.transparent,
-                              borderRadius: BorderRadius.all(Radius.circular(30)),
-                              borderWidth: 0,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(18.0),
-                              child: AppImageViewer(url: widget.model.competion.emblem),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: SizedBox(
+                            width: Get.width * .35,
+                            child: CustomPaint(
+                              painter: BorderedRadiusBoxPainter(
+                                backgroundColor: Colors.white,
+                                borderColor: Colors.transparent,
+                                borderRadius: BorderRadius.all(Radius.circular(30)),
+                                borderWidth: 0,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: AppImageViewer(url: widget.model.competion.emblem),
+                              ),
                             ),
                           ),
                         ),

@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:uefa_champions_league/lib.dart';
 import 'package:http/http.dart' show get;
-import 'package:uefa_champions_league/models/all_competitions.dart';
 
 abstract class AppLogic {
   static const String _CL_API = 'https://api.football-data.org/v4/competitions';

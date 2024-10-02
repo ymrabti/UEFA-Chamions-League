@@ -41,7 +41,7 @@ class _SplashPageState extends State<SplashPage> {
           });
         } else {
           await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-          await Get.offUntil(MaterialPageRoute(builder: (_) => AppChampionsLeague(model: widget.model)), (e) => false);
+          await Get.offUntil(MaterialPageRoute(builder: (_) => AppLeague(model: widget.model)), (e) => false);
         }
       }
     });

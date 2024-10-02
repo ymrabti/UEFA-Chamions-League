@@ -1,4 +1,4 @@
-package com.ymrabtiapps.uefa_chamions_league;
+package com.ymrabtiapps.botola_max;
 
 import io.flutter.embedding.android.FlutterActivity;
 

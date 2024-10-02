@@ -33,43 +33,33 @@ dependencies:
   loading_animation_widget: ^1.2.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-
   flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.10.0
+  flutter_launcher_icons:
+    path: ../../my-edited-packages/flutter_launcher_icons-master
   flutter_native_splash: ^2.2.10+1
 
-# dart run flutter_launcher_icons:main
-flutter_icons:
-  image_path: assets/logo-dark.png
-  android: true
-  ios: true
-  remove_alpha_ios: true
-  adaptive_icon_background: "#FF00004B"
-  adaptive_icon_foreground: assets/logo-dark.png
-
-  flutter_lints: ^1.0.0
-
+# dart pub global run rename setAppName --value ""
+# dart pub global run rename setBundleId --value com.ymrabtiapps.botola_max
 # dart run flutter_native_splash:create
+flutter_launcher_icons:
+  image_path: "src/logo-botola-max.png"
+  android: true
+  ios: false
+  remove_alpha_ios: true
+  #   adaptive_icon_background: "#FF00004B"
+  adaptive_icon_foreground: "src/logo-botola-max.png"
+
 flutter_native_splash:
-  image: assets/logo-light.png
-  image_dark: assets/logo-dark.png
-  #   branding: assets/qatar-word.png
-  color: "#00004b"
-  color_dark: "#d8d8d8"
-  #background_image: "assets/background.png"
-  #background_image_dark: "assets/dark-background.png"
+  image: src/logo-max-botola.png
+  image_dark: src/logo-max-botola.png
+  color: "#080808"
+  color_dark: "#080808"
 
   android_12:
-    image: assets/logo-light.png
-    image_dark: assets/logo-dark.png
-    # branding: assets/qatar-word.png
-    color: "#00004b"
-    color_dark: "#d8d8d8"
-
-    # icon_background_color: "#111111"
-    # icon_background_color_dark: "#eeeeee"
+    image: src/logo-max-botola.png
+    image_dark: src/logo-max-botola.png
+    color: "#383838"
+    color_dark: "#383838"
 
 flutter:
   uses-material-design: true

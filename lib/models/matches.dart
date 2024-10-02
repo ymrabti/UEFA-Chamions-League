@@ -442,50 +442,6 @@ class Season {
   }
 }
 
-class Area {
-  final int id;
-  final String name;
-  final String code;
-  final dynamic flag;
-  const Area({
-    required this.id,
-    required this.name,
-    required this.code,
-    required this.flag,
-  });
-  Area copyWith({int? id, String? name, String? code, dynamic flag}) {
-    return Area(id: id ?? this.id, name: name ?? this.name, code: code ?? this.code, flag: flag ?? this.flag);
-  }
-
-  Map<String, Object?> toJson() {
-    return {'id': id, 'name': name, 'code': code, 'flag': flag};
-  }
-
-  static Area fromJson(Map<String, Object?> json) {
-    return Area(
-      id: json['id'] == null ? 0 : json['id'] as int,
-      name: json['name'] == null ? 'null' : json['name'] as String,
-      code: json['code'] == null ? 'null' : json['code'] as String,
-      flag: json['flag'] as dynamic,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'Area(id:$id,name:$name,code:$code,flag:$flag)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is Area && other.runtimeType == runtimeType && other.id == id && other.name == name && other.code == code && other.flag == flag;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(runtimeType, id, name, code, flag);
-  }
-}
-
 class Competition {
   final int id;
   final String name;
