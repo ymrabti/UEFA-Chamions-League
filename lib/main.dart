@@ -14,7 +14,7 @@ Future<void> main() async {
     await WakelockPlus.enable();
     // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
-//   MatchesAndStandings matchesAndStands = await AppLogic.getStandingsAndMatches('CL');
+  // MatchesAndStandings matchesAndStands = await AppLogic.getStandingsAndMatches('CL');
   late ElBotolaChampionsList competitions;
   if (kDebugMode) {
     competitions = ElBotolaChampionsList.fromJson(testAllCompetitions);
@@ -42,7 +42,7 @@ Future<void> main() async {
   );
 }
 
-final Key keyTextSlogan = Key('SPLASH');
+final GlobalKey keyTextSlogan = GlobalKey();
 
 String stageName(title) {
   switch (title) {

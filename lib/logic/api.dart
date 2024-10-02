@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -68,4 +69,8 @@ abstract class AppConstants {
   static const String THIRDPLACE = 'THIRD_PLACE';
   static const String FINAL = 'FINAL';
   static const String BRONZE = 'BRONZE';
+  static const String FINISHED = 'FINISHED';
+  static const String TIMED = 'TIMED';
+  static const String IN_PLAY = 'IN_PLAY';
+  static const String PAUSED = 'PAUSED';
 }

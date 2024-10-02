@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:collection/collection.dart';
 import 'package:uefa_champions_league/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class AppLeague extends StatefulWidget {
@@ -14,9 +16,27 @@ class AppLeague extends StatefulWidget {
 }
 
 class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProviderStateMixin {
-  double _visiblePercentage = 100.0;
+  double _visiblePercentage = .0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
+
+  final Map<String, GlobalKey> _expansionTileKeys = {};
+  String _index = '';
+  String? _subIndex;
+
+  void scrollToTile(String index, String? subIndex) {
+    String key = subIndex ?? index;
+    if (key == '') return;
+    final GlobalKey<State<StatefulWidget>>? targetKey = _expansionTileKeys[key];
+    if (targetKey == null) return;
+    BuildContext? currentContext = targetKey.currentContext;
+    if (currentContext == null) return;
+    Scrollable.ensureVisible(
+      currentContext,
+      duration: Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    ).then((value) {});
+  }
 
   @override
   void initState() {
@@ -29,7 +49,13 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
     );
     unawaited(SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]));
 
+    WidgetsBinding.instance.addPostFrameCallback((_) => scrollToTile(_index, _subIndex));
     super.initState();
+  }
+
+  @override
+  didChangeDependencies() {
+    super.didChangeDependencies();
   }
 
   Future<void> startAudio() async {
@@ -154,9 +180,63 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
                 ],
               ),
             ),
-            if (widget.model.competion.code == 'CL') ...snapData.matches.modelDataCL,
-            if (widget.model.competion.type == 'CUP') ...snapData.matches.modelDataCup(snapData.standings),
-            if (widget.model.competion.type == 'LEAGUE') ...snapData.matches.modelDataLeague,
+            ...(snapData.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate)))
+                .stagePhaseData(
+              code: widget.model.competion.code,
+              standings: snapData.standings,
+              type: widget.model.competion.type,
+            )
+                .mapIndexed(
+              (index, e) {
+                String uuid = Uuid().v4();
+                if (e.initialExpand) {
+                  setState(() {
+                    _index = uuid;
+                  });
+                }
+                GlobalKey<State<StatefulWidget>> globalKey = GlobalKey();
+                _expansionTileKeys[uuid] = globalKey;
+                return ExpansionTile(
+                  key: globalKey,
+                  initiallyExpanded: e.initialExpand,
+                  title: Text(
+                    e.title,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  children: [
+                    if (e.subPhase.isNotEmpty)
+                      ...() {
+                        return e.subPhase.mapIndexed(
+                          (i, f) {
+                            var uuid = Uuid().v4();
+                            if (f.initialExpand) {
+                              setState(() {
+                                _subIndex = uuid;
+                              });
+                            }
+                            GlobalKey<State<StatefulWidget>> subGlobalKey = GlobalKey();
+                            _expansionTileKeys[uuid] = subGlobalKey;
+                            Standing? groupStanding = f.groupStanding;
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 18.0, right: 10),
+                              child: ExpansionTile(
+                                key: subGlobalKey,
+                                initiallyExpanded: f.initialExpand,
+                                title: Text(f.title),
+                                children: [
+                                  ...f.matches.map((e) => e.toView()),
+                                  if (groupStanding != null) groupStanding.toView(),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      }(),
+                    if (e.matches.isNotEmpty) ...e.matches.map((e) => e.toView()).toList()
+                  ],
+                );
+              },
+            ).toList(),
             GoalRankk(
               goals: snapData.matches.toList().teamGoalRanking,
               goalRanking: snapData.matches.goalsStatistics,

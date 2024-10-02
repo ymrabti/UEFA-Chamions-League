@@ -13,7 +13,6 @@ class AppState extends ChangeNotifier {
 
   void addCompetition(String compID, MatchesAndStandings datum) {
     data.addAll({compID: datum});
-    logg('$data');
     notifyListeners();
   }
 
@@ -21,7 +20,6 @@ class AppState extends ChangeNotifier {
 
   MatchesAndStandings getCompetition(String cID) {
     MatchesAndStandings? dataAt = data[cID];
-    logg('$dataAt');
     return dataAt as MatchesAndStandings;
   }
 

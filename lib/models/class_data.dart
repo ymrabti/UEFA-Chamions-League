@@ -169,7 +169,8 @@ extension ListMatchesX on List<Matche> {
         return pmm;
       },
     );
-    var gls = fold<List<GoalRanking>>(
+
+    List<GoalRanking> gls = fold<List<GoalRanking>>(
       teams,
       (pm, cm) {
         GoalRanking? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
@@ -204,8 +205,8 @@ extension ListMatchesX on List<Matche> {
     return gls;
   }
 
-  List<Widget> get modelDataCL {
-    var folding = fold<List<StageWithMatches>>(
+  List<StagePhaseMatches> get _modelCL {
+    List<StageWithMatches> folding = fold<List<StageWithMatches>>(
       [],
       (previousValue, element) {
         var wheras = previousValue.where((e) => e.stage == element.stage);
@@ -217,60 +218,56 @@ extension ListMatchesX on List<Matche> {
         return previousValue;
       },
     );
-    return folding.mapIndexed(
+
+    List<StagePhaseMatches> expandStagePhase = folding.mapIndexed(
       (index, elm) {
         List<Matche> matches = elm.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-        bool initilExpand = index == 0 ? !everyThisFinished : folding.elementAt(index - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
-        return ExpansionTile(
-          initiallyExpanded: initilExpand,
-          title: Text(
-            stageName(elm.stage),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: [
-            if (elm.stage == AppConstants.LEAGUESTAGE)
-              ...() {
-                List<MonthMatches> foldedMonths = elm.matches.fold(
-                  <MonthMatches>[],
-                  (value, element) {
-                    if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
-                    bool sameMonth = value.last.month.sameMonth(element.utcDate);
-                    if (sameMonth) {
-                      value.last.matches.add(element);
-                    } else {
-                      value.add(MonthMatches(month: element.utcDate, matches: [element]));
-                    }
-                    return value;
-                  },
-                )..sort((a, b) => a.month.compareTo(b.month));
-                return foldedMonths.mapIndexed(
-                  (i, f) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 18.0, right: 10),
-                      child: Builder(builder: (context) {
+        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
+        bool initilExpand = index == 0 ? !everyThisFinished : folding.elementAt(index - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+        return StagePhaseMatches(
+          initialExpand: initilExpand,
+          title: stageName(elm.stage),
+          subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
+              ? [
+                  ...() {
+                    List<MonthMatches> foldedMonths = elm.matches.fold(
+                      <MonthMatches>[],
+                      (value, element) {
+                        if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
+                        bool sameMonth = value.last.month.sameMonth(element.utcDate);
+                        if (sameMonth) {
+                          value.last.matches.add(element);
+                        } else {
+                          value.add(MonthMatches(month: element.utcDate, matches: [element]));
+                        }
+                        return value;
+                      },
+                    )..sort((a, b) => a.month.compareTo(b.month));
+                    return foldedMonths.mapIndexed(
+                      (i, f) {
                         List<Matche> matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-                        bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-                        bool initilExpand = i == 0 ? !everyThisFinished : foldedMonths.elementAt(i - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
-                        return ExpansionTile(
-                          initiallyExpanded: initilExpand,
-                          title: Text(DateFormat.yMMMM().format(f.month)),
-                          children: matches.map((e) => e.toView()).toList(),
+                        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
+                        bool initilExpand = i == 0 ? !everyThisFinished : foldedMonths.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+                        return StagePhaseMatches(
+                          initialExpand: initilExpand,
+                          title: DateFormat.yMMMM().format(f.month),
+                          matches: matches,
                         );
-                      }),
+                      },
                     );
-                  },
-                );
-              }(),
-            if (elm.stage != AppConstants.LEAGUESTAGE) ...elm.matches.map((e) => e.toView()).toList()
-          ],
+                  }()
+                ]
+              : [],
+          matches: (elm.stage == AppConstants.LEAGUESTAGE) ? [] : elm.matches,
         );
       },
     ).toList();
+
+    return expandStagePhase;
   }
 
-  List<Widget> modelDataCup(List<Standing> standings) {
-    var reducing = fold<List<StageWithMatches>>(
+  List<StagePhaseMatches> _modelCup(List<Standing> standings) {
+    List<StageWithMatches> reducing = fold<List<StageWithMatches>>(
       [],
       (previousValue, element) {
         var wheras = previousValue.where((e) => e.stage == element.stage);
@@ -283,11 +280,11 @@ extension ListMatchesX on List<Matche> {
       },
     );
 
-    var expandPhaseStage = reducing.mapIndexed(
+    List<StagePhaseMatches> expandPhaseStage = reducing.mapIndexed(
       (index, e) {
         List<Matche> matches = e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-        bool initilExpand = index == 0 ? !everyThisFinished : reducing.elementAt(index - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
+        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
+        bool initilExpand = index == 0 ? !everyThisFinished : reducing.elementAt(index - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
         List<StagePhaseMatches> Function() list = () {
           var foldGroups = e.matches.fold(
             <StageWithMatches>[],
@@ -305,8 +302,8 @@ extension ListMatchesX on List<Matche> {
           return foldGroups.mapIndexed(
             (i, f) {
               List<Matche> matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-              bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-              bool initilExpand = i == 0 ? !everyThisFinished : foldGroups.elementAt(i - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
+              bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
+              bool initilExpand = i == 0 ? !everyThisFinished : foldGroups.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
               Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
               return StagePhaseMatches(
                 initialExpand: initilExpand,
@@ -325,95 +322,11 @@ extension ListMatchesX on List<Matche> {
         );
       },
     ).toList();
-    var expandPhaseStageWidgets = expandPhaseStage.mapIndexed(
-      (index, e) {
-        return ExpansionTile(
-          initiallyExpanded: e.initialExpand,
-          title: Text(
-            e.title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: [
-            if (e.subPhase.isNotEmpty)
-              ...() {
-                return e.subPhase.mapIndexed(
-                  (i, f) {
-                    Standing? groupStanding = f.groupStanding;
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 18.0, right: 10),
-                      child: ExpansionTile(
-                        initiallyExpanded: f.initialExpand,
-                        title: Text(f.title),
-                        children: [
-                          ...f.matches.map((e) => e.toView()),
-                          if (groupStanding != null) groupStanding.toView(),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }(),
-            if (e.matches.isNotEmpty) ...e.matches.map((e) => e.toView()).toList()
-          ],
-        );
-      },
-    ).toList();
 
-    return reducing.mapIndexed(
-      (index, e) {
-        List<Matche> matches = e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-        bool initilExpand = index == 0 ? !everyThisFinished : reducing.elementAt(index - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
-        return ExpansionTile(
-          initiallyExpanded: initilExpand,
-          title: Text(
-            stageName(e.stage),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: [
-            if (e.stage == AppConstants.GROUPSTAGE)
-              ...() {
-                var foldGroups = e.matches.fold(
-                  <StageWithMatches>[],
-                  (value, element) {
-                    if (value.isEmpty) return value..add(StageWithMatches(stage: element.group, matches: [element]));
-                    bool foldCondition = value.map((e) => e.stage).contains(element.group);
-                    if (foldCondition) {
-                      value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
-                    } else {
-                      value.add(StageWithMatches(stage: element.group, matches: [element]));
-                    }
-                    return value;
-                  },
-                )..sort((a, b) => a.stage.compareTo(b.stage));
-                return foldGroups.mapIndexed(
-                  (i, f) {
-                    List<Matche> matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-                    bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-                    bool initilExpand = i == 0 ? !everyThisFinished : foldGroups.elementAt(i - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
-                    Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 18.0, right: 10),
-                      child: ExpansionTile(
-                        initiallyExpanded: initilExpand,
-                        title: Text(f.stage.replaceAll('GROUP_', 'Group ')),
-                        children: [
-                          ...f.matches.map((e) => e.toView()),
-                          if (groupStanding != null) groupStanding.toView(),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              }(),
-            if (e.stage != AppConstants.GROUPSTAGE) ...e.matches.map((e) => e.toView()).toList()
-          ],
-        );
-      },
-    ).toList();
+    return expandPhaseStage;
   }
 
-  List<Widget> get modelDataLeague {
+  List<StagePhaseMatches> get _modelLeague {
     var reducingMatchdays = fold<List<PhaseMatches>>(
       [],
       (previousValue, element) {
@@ -426,21 +339,36 @@ extension ListMatchesX on List<Matche> {
         return previousValue;
       },
     )..sort((a, b) => a.matchday - b.matchday);
-    return reducingMatchdays.mapIndexed(
+
+    var foldExpandMatchdays = reducingMatchdays.mapIndexed(
       (i, e) {
         List<Matche> matches = e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == 'FINISHED');
-        bool initilExpand = i == 0 ? !everyThisFinished : reducingMatchdays.elementAt(i - 1).matches.every((er) => er.status == 'FINISHED') && !everyThisFinished;
-        return ExpansionTile(
-          initiallyExpanded: initilExpand,
-          title: Text(
-            stageName('Matchday ${e.matchday}'),
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          children: e.matches.map((e) => e.toView()).toList(),
+        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
+        bool initilExpand = i == 0 ? !everyThisFinished : reducingMatchdays.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+        return StagePhaseMatches(
+          initialExpand: initilExpand,
+          title: stageName('Matchday ${e.matchday}'),
+          matches: e.matches,
         );
       },
     ).toList();
+
+    return foldExpandMatchdays;
+  }
+
+  List<StagePhaseMatches> stagePhaseData({
+    required String type,
+    required String code,
+    required List<Standing> standings,
+  }) {
+    switch (type) {
+      case 'CUP':
+        return code == 'CL' ? _modelCL : _modelCup(standings);
+      case 'LEAGUE':
+        return _modelLeague;
+      default:
+        return [];
+    }
   }
 }
 

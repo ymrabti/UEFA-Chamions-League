@@ -42,6 +42,17 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Botola Max'),
+          actions: [
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Icon(
+                  Icons.ac_unit,
+                  color: primaryColor,
+                ),
+              ),
+            )
+          ],
         ),
         body: ListView(
           physics: BouncingScrollPhysics(),

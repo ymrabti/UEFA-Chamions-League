@@ -40,15 +40,15 @@ class _MatchViewState extends State<MatchView> {
   @override
   Widget build(BuildContext context) {
     // var matchTimeLocal = DateFormat.MMMMd(Get.locale).format(matchTime);
-    var matchTime = widget.match.utcDate;
-    var now = DateTime.now().toUtc();
-    var isStarted = matchTime.isBefore(now);
-    var homeTeamTla = widget.match.homeTeam.tla;
-    var awayTeamTla = widget.match.awayTeam.tla;
-    var localeTime = DateFormat.Hm(Get.locale?.languageCode).format(matchTime);
-    var localeDate = DateFormat.MEd(Get.locale?.languageCode).format(matchTime);
-    var matchStat = widget.match.status;
-    var machDura = widget.match.score.duration;
+    DateTime matchTime = widget.match.utcDate;
+    DateTime now = DateTime.now().toUtc();
+    bool isStarted = matchTime.isBefore(now);
+    String homeTeamTla = widget.match.homeTeam.tla;
+    String awayTeamTla = widget.match.awayTeam.tla;
+    String localeTime = DateFormat.Hm(Get.locale?.languageCode).format(matchTime);
+    String localeDate = DateFormat.MEd(Get.locale?.languageCode).format(matchTime);
+    String matchStat = widget.match.status;
+    String machDura = widget.match.score.duration;
     return SizedBox(
       height: 100,
       child: Padding(
@@ -114,7 +114,7 @@ class _MatchViewState extends State<MatchView> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(convertNumbers(localeTime)),
+                              if (matchTime.hour + matchTime.minute != 0) Text(convertNumbers(localeTime)),
                               Text(convertNumbers(localeDate)),
                             ],
                           ),
@@ -173,21 +173,61 @@ class _MatchViewState extends State<MatchView> {
 }
 
 String convertNumbers(String str) {
-  return str.replaceAll('٠', '0').replaceAll('١', '1').replaceAll('٢', '2').replaceAll('٣', '3').replaceAll('٤', '4').replaceAll('٥', '5').replaceAll('٦', '6').replaceAll('٧', '7').replaceAll('٨', '8').replaceAll('٩', '9');
+  return str
+      .replaceAll(
+        '٠',
+        '0',
+      )
+      .replaceAll(
+        '١',
+        '1',
+      )
+      .replaceAll(
+        '٢',
+        '2',
+      )
+      .replaceAll(
+        '٣',
+        '3',
+      )
+      .replaceAll(
+        '٤',
+        '4',
+      )
+      .replaceAll(
+        '٥',
+        '5',
+      )
+      .replaceAll(
+        '٦',
+        '6',
+      )
+      .replaceAll(
+        '٧',
+        '7',
+      )
+      .replaceAll(
+        '٨',
+        '8',
+      )
+      .replaceAll(
+        '٩',
+        '9',
+      );
 }
 
 String statusMatch(String status) {
   switch (status) {
-    case 'FINISHED':
+    case AppConstants.FINISHED:
       return "Finished";
 
-    case 'TIMED':
+    case AppConstants.TIMED:
       return "Next match";
 
-    case 'IN_PLAY':
+    case AppConstants.IN_PLAY:
       return "Playing";
 
-    case 'PAUSED':
+    case AppConstants.PAUSED:
       return "Half time";
 
     default:
