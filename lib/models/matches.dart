@@ -143,7 +143,7 @@ class Matche {
     return 'Matches(area:${area.toString()},competition:${competition.toString()},season:${season.toString()},id:$id,utcDate:$utcDate,status:$status,matchday:$matchday,stage:$stage,group:$group,lastUpdated:$lastUpdated,homeTeam:${homeTeam.toString()},awayTeam:${awayTeam.toString()},score:${score.toString()},odds:${odds.toString()},referees:${referees.toString()})';
   }
 
-  Widget toView() => MatchView(match: this);
+  Widget view() => MatchView(match: this);
 
   @override
   bool operator ==(Object other) {

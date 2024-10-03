@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:uefa_champions_league/lib.dart';
+import 'package:uuid/uuid.dart';
 
 class GlobalGoalRanking {
   int scoredFTHome;
@@ -89,20 +90,127 @@ class StageWithMatches {
   });
 }
 
-// Cup
+// Cup, League, Champions league
 class StagePhaseMatches {
   String title;
-  bool initialExpand;
+  String uuid;
+  bool initiallyExpanded;
+  bool isSubPhase;
   Standing? groupStanding;
   List<Matche> matches;
   List<StagePhaseMatches> subPhase;
+  GlobalKey<State<StatefulWidget>> globalKey;
   StagePhaseMatches({
     required this.title,
+    required this.uuid,
+    required this.globalKey,
     this.groupStanding,
-    this.initialExpand = false,
+    this.initiallyExpanded = false,
+    this.isSubPhase = true,
     this.matches = const [],
     this.subPhase = const [],
   });
+  Widget view(BuildContext context) {
+    Standing? groupStand = groupStanding;
+    return ExpansionTile(
+      title: Text(title),
+      initiallyExpanded: initiallyExpanded,
+      onExpansionChanged: (value) {
+        context.read<AppState>().setExpansion(uuid, value);
+      },
+      children: [
+        ...(subPhase.isEmpty
+            ? matches.map(
+                (e) => e.view(),
+              )
+            : [
+                ...subPhase.map(
+                  (e) => e.view(context),
+                ),
+                if (groupStand != null) groupStand.view(),
+              ]),
+      ],
+    );
+  }
+}
+
+class StagePhase {
+  String title;
+  String uuid;
+  bool initiallyExpanded;
+  bool isSubPhase;
+  Standing? groupStanding;
+  List<Matche> matches;
+  GlobalKey<State<StatefulWidget>> globalKey;
+  StagePhase({
+    required this.title,
+    required this.uuid,
+    required this.globalKey,
+    this.groupStanding,
+    this.initiallyExpanded = false,
+    required this.isSubPhase,
+    this.matches = const [],
+  });
+}
+
+List<StagePhase> extractStagePhases(List<StagePhaseMatches> stagePhaseMatchesList) {
+  List<StagePhase> stagePhases = [];
+
+  // Helper function to convert StagePhaseMatches to StagePhase and flatten subphases
+  void flatten(StagePhaseMatches spm) {
+    // Convert StagePhaseMatches to StagePhase and add to the list
+    stagePhases.add(
+      StagePhase(
+        initiallyExpanded: spm.initiallyExpanded,
+        groupStanding: spm.groupStanding,
+        isSubPhase: spm.isSubPhase,
+        globalKey: spm.globalKey,
+        matches: spm.matches,
+        title: spm.title,
+        uuid: spm.uuid,
+      ),
+    );
+
+    // Recursively flatten subphases
+    for (var subPhase in spm.subPhase) {
+      flatten(subPhase);
+    }
+  }
+
+  // Iterate over the top-level list and flatten each item
+  for (var spm in stagePhaseMatchesList) {
+    flatten(spm);
+  }
+
+  return stagePhases;
+}
+
+List<StagePhase> extractStagePhasesWithFold(List<StagePhaseMatches> stagePhaseMatchesList) {
+  // Helper function to convert StagePhaseMatches to StagePhase
+  List<StagePhase> flatten(StagePhaseMatches spm) {
+    List<StagePhase> stagePhases = [];
+
+    // Convert the StagePhaseMatches to StagePhase
+    stagePhases.add(
+      StagePhase(
+        initiallyExpanded: spm.initiallyExpanded,
+        groupStanding: spm.groupStanding,
+        isSubPhase: spm.isSubPhase,
+        globalKey: spm.globalKey,
+        matches: spm.matches,
+        title: spm.title,
+        uuid: spm.uuid,
+      ),
+    );
+
+    // Recursively flatten subphases
+    stagePhases.addAll(spm.subPhase.fold<List<StagePhase>>([], (acc, subPhase) => acc..addAll(flatten(subPhase))));
+
+    return stagePhases;
+  }
+
+  // Use fold to accumulate the result into a flat list
+  return stagePhaseMatchesList.fold<List<StagePhase>>([], (acc, spm) => acc..addAll(flatten(spm)));
 }
 
 extension ListMatchesX on List<Matche> {
@@ -225,7 +333,10 @@ extension ListMatchesX on List<Matche> {
         bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
         bool initilExpand = index == 0 ? !everyThisFinished : folding.elementAt(index - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
         return StagePhaseMatches(
-          initialExpand: initilExpand,
+          initiallyExpanded: initilExpand,
+          uuid: Uuid().v4(),
+          globalKey: GlobalKey(),
+          isSubPhase: false,
           title: stageName(elm.stage),
           subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
               ? [
@@ -249,7 +360,9 @@ extension ListMatchesX on List<Matche> {
                         bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
                         bool initilExpand = i == 0 ? !everyThisFinished : foldedMonths.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
                         return StagePhaseMatches(
-                          initialExpand: initilExpand,
+                          globalKey: GlobalKey(),
+                          uuid: Uuid().v4(),
+                          initiallyExpanded: initilExpand,
                           title: DateFormat.yMMMM().format(f.month),
                           matches: matches,
                         );
@@ -306,7 +419,9 @@ extension ListMatchesX on List<Matche> {
               bool initilExpand = i == 0 ? !everyThisFinished : foldGroups.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
               Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
               return StagePhaseMatches(
-                initialExpand: initilExpand,
+                globalKey: GlobalKey(),
+                initiallyExpanded: initilExpand,
+                uuid: Uuid().v4(),
                 title: f.stage.replaceAll('GROUP_', 'Group '),
                 groupStanding: groupStanding,
                 matches: f.matches,
@@ -315,8 +430,11 @@ extension ListMatchesX on List<Matche> {
           ).toList();
         };
         return StagePhaseMatches(
-          initialExpand: initilExpand,
+          initiallyExpanded: initilExpand,
+          uuid: Uuid().v4(),
+          globalKey: GlobalKey(),
           title: stageName(e.stage),
+          isSubPhase: false,
           matches: (e.stage != AppConstants.GROUPSTAGE) ? e.matches : <Matche>[],
           subPhase: (e.stage == AppConstants.GROUPSTAGE) ? list() : <StagePhaseMatches>[],
         );
@@ -346,8 +464,11 @@ extension ListMatchesX on List<Matche> {
         bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
         bool initilExpand = i == 0 ? !everyThisFinished : reducingMatchdays.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
         return StagePhaseMatches(
-          initialExpand: initilExpand,
+          uuid: Uuid().v4(),
+          globalKey: GlobalKey(),
+          initiallyExpanded: initilExpand,
           title: stageName('Matchday ${e.matchday}'),
+          isSubPhase: false,
           matches: e.matches,
         );
       },

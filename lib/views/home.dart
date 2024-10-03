@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:uefa_champions_league/lib.dart';
 
 class ChampionshipModel extends ChampionshipModelParent {
-  MatchesAndStandings matchesStandings;
+  DataCompetition matchesStandings;
   ChampionshipModel({
     required super.assetAnthem,
     required super.color,
@@ -42,17 +42,13 @@ class HomeScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('Botola Max'),
-          actions: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Icon(
-                  Icons.ac_unit,
-                  color: primaryColor,
-                ),
-              ),
-            )
-          ],
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset(
+              'assets/max-botola-logo.png',
+            ),
+          ),
+          actions: [],
         ),
         body: ListView(
           physics: BouncingScrollPhysics(),
@@ -65,28 +61,48 @@ class HomeScreen extends StatelessWidget {
                 child: InkWell(
                   onTap: () async {
                     context.read<AppState>().setLoading(true);
-                    late MatchesAndStandings dataMatches;
+                    late DataCompetition dataMatches;
                     var exist = context.read<AppState>().isCompExist(e.code);
                     if (exist) {
-                      log('EXISTS');
                       dataMatches = context.read<AppState>().getCompetition(e.code);
                     } else {
-                      dataMatches = await AppLogic.getStandingsAndMatches(e.code);
+                      dataMatches = await AppLogic.getCompetition(e.code);
                       if (!context.mounted) return;
                       context.read<AppState>().addCompetition(e.code, dataMatches);
                     }
                     context.read<AppState>().setLoading(false);
 
-                    await Get.to(
-                      () => AppLeague(
-                        model: ChampionshipModel(
-                          assetAnthem: 'assets/bg_audio.mp3',
-                          competion: e,
-                          color: Colors.pink,
-                          colorText: Colors.black45,
-                          matchesStandings: dataMatches,
-                        ),
-                      ),
+                    List<Matche> list = dataMatches.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
+                    List<StagePhaseMatches> stagePhaseData = list.stagePhaseData(
+                      code: e.code,
+                      standings: dataMatches.standings,
+                      type: e.type,
+                    );
+                    List<StagePhase> expd = extractStagePhasesWithFold(stagePhaseData);
+                    Iterable<MapEntry<String, bool>> stagedData = expd.map(
+                      (e) => MapEntry(e.uuid, e.initiallyExpanded),
+                    );
+                    StagePhase? expanded = expd.firstWhereOrNull(
+                          (e) => e.initiallyExpanded && e.isSubPhase,
+                        ) ??
+                        expd.firstWhereOrNull(
+                          (e) => e.initiallyExpanded,
+                        );
+                    context.read<AppState>().setExpansionAll(stagedData);
+                    await Get.to<void>(
+                      () {
+                        return AppLeague(
+                          stagesData: stagePhaseData,
+                          firstExpand: expanded,
+                          model: ChampionshipModel(
+                            assetAnthem: 'assets/bg_audio.mp3',
+                            competion: e,
+                            color: Colors.pink,
+                            colorText: Colors.black45,
+                            matchesStandings: dataMatches,
+                          ),
+                        );
+                      },
                     );
                   },
                   child: Padding(

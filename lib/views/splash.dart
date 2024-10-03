@@ -40,8 +40,16 @@ class _SplashPageState extends State<SplashPage> {
             _ended = ended;
           });
         } else {
-          await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
-          await Get.offUntil(MaterialPageRoute(builder: (_) => AppLeague(model: widget.model)), (e) => false);
+          await SystemChrome.setEnabledSystemUIMode(
+            SystemUiMode.manual,
+            overlays: SystemUiOverlay.values,
+          );
+          /* await Get.offUntil(
+            MaterialPageRoute(
+              builder: (_) => AppLeague(model: widget.model),
+            ),
+            (e) => false,
+          ); */
         }
       }
     });

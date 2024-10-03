@@ -14,13 +14,8 @@ Future<void> main() async {
     await WakelockPlus.enable();
     // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
-  // MatchesAndStandings matchesAndStands = await AppLogic.getStandingsAndMatches('CL');
-  late ElBotolaChampionsList competitions;
-  if (kDebugMode) {
-    competitions = ElBotolaChampionsList.fromJson(testAllCompetitions);
-  } else {
-    competitions = await AppLogic.getCompetitions();
-  }
+  ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => AppState(),

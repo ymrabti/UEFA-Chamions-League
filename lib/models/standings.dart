@@ -74,7 +74,7 @@ class Standing {
     return {'stage': stage, 'type': type, 'group': group, 'table': table.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
   }
 
-  Widget toView() => TableStanding(standing: this);
+  Widget view() => TableStanding(standing: this);
 
   static Standing fromJson(Map<String, Object?> json) {
     return Standing(

@@ -3,23 +3,25 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:uefa_champions_league/lib.dart';
-import 'package:http/http.dart' show get;
+import 'package:http/http.dart' show Response, get;
 
 abstract class AppLogic {
-  static const String _CL_API = 'https://api.football-data.org/v4/competitions';
+  static const String _CL_API = 'https://api.football-data.org/v4';
   static final Map<String, String> _headers = {'X-Auth-Token': token};
 
-  static Future<MatchesAndStandings> getStandingsAndMatches(String competionID) async {
+  static Future<DataCompetition> getCompetition(String competionID) async {
     BotolaStandings standings = await _getStandings(competionID);
     BotolaLeagueMatches matches = await _getMatches(competionID);
-    return MatchesAndStandings(
+    BotolaScorers scorers = await _getScorers(competionID);
+    return DataCompetition(
       matches: matches.matches,
       standings: standings.standings,
+      scorers: scorers,
     );
   }
 
   static Future<ElBotolaChampionsList> getCompetitions() async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions'), headers: _headers);
 
     if (getGet.statusCode == 200) {
       var fromJson = ElBotolaChampionsList.fromJson(jsonDecode(getGet.body));
@@ -29,7 +31,7 @@ abstract class AppLogic {
   }
 
   static Future<BotolaStandings> _getStandings(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/$competionID/standings'), headers: _headers);
+    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/standings'), headers: _headers);
 
     if (getGet.statusCode == 200) {
       var fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
@@ -39,20 +41,33 @@ abstract class AppLogic {
   }
 
   static Future<BotolaLeagueMatches> _getMatches(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/$competionID/matches'), headers: _headers);
-
+    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/matches'), headers: _headers);
     if (getGet.statusCode == 200) {
       var fromJson = BotolaLeagueMatches.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     return BotolaLeagueMatches.fromJson(testChampionsLeagueMatches);
   }
+
+  static Future<BotolaScorers> _getScorers(String competionID) async {
+    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/scorers'), headers: _headers);
+    if (getGet.statusCode == 200) {
+      var fromJson = BotolaScorers.fromJson(jsonDecode(getGet.body));
+      return fromJson;
+    }
+    return BotolaScorers.fromJson(testChampionsLeagueMatches);
+  }
 }
 
-class MatchesAndStandings {
+class DataCompetition {
   List<Matche> matches = [];
   List<Standing> standings = [];
-  MatchesAndStandings({required this.matches, required this.standings});
+  BotolaScorers scorers;
+  DataCompetition({
+    required this.matches,
+    required this.standings,
+    required this.scorers,
+  });
 }
 
 void logg(dynamic message, {String name = 'BOTOLA'}) {

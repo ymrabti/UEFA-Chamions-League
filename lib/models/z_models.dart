@@ -4,3 +4,4 @@ export 'matches.dart';
 export 'standings.dart';
 export 'custom_shape.dart';
 export 'state.dart';
+export 'scorers.dart';
