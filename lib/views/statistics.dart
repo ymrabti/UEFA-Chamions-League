@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 
@@ -195,7 +195,9 @@ class GoalStatistic extends StatelessWidget {
                     TextSpan(
                       text: text,
                       style: TextStyle(
-                        color: primaryColor,
+                        color: Theme.of(context).primaryColor.transform(
+                              Theme.of(context).brightness == Brightness.dark,
+                            ),
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic,
                         decoration: TextDecoration.underline,
@@ -216,7 +218,9 @@ class GoalStatistic extends StatelessWidget {
                           TextSpan(
                             text: '$home',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: Theme.of(context).primaryColor.transform(
+                                    Theme.of(context).brightness == Brightness.dark,
+                                  ),
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,
                               decoration: TextDecoration.underline,
@@ -237,7 +241,9 @@ class GoalStatistic extends StatelessWidget {
                           TextSpan(
                             text: '$away',
                             style: TextStyle(
-                              color: primaryColor,
+                              color: Theme.of(context).primaryColor.transform(
+                                    Theme.of(context).brightness == Brightness.dark,
+                                  ),
                               fontWeight: FontWeight.bold,
                               fontStyle: FontStyle.italic,
                               decoration: TextDecoration.underline,
@@ -260,7 +266,9 @@ class GoalStatistic extends StatelessWidget {
                 TextSpan(
                   text: '$home',
                   style: TextStyle(
-                    color: primaryColor,
+                    color: Theme.of(context).primaryColor.transform(
+                          Theme.of(context).brightness == Brightness.dark,
+                        ),
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
                     decoration: TextDecoration.underline,
@@ -298,7 +306,7 @@ class CenterContent extends StatelessWidget {
       flex: 3,
       child: Container(
         decoration: BoxDecoration(
-          color: primaryColor.shade50,
+          color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 50),
         ),
         height: 100,
         alignment: Alignment.center,
@@ -352,7 +360,7 @@ class RoundedTeam extends StatelessWidget {
       flex: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: primaryColor,
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.only(
             topRight: left ? const Radius.circular(36) : Radius.zero,
             bottomRight: left ? const Radius.circular(36) : Radius.zero,

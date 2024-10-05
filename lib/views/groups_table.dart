@@ -1,7 +1,8 @@
 import 'package:collection/collection.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class TableStanding extends StatelessWidget {
   const TableStanding({super.key, required this.standing});
@@ -35,7 +36,7 @@ class TableStanding extends StatelessWidget {
           Container(
             width: Get.width,
             decoration: BoxDecoration(
-              color: primaryColor.shade700,
+              color: Theme.of(context).primaryColor,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
@@ -46,6 +47,7 @@ class TableStanding extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
+                  Expanded(flex: 1, child: Text('#', style: textStyle, textAlign: TextAlign.center)),
                   Expanded(flex: 2, child: Text('Team', style: textStyle, textAlign: TextAlign.center)),
                   Expanded(flex: 1, child: Text('P', style: textStyle, textAlign: TextAlign.center)),
                   Expanded(flex: 1, child: Text('W', style: textStyle, textAlign: TextAlign.center)),
@@ -57,7 +59,9 @@ class TableStanding extends StatelessWidget {
             ),
           ),
           Container(
-            decoration: BoxDecoration(color: primaryColor.shade50),
+            decoration: BoxDecoration(
+              color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 40),
+            ),
             width: Get.width,
             alignment: Alignment.center,
             child: Padding(
@@ -73,30 +77,33 @@ class TableStanding extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
+                            Expanded(flex: 1, child: Text('${index + 1}', textAlign: TextAlign.center)),
                             Expanded(
                               flex: 2,
-                              child: Row(
-                                children: [
-                                  Stack(
-                                    children: [
-                                      TeamAvatar(team: e.team),
-                                      if (index < 2)
-                                        const Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Icon(
-                                            Icons.verified,
-                                            color: primaryColor,
-                                            size: 15,
-                                            shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+                              child: FittedBox(
+                                child: Row(
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        TeamAvatar(team: e.team),
+                                        if (index < 2)
+                                          Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: Icon(
+                                              Icons.verified,
+                                              color: Theme.of(context).primaryColor,
+                                              size: 15,
+                                              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+                                            ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Text(e.team.tla, textAlign: TextAlign.center),
-                                  ),
-                                ],
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text(e.team.tla, textAlign: TextAlign.center),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             Expanded(flex: 1, child: Text('${e.playedGames}', textAlign: TextAlign.center)),
@@ -141,8 +148,8 @@ class TeamAvatar extends StatelessWidget {
             shadows: [Shadow(blurRadius: 5, color: Colors.white)],
           );
         } else {
-          return AppImageViewer(
-            url: team.crest,
+          return AppFileImageViewer(
+            url: context.watch<AppState>().exchangeCrest(team.crest),
             width: size,
             height: size,
             boxFit: BoxFit.fitHeight,

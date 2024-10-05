@@ -1,6 +1,6 @@
 // import 'package:console_tools/console_tools.dart';
 import 'dart:async';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -58,8 +58,8 @@ class _MatchViewState extends State<MatchView> {
             Expanded(
               flex: 1,
               child: Container(
-                decoration: const BoxDecoration(
-                  color: primaryColor,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(36),
                     bottomLeft: Radius.circular(36),
@@ -92,7 +92,7 @@ class _MatchViewState extends State<MatchView> {
               flex: 3,
               child: Container(
                 decoration: BoxDecoration(
-                  color: primaryColor.shade50,
+                  color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 20),
                 ),
                 alignment: Alignment.center,
                 child: Column(
@@ -136,8 +136,8 @@ class _MatchViewState extends State<MatchView> {
             Expanded(
               flex: 1,
               child: Container(
-                decoration: const BoxDecoration(
-                  color: primaryColor,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.only(
                     topRight: Radius.circular(36),
                     bottomRight: Radius.circular(36),

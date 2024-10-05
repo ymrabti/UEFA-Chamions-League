@@ -1,4 +1,6 @@
-class ElBotolaChampionsList {
+import 'package:botola_max/lib.dart';
+
+class ElBotolaChampionsList extends IGenericAppModel {
   final int count;
 
   final List<Competitions> competitions;
@@ -17,24 +19,32 @@ class ElBotolaChampionsList {
     );
   }
 
+  @override
   Map<String, Object?> toJson() {
-    return {
-      ElBotolaChampionsListEnum.count.name: count,
-      ElBotolaChampionsListEnum.competitions.name: competitions.map<Map<String, Object?>>((data) => data.toJson()).toList(),
-    };
-  }
-
-  Map<String, Object?> toMap() {
-    return {
-      ElBotolaChampionsListEnum.count.name: count.toString(),
-      ElBotolaChampionsListEnum.competitions.name: competitions,
-    };
+    return Map.fromEntries([
+      MapEntry(
+        ElBotolaChampionsListEnum.count.name,
+        count,
+      ),
+      MapEntry(
+        ElBotolaChampionsListEnum.competitions.name,
+        competitions
+            .map<Map<String, Object?>>(
+              (data) => data.toJson(),
+            )
+            .toList(),
+      ),
+    ]);
   }
 
   factory ElBotolaChampionsList.fromJson(Map<String, Object?> json) {
     return ElBotolaChampionsList(
       count: int.parse('${json[ElBotolaChampionsListEnum.count.name]}'),
-      competitions: (json[ElBotolaChampionsListEnum.competitions.name] as List).map<Competitions>((data) => Competitions.fromJson(data as Map<String, Object?>)).toList(),
+      competitions: (json[ElBotolaChampionsListEnum.competitions.name] as List)
+          .map<Competitions>(
+            (data) => Competitions.fromJson(data as Map<String, Object?>),
+          )
+          .toList(),
     );
   }
 
@@ -47,7 +57,7 @@ class ElBotolaChampionsList {
 
   @override
   String toString() {
-    return 'ElBotolaChampionsList(count:$count, competitions:${competitions.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -130,6 +140,17 @@ class Competitions {
     required this.lastUpdated,
   });
 
+  String get anthem {
+    switch (code) {
+      case 'CL':
+        return 'assets/bg_audio.mp3';
+      case 'WC':
+        return 'assets/wc_qatar.mp3';
+      default:
+        return '';
+    }
+  }
+
   Competitions copyWith({
     int? id,
     Area? area,
@@ -171,21 +192,6 @@ class Competitions {
     };
   }
 
-  Map<String, Object?> toMap() {
-    return {
-      CompetitionsEnum.id.name: id.toString(),
-      CompetitionsEnum.area.name: area,
-      CompetitionsEnum.name.name: name,
-      CompetitionsEnum.code.name: code,
-      CompetitionsEnum.type.name: type,
-      CompetitionsEnum.emblem.name: emblem,
-      CompetitionsEnum.plan.name: plan,
-      CompetitionsEnum.currentSeason.name: currentSeason,
-      CompetitionsEnum.numberOfAvailableSeasons.name: numberOfAvailableSeasons.toString(),
-      CompetitionsEnum.lastUpdated.name: lastUpdated,
-    };
-  }
-
   factory Competitions.fromJson(Map<String, Object?> json) {
     return Competitions(
       id: int.parse('${json[CompetitionsEnum.id.name]}'),
@@ -218,7 +224,7 @@ class Competitions {
 
   @override
   String toString() {
-    return 'Competitions(id:$id, area:${area.toString()}, name:$name, code:$code, type:$type, emblem:$emblem, plan:$plan, currentSeason:${currentSeason.toString()}, numberOfAvailableSeasons:$numberOfAvailableSeasons, lastUpdated:$lastUpdated)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -402,16 +408,6 @@ class CurrentSeason {
     };
   }
 
-  Map<String, Object?> toMap() {
-    return {
-      CurrentSeasonEnum.id.name: id.toString(),
-      CurrentSeasonEnum.startDate.name: startDate,
-      CurrentSeasonEnum.endDate.name: endDate,
-      CurrentSeasonEnum.currentMatchday.name: currentMatchday.toString(),
-      CurrentSeasonEnum.winner.name: winner,
-    };
-  }
-
   factory CurrentSeason.fromJson(Map<String, Object?> json) {
     return CurrentSeason(
       id: int.parse('${json[CurrentSeasonEnum.id.name]}'),
@@ -434,7 +430,7 @@ class CurrentSeason {
 
   @override
   String toString() {
-    return 'CurrentSeason(id:$id, startDate:$startDate, endDate:$endDate, currentMatchday:$currentMatchday, winner:$winner)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -559,15 +555,6 @@ class Area {
     };
   }
 
-  Map<String, Object?> toMap() {
-    return {
-      AreaEnum.id.name: id.toString(),
-      AreaEnum.name.name: name,
-      AreaEnum.code.name: code,
-      AreaEnum.flag.name: flag,
-    };
-  }
-
   factory Area.fromJson(Map<String, Object?> json) {
     return Area(
       id: int.parse('${json[AreaEnum.id.name]}'),
@@ -588,7 +575,7 @@ class Area {
 
   @override
   String toString() {
-    return 'Area(id:$id, name:$name, code:$code, flag:$flag)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override

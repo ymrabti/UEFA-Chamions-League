@@ -1,4 +1,4 @@
-name: uefa_champions_league
+name: botola_max
 description: UEFA Champions League competitions, matches and much more
 
 publish_to: "none"
@@ -32,6 +32,9 @@ dependencies:
   http: ^1.1.0
   loading_animation_widget: ^1.2.1
   uuid: ^4.2.2
+  shared_preferences: ^2.2.3
+  animated_theme_switcher: ^2.0.10
+  dio: ^5.7.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0

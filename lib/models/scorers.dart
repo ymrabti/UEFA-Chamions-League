@@ -1,4 +1,4 @@
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 
 class BotolaScorers {
   final int count;
@@ -76,7 +76,7 @@ class BotolaScorers {
 
   @override
   String toString() {
-    return 'BotolaScorers(count:$count, filters:${filters.toString()}, competition:${competition.toString()}, season:${season.toString()}, scorers:${scorers.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -223,7 +223,7 @@ class Scorers {
 
   @override
   String toString() {
-    return 'Scorers(player:${player.toString()}, team:${team.toString()}, playedMatches:$playedMatches, goals:$goals, assists:$assists, penalties:$penalties)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -318,7 +318,7 @@ class Player {
 
   final String lastName;
 
-  final DateTime dateOfBirth;
+  final DateTime? dateOfBirth;
 
   final String nationality;
 
@@ -404,7 +404,7 @@ class Player {
       name: json[PlayerEnum.name.name] as String,
       firstName: json[PlayerEnum.firstName.name] as String,
       lastName: json[PlayerEnum.lastName.name] as String,
-      dateOfBirth: DateTime.parse('${json[PlayerEnum.dateOfBirth.name]}'),
+      dateOfBirth: DateTime.tryParse('${json[PlayerEnum.dateOfBirth.name]}'),
       nationality: json[PlayerEnum.nationality.name] as String,
       section: json[PlayerEnum.section.name] as String,
       position: json[PlayerEnum.position.name],
@@ -430,7 +430,7 @@ class Player {
 
   @override
   String toString() {
-    return 'Player(id:$id, name:$name, firstName:$firstName, lastName:$lastName, dateOfBirth:$dateOfBirth, nationality:$nationality, section:$section, position:$position, shirtNumber:$shirtNumber, lastUpdated:$lastUpdated)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -485,93 +485,4 @@ class Player_Views {
   final Player model;
 
   Player_Views({required this.model});
-}
-
-extension PlayerSort on List<Player> {
-  List<Player> sorty(String caseField, {bool desc = false}) {
-    return this
-      ..sort((a, b) {
-        int fact = (desc ? -1 : 1);
-
-        if (caseField == PlayerEnum.id.name) {
-          // unsortable
-
-          int akey = a.id;
-          int bkey = b.id;
-
-          return fact * (bkey - akey);
-        }
-
-        if (caseField == PlayerEnum.name.name) {
-          // unsortable
-
-          String akey = a.name;
-          String bkey = b.name;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == PlayerEnum.firstName.name) {
-          // unsortable
-
-          String akey = a.firstName;
-          String bkey = b.firstName;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == PlayerEnum.lastName.name) {
-          // unsortable
-
-          String akey = a.lastName;
-          String bkey = b.lastName;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == PlayerEnum.dateOfBirth.name) {
-          // unsortable
-
-          DateTime akey = a.dateOfBirth;
-          DateTime bkey = b.dateOfBirth;
-
-          return fact * bkey.compareTo(akey);
-        }
-
-        if (caseField == PlayerEnum.nationality.name) {
-          // unsortable
-
-          String akey = a.nationality;
-          String bkey = b.nationality;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == PlayerEnum.section.name) {
-          // unsortable
-
-          String akey = a.section;
-          String bkey = b.section;
-
-          return fact * (bkey.compareTo(akey));
-        }
-
-        if (caseField == PlayerEnum.position.name) {}
-        // unsortable
-
-        if (caseField == PlayerEnum.shirtNumber.name) {}
-        // unsortable
-
-        if (caseField == PlayerEnum.lastUpdated.name) {
-          // unsortable
-
-          DateTime akey = a.lastUpdated;
-          DateTime bkey = b.lastUpdated;
-
-          return fact * bkey.compareTo(akey);
-        }
-
-        return 0;
-      });
-  }
 }

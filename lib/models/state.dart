@@ -1,8 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AppState extends ChangeNotifier {
+  final String fallback;
   Map<String, DataCompetition> data = {};
+  Map<String, String> mapCrests = {};
   Map<String, bool> expansion = {};
 
   bool loading = false;
@@ -17,17 +22,33 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void cleanExpansion() {
+    expansion.clear();
+    notifyListeners();
+  }
+
   void setExpansionAll(Iterable<MapEntry<String, bool>> newEntries) {
     expansion.addEntries(newEntries);
     notifyListeners();
+  }
+
+  String exchangeCrest(String url) {
+    return mapCrests[url] ?? fallback;
   }
 
   bool getEntryExpansion(String uuid) {
     return expansion[uuid] ?? false;
   }
 
-  void addCompetition(String compID, DataCompetition datum) {
+  Future<void> addCompetition(String compID, DataCompetition datum) async {
     data.addAll({compID: datum});
+    Directory appDirectory = await getApplicationDocumentsDirectory();
+    FallBackMap locateds = await updateLocalCrests(datum.teams.teams.map((e) => e.crest).toList(), appDirectory);
+    MapCompetitions dataClass = MapCompetitions(
+      data.map((key, value) => MapEntry(key, true)),
+      mapCrests..addAll(locateds.map),
+    );
+    await dataClass.save(AppSaveNames.available_competitions_data.name);
     notifyListeners();
   }
 
@@ -38,5 +59,40 @@ class AppState extends ChangeNotifier {
     return dataAt as DataCompetition;
   }
 
-  AppState();
+  AppState(
+    this.fallback,
+    Map<String, DataCompetition> dataMap,
+    Map<String, String> crests,
+  ) {
+    data = Map.from(dataMap);
+    mapCrests = Map.from(crests);
+  }
+}
+
+class MapCompetitions extends IGenericAppModel {
+  final Map<String, bool> data;
+  final Map<String, String> crests;
+
+  MapCompetitions(this.data, this.crests);
+  @override
+  Map<String, Object?> toJson() {
+    return {
+      'data': data.map((key, value) {
+        return MapEntry(key, value);
+      }),
+      'crests': crests,
+    };
+  }
+
+  @override
+  String toString() {
+    return PowerJSON(toJson()).toText();
+  }
+
+  static MapCompetitions? fromJson(Map<String, Object?> json) {
+    return MapCompetitions(
+      Map<String, bool>.from(json['data'] as Map<String, dynamic>),
+      Map<String, String>.from(json['crests'] as Map<String, dynamic>),
+    );
+  }
 }

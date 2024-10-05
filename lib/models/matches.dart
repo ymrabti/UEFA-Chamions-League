@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 
-class BotolaLeagueMatches {
+class BotolaMatches {
   final Filters filters;
   final ResultSet resultSet;
   final Competition competition;
   final List<Matche> matches;
-  const BotolaLeagueMatches({
+  const BotolaMatches({
     required this.filters,
     required this.resultSet,
     required this.competition,
     required this.matches,
   });
-  BotolaLeagueMatches copyWith({Filters? filters, ResultSet? resultSet, Competition? competition, List<Matche>? matches}) {
-    return BotolaLeagueMatches(
+  BotolaMatches copyWith({Filters? filters, ResultSet? resultSet, Competition? competition, List<Matche>? matches}) {
+    return BotolaMatches(
       filters: filters ?? this.filters,
       resultSet: resultSet ?? this.resultSet,
       competition: competition ?? this.competition,
@@ -25,18 +25,18 @@ class BotolaLeagueMatches {
     return {'filters': filters.toJson(), 'resultSet': resultSet.toJson(), 'competition': competition.toJson(), 'matches': matches.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
   }
 
-  static BotolaLeagueMatches fromJson(Map<String, Object?> json) {
-    return BotolaLeagueMatches(filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>), resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>), competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>), matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList());
+  static BotolaMatches fromJson(Map<String, Object?> json) {
+    return BotolaMatches(filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>), resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>), competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>), matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList());
   }
 
   @override
   String toString() {
-    return 'WorldcupMatches(filters:${filters.toString()},resultSet:${resultSet.toString()},competition:${competition.toString()},matches:${matches.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
   bool operator ==(Object other) {
-    return other is BotolaLeagueMatches && other.runtimeType == runtimeType && other.filters == filters && other.resultSet == resultSet && other.competition == competition && other.matches == matches;
+    return other is BotolaMatches && other.runtimeType == runtimeType && other.filters == filters && other.resultSet == resultSet && other.competition == competition && other.matches == matches;
   }
 
   @override
@@ -115,32 +115,49 @@ class Matche {
   }
 
   Map<String, Object?> toJson() {
-    return {'area': area.toJson(), 'competition': competition.toJson(), 'season': season.toJson(), 'id': id, 'utcDate': utcDate, 'status': status, 'matchday': matchday, 'stage': stage, 'group': group, 'lastUpdated': lastUpdated, 'homeTeam': homeTeam.toJson(), 'awayTeam': awayTeam.toJson(), 'score': score.toJson(), 'odds': odds.toJson(), 'referees': referees.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
+    return {
+      'area': area.toJson(),
+      'competition': competition.toJson(),
+      'season': season.toJson(),
+      'id': id,
+      'utcDate': utcDate,
+      'status': status,
+      'matchday': matchday,
+      'stage': stage,
+      'group': group,
+      'lastUpdated': lastUpdated,
+      'homeTeam': homeTeam.toJson(),
+      'awayTeam': awayTeam.toJson(),
+      'score': score.toJson(),
+      'odds': odds.toJson(),
+      'referees': referees.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+    };
   }
 
   static Matche fromJson(Map<String, Object?> json) {
     var id2 = json['id'] == null ? 0 : json['id'] as int;
     return Matche(
-        area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
-        competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
-        season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
-        id: id2,
-        utcDate: DateTime.parse(json['utcDate'] as String),
-        status: json['status'] == null ? 'null' : json['status'] as String,
-        matchday: json['matchday'] == null ? 0 : json['matchday'] as int,
-        stage: json['stage'] == null ? 'null' : json['stage'] as String,
-        group: json['group'] == null ? 'null' : json['group'] as String,
-        lastUpdated: DateTime.parse(json['lastUpdated'] as String),
-        homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
-        awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
-        score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
-        odds: json['odds'] == null ? Odds.fromJson({}) : Odds.fromJson(json['odds'] as Map<String, Object?>),
-        referees: json['referees'] == null ? [] : (json['referees'] as List).map<Referees>((data) => Referees.fromJson(data as Map<String, Object?>)).toList());
+      area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
+      competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
+      season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
+      id: id2,
+      utcDate: DateTime.parse(json['utcDate'] as String),
+      status: json['status'] == null ? 'null' : json['status'] as String,
+      matchday: json['matchday'] == null ? 0 : json['matchday'] as int,
+      stage: json['stage'] == null ? 'null' : json['stage'] as String,
+      group: json['group'] == null ? 'null' : json['group'] as String,
+      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+      homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
+      awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
+      score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
+      odds: json['odds'] == null ? Odds.fromJson({}) : Odds.fromJson(json['odds'] as Map<String, Object?>),
+      referees: json['referees'] == null ? [] : (json['referees'] as List).map<Referees>((data) => Referees.fromJson(data as Map<String, Object?>)).toList(),
+    );
   }
 
   @override
   String toString() {
-    return 'Matches(area:${area.toString()},competition:${competition.toString()},season:${season.toString()},id:$id,utcDate:$utcDate,status:$status,matchday:$matchday,stage:$stage,group:$group,lastUpdated:$lastUpdated,homeTeam:${homeTeam.toString()},awayTeam:${awayTeam.toString()},score:${score.toString()},odds:${odds.toString()},referees:${referees.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   Widget view() => MatchView(match: this);
@@ -186,7 +203,7 @@ class Referees {
 
   @override
   String toString() {
-    return 'Referees(id:$id,name:$name,type:$type,nationality:$nationality)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -217,7 +234,7 @@ class Odds {
 
   @override
   String toString() {
-    return 'Odds(msg:$msg)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -300,7 +317,7 @@ class Score {
 
   @override
   String toString() {
-    return 'Score(winner:$winner,duration:$duration,fullTime:${fullTime.toString()},halfTime:${halfTime.toString()},regularTime:${regularTime.toString()},extraTime:${extraTime.toString()},penalties:${penalties.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -334,7 +351,7 @@ class FullTime {
 
   @override
   String toString() {
-    return 'FullTime(home:$home,away:$away)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -347,53 +364,6 @@ class FullTime {
     return Object.hash(runtimeType, home, away);
   }
 }
-
-/* class Team {
-  final int id;
-  final String name;
-  final String shortName;
-  final String tla;
-  final String crest;
-  const Team({
-    required this.id,
-    required this.name,
-    required this.shortName,
-    required this.tla,
-    required this.crest,
-  });
-  Team copyWith({int? id, String? name, String? shortName, String? tla, String? crest}) {
-    return Team(id: id ?? this.id, name: name ?? this.name, shortName: shortName ?? this.shortName, tla: tla ?? this.tla, crest: crest ?? this.crest);
-  }
-
-  Map<String, Object?> toJson() {
-    return {'id': id, 'name': name, 'shortName': shortName, 'tla': tla, 'crest': crest};
-  }
-
-  static Team fromJson(Map<String, Object?> json) {
-    return Team(
-      id: json['id'] == null ? 0 : json['id'] as int,
-      name: json['name'] == null ? 'null' : json['name'] as String,
-      shortName: json['shortName'] == null ? 'null' : json['shortName'] as String,
-      tla: json['tla'] == null ? 'null' : json['tla'] as String,
-      crest: json['crest'] == null ? 'null' : json['crest'] as String,
-    );
-  }
-
-  @override
-  String toString() {
-    return 'Team(id:$id,name:$name,shortName:$shortName,tla:$tla,crest:$crest)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is Team && other.runtimeType == runtimeType && other.id == id && other.name == name && other.shortName == shortName && other.tla == tla && other.crest == crest;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(runtimeType, id, name, shortName, tla, crest);
-  }
-} */
 
 class Season {
   final int id;
@@ -428,7 +398,7 @@ class Season {
 
   @override
   String toString() {
-    return 'Season(id:$id,startDate:$startDate,endDate:$endDate,currentMatchday:$currentMatchday,winner:$winner)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -475,7 +445,7 @@ class Competition {
 
   @override
   String toString() {
-    return 'Competition(id:$id,name:$name,code:$code,type:$type,emblem:$emblem)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -514,7 +484,7 @@ class ResultSet {
 
   @override
   String toString() {
-    return 'ResultSet(count:$count,first:$first,last:$last,played:$played)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -545,7 +515,7 @@ class Filters {
 
   @override
   String toString() {
-    return 'Filters(season:$season)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override

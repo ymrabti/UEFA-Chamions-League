@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -82,7 +82,7 @@ class _SplashPageState extends State<SplashPage> {
                 duration: const Duration(milliseconds: 1000),
                 child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller)),
               ) //
-            : Container(color: primaryColor, width: Get.width, height: Get.height),
+            : Container(color: Theme.of(context).primaryColor, width: Get.width, height: Get.height),
       ),
     );
   }

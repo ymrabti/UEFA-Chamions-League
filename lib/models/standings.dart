@@ -1,4 +1,4 @@
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 
 class BotolaStandings {
@@ -46,7 +46,7 @@ class BotolaStandings {
 
   @override
   String toString() {
-    return 'FifaWorldCupApi(filters:${filters.toString()},area:${area.toString()},competition:${competition.toString()},season:${season.toString()},standings:${standings.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -71,7 +71,12 @@ class Standing {
   }
 
   Map<String, Object?> toJson() {
-    return {'stage': stage, 'type': type, 'group': group, 'table': table.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
+    return {
+      'stage': stage,
+      'type': type,
+      'group': group,
+      'table': table.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+    };
   }
 
   Widget view() => TableStanding(standing: this);
@@ -87,7 +92,7 @@ class Standing {
 
   @override
   String toString() {
-    return 'Standings(stage:$stage,type:$type,group:$group,table:${table.toString()})';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -176,7 +181,7 @@ class Tabla {
 
   @override
   String toString() {
-    return 'Table(position:$position,team:${team.toString()},playedGames:$playedGames,form:$form,won:$won,draw:$draw,lost:$lost,points:$points,goalsFor:$goalsFor,goalsAgainst:$goalsAgainst,goalDifference:$goalDifference)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override
@@ -229,7 +234,7 @@ class Team {
 
   @override
   String toString() {
-    return 'Team(id:$id,name:$name,shortName:$shortName,tla:$tla,crest:$crest)';
+    return PowerJSON(toJson()).toText();
   }
 
   @override

@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:uefa_champions_league/lib.dart';
+import 'package:botola_max/lib.dart';
 import 'package:uuid/uuid.dart';
 
 class GlobalGoalRanking {
@@ -69,6 +69,7 @@ class GoalRanking {
 class PhaseMatches {
   int matchday;
 
+  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
   List<Matche> matches;
   PhaseMatches({required this.matchday, required this.matches});
 }
@@ -77,6 +78,7 @@ class PhaseMatches {
 class MonthMatches {
   DateTime month;
   List<Matche> matches;
+  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
   MonthMatches({required this.month, required this.matches});
 }
 
@@ -84,6 +86,7 @@ class MonthMatches {
 class StageWithMatches {
   String stage;
   List<Matche> matches;
+  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
   StageWithMatches({
     required this.stage,
     required this.matches,
@@ -110,27 +113,76 @@ class StagePhaseMatches {
     this.matches = const [],
     this.subPhase = const [],
   });
-  Widget view(BuildContext context) {
+  Widget view(BuildContext context, {Size? splashedSize, String? splashedId, bool? splashing}) {
     Standing? groupStand = groupStanding;
-    return ExpansionTile(
-      title: Text(title),
-      initiallyExpanded: initiallyExpanded,
-      onExpansionChanged: (value) {
-        context.read<AppState>().setExpansion(uuid, value);
-      },
+    return Stack(
       children: [
-        ...(subPhase.isEmpty
-            ? matches.map(
-                (e) => e.view(),
-              )
-            : [
-                ...subPhase.map(
-                  (e) => e.view(context),
-                ),
-                if (groupStand != null) groupStand.view(),
-              ]),
+        ExpansionTile(
+          key: globalKey,
+          title: Text(
+            title,
+            style: isSubPhase
+                ? null
+                : const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+          ),
+          initiallyExpanded: context.watch<AppState>().getEntryExpansion(uuid),
+          onExpansionChanged: (value) {
+            context.read<AppState>().setExpansion(uuid, value);
+          },
+          childrenPadding: EdgeInsets.only(left: 4),
+          children: [
+            ...(subPhase.isEmpty
+                ? matches.map(
+                    (e) => e.view(),
+                  )
+                : [
+                    ...subPhase.map(
+                      (e) => e.view(context, splashedSize: splashedSize, splashedId: splashedId, splashing: splashing),
+                    ),
+                    if (groupStand != null) groupStand.view(),
+                  ]),
+          ],
+        ),
+        if (splashedId == uuid && (splashing ?? false))
+          Positioned.fill(
+            child: ColorFiltered(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).primaryColor.withOpacity(0.7),
+                Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
+              ),
+              child: Container(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+        /* AnimatedContainer(
+            duration: Duration(milliseconds: 300),
+            color: Colors.red.withOpacity(0.3),
+            child: SizedBox.fromSize(size: splashedSize),
+          ), */
+        /* Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.compose(
+                outer: ImageFilter.blur(sigmaX: 0, sigmaY: 0),
+                inner: ImageFilter.matrix(_createBlendMatrix(Colors.blue)),
+              ),
+              child: Container(
+                color: Colors.transparent, // You can apply an optional base color here
+              ),
+            ),
+          ), */
       ],
     );
+  }
+
+  Matrix4 createBlendMatrix(Color color) {
+    // Create a matrix for the blend mode effect, using the color
+    return Matrix4.identity()
+      ..setEntry(3, 2, 0.001) // Perspective control
+      ..translate(0.0, 0.0, 0.0);
   }
 }
 
@@ -314,7 +366,7 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> get _modelCL {
-    List<StageWithMatches> folding = fold<List<StageWithMatches>>(
+    List<StageWithMatches> foldingStage = fold<List<StageWithMatches>>(
       [],
       (previousValue, element) {
         var wheras = previousValue.where((e) => e.stage == element.stage);
@@ -327,11 +379,24 @@ extension ListMatchesX on List<Matche> {
       },
     );
 
-    List<StagePhaseMatches> expandStagePhase = folding.mapIndexed(
+    List<StagePhaseMatches> expandStagePhase = foldingStage.mapIndexed(
       (index, elm) {
-        List<Matche> matches = elm.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
-        bool initilExpand = index == 0 ? !everyThisFinished : folding.elementAt(index - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+        bool thisFinished = elm.allFinished;
+        bool initilExpand = index == 0 ? !thisFinished : foldingStage.elementAt(index - 1).allFinished && !thisFinished;
+        //
+        List<MonthMatches> foldedMonths = elm.matches.fold(
+          <MonthMatches>[],
+          (value, element) {
+            if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
+            bool sameMonth = value.last.month.sameMonth(element.utcDate);
+            if (sameMonth) {
+              value.last.matches.add(element);
+            } else {
+              value.add(MonthMatches(month: element.utcDate, matches: [element]));
+            }
+            return value;
+          },
+        )..sort((a, b) => a.month.compareTo(b.month));
         return StagePhaseMatches(
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
@@ -339,37 +404,45 @@ extension ListMatchesX on List<Matche> {
           isSubPhase: false,
           title: stageName(elm.stage),
           subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
-              ? [
-                  ...() {
-                    List<MonthMatches> foldedMonths = elm.matches.fold(
-                      <MonthMatches>[],
+              ? foldedMonths.mapIndexed(
+                  (iiii, ffff) {
+                    bool thisFinished = ffff.allFinished;
+                    bool initilExpand = iiii == 0 ? !thisFinished : foldedMonths.elementAt(iiii - 1).allFinished && !thisFinished;
+                    //
+                    List<PhaseMatches> foldedMatchdays = ffff.matches.fold(
+                      <PhaseMatches>[],
                       (value, element) {
-                        if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
-                        bool sameMonth = value.last.month.sameMonth(element.utcDate);
+                        if (value.isEmpty) return value..add(PhaseMatches(matchday: element.matchday, matches: [element]));
+                        bool sameMonth = value.last.matchday == (element.matchday);
                         if (sameMonth) {
                           value.last.matches.add(element);
                         } else {
-                          value.add(MonthMatches(month: element.utcDate, matches: [element]));
+                          value.add(PhaseMatches(matchday: element.matchday, matches: [element]));
                         }
                         return value;
                       },
-                    )..sort((a, b) => a.month.compareTo(b.month));
-                    return foldedMonths.mapIndexed(
-                      (i, f) {
-                        List<Matche> matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-                        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
-                        bool initilExpand = i == 0 ? !everyThisFinished : foldedMonths.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+                    )..sort((a, b) => a.matchday.compareTo(b.matchday));
+                    logg(foldedMatchdays.map((e) => e.matchday), name: 'matchdays');
+                    return StagePhaseMatches(
+                      globalKey: GlobalKey(),
+                      uuid: Uuid().v4(),
+                      initiallyExpanded: initilExpand,
+                      title: DateFormat.yMMMM().format(ffff.month),
+                      matches: [],
+                      subPhase: foldedMatchdays.mapIndexed((jjjj, gggg) {
+                        bool thisFinished = gggg.allFinished;
+                        bool initilExpand = jjjj == 0 ? !thisFinished : foldedMonths.elementAt(jjjj - 1).allFinished && !thisFinished;
                         return StagePhaseMatches(
-                          globalKey: GlobalKey(),
+                          title: 'Matchday ${gggg.matchday}',
                           uuid: Uuid().v4(),
                           initiallyExpanded: initilExpand,
-                          title: DateFormat.yMMMM().format(f.month),
-                          matches: matches,
+                          globalKey: GlobalKey(),
+                          matches: gggg.matches..sort((a, b) => a.matchday.compareTo(b.matchday)),
                         );
-                      },
+                      }).toList(),
                     );
-                  }()
-                ]
+                  },
+                ).toList()
               : [],
           matches: (elm.stage == AppConstants.LEAGUESTAGE) ? [] : elm.matches,
         );
@@ -395,9 +468,8 @@ extension ListMatchesX on List<Matche> {
 
     List<StagePhaseMatches> expandPhaseStage = reducing.mapIndexed(
       (index, e) {
-        List<Matche> matches = e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
-        bool initilExpand = index == 0 ? !everyThisFinished : reducing.elementAt(index - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+        bool thisFinished = e.allFinished;
+        bool initilExpand = index == 0 ? !thisFinished : reducing.elementAt(index - 1).allFinished && !thisFinished;
         List<StagePhaseMatches> Function() list = () {
           var foldGroups = e.matches.fold(
             <StageWithMatches>[],
@@ -414,9 +486,8 @@ extension ListMatchesX on List<Matche> {
           )..sort((a, b) => a.stage.compareTo(b.stage));
           return foldGroups.mapIndexed(
             (i, f) {
-              List<Matche> matches = f.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-              bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
-              bool initilExpand = i == 0 ? !everyThisFinished : foldGroups.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+              bool thisFinished = f.allFinished;
+              bool initilExpand = i == 0 ? !thisFinished : foldGroups.elementAt(i - 1).allFinished && !thisFinished;
               Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
               return StagePhaseMatches(
                 globalKey: GlobalKey(),
@@ -460,16 +531,15 @@ extension ListMatchesX on List<Matche> {
 
     var foldExpandMatchdays = reducingMatchdays.mapIndexed(
       (i, e) {
-        List<Matche> matches = e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-        bool everyThisFinished = matches.every((er) => er.status == AppConstants.FINISHED);
-        bool initilExpand = i == 0 ? !everyThisFinished : reducingMatchdays.elementAt(i - 1).matches.every((er) => er.status == AppConstants.FINISHED) && !everyThisFinished;
+        bool thisFinished = e.allFinished;
+        bool initilExpand = i == 0 ? !thisFinished : reducingMatchdays.elementAt(i - 1).allFinished && !thisFinished;
         return StagePhaseMatches(
           uuid: Uuid().v4(),
           globalKey: GlobalKey(),
           initiallyExpanded: initilExpand,
           title: stageName('Matchday ${e.matchday}'),
           isSubPhase: false,
-          matches: e.matches,
+          matches: e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate)),
         );
       },
     ).toList();
@@ -502,32 +572,26 @@ class WidgetWithWaiter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        child,
-        if (context.watch<AppState>().loading)
-          AbsorbPointer(
-            child: Container(
-              color: Theme.of(context).cardColor.withOpacity(0.4),
-              width: Get.width,
-              height: Get.height,
-              child: Center(
-                child: LoadingAnimationWidget.discreteCircle(
-                  color: primaryColor,
-                  size: 125,
+    return CustomThemeSwitchingArea(
+      child: Stack(
+        children: [
+          child,
+          if (context.watch<AppState>().loading)
+            AbsorbPointer(
+              child: Container(
+                color: Theme.of(context).cardColor.withOpacity(0.4),
+                width: Get.width,
+                height: Get.height,
+                child: Center(
+                  child: LoadingAnimationWidget.discreteCircle(
+                    color: Theme.of(context).primaryColor,
+                    size: 125,
+                  ),
                 ),
               ),
             ),
-          ),
-      ],
+        ],
+      ),
     );
   }
 }
-
-// ...widgets(widget.matches.matches).map((e) => e.view()),
-/* ListView.builder(
-    itemCount: widgets2.length,
-    shrinkWrap: true,
-    itemBuilder: (BuildContext context, int index) => _buildList(widgets2[index]),
-), */
-// leading: list.icon != null ? Icon(list.icon) : null,
