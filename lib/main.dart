@@ -13,9 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' show basename;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
+  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   if ((Platform.isAndroid || Platform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
@@ -24,8 +26,10 @@ Future<void> main() async {
   final SettingsController settingsController = SettingsController();
   await settingsController.loadSettings();
   ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
+  BotolaHappening today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
   List<String> mapEmblems = competitions.competitions.map((e) => e.emblem).toList();
-  FallBackAndMap fallBackAndMap = await downloadCrests(mapEmblems);
+  Iterable<String> todayCrests = today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _);
+  FallBackAndMap fallBackAndMap = await downloadCrests([...mapEmblems, ...todayCrests]);
   Map<String, String> allFileCrests = fallBackAndMap.map;
 
   Map<String, DataCompetition> availableCompetitionsData = await getAvailableCompetitions(fallBackAndMap.availableIds);
@@ -47,7 +51,7 @@ Future<void> main() async {
               home: Builder(
                 builder: (context) {
                   Get.put<SettingsController>(settingsController, tag: SharedPreferencesKeys.settingController.name);
-                  return HomeScreen(competitions);
+                  return HomeScreen(competitions, today);
                 },
               ),
               /* home: SplashPage(

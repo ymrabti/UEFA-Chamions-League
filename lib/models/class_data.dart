@@ -93,6 +93,63 @@ class StageWithMatches {
   });
 }
 
+// General
+class GeneralStageWithMatchesData<T> {
+  T title;
+  List<Matche> matches;
+
+  GeneralStageWithMatchesData({
+    required this.title,
+    required this.matches,
+  });
+
+  Map<String, Object?> toJson() {
+    return {
+      'Title': title,
+      'Matches': matches.map((e) => e.toJson()).toList(),
+    };
+  }
+
+  @override
+  String toString() {
+    return PowerJSON(toJson()).toText();
+  }
+
+  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+}
+
+// General
+class GeneralStageWithMatches<T> {
+  bool Function(T prevTitle, T currentTitle)? test;
+  T Function(Matche match) getTitle;
+
+  List<Matche> matches;
+
+  List<GeneralStageWithMatchesData<T>> get subphases {
+    var localTest = test;
+    if (localTest == null) return [];
+    return matches.fold(
+      <GeneralStageWithMatchesData<T>>[],
+      (value, current) {
+        GeneralStageWithMatchesData<T>? prev = value.firstWhereOrNull((kel) => localTest(kel.title, getTitle(current)));
+        if (prev != null) {
+          prev.matches.add(current);
+          return value;
+        } else {
+          return value..add(GeneralStageWithMatchesData<T>(title: getTitle(current), matches: [current]));
+        }
+      },
+    );
+  }
+
+  GeneralStageWithMatches({
+    required this.matches,
+    required this.getTitle,
+    this.test,
+  });
+  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+}
+
 // Cup, League, Champions league
 class StagePhaseMatches {
   String title;
@@ -280,14 +337,14 @@ extension ListMatchesX on List<Matche> {
     int scoredET = 0;
     int scoredPT = 0;
     for (var match in this) {
-      int _scoreRTHome = match.score.regularTime.home;
-      int _scoreRTAway = match.score.regularTime.away;
-      int _scoreETHome = match.score.extraTime.home;
-      int _scoreETAway = match.score.extraTime.away;
-      int _scorePTHome = match.score.penalties.home;
-      int _scorePTAway = match.score.penalties.away;
-      int _scoreFTHome = match.score.fullTime.home;
-      int _scoreFTAway = match.score.fullTime.away;
+      int _scoreRTHome = match.score.regularTime.home ?? 0;
+      int _scoreRTAway = match.score.regularTime.away ?? 0;
+      int _scoreETHome = match.score.extraTime.home ?? 0;
+      int _scoreETAway = match.score.extraTime.away ?? 0;
+      int _scorePTHome = match.score.penalties.home ?? 0;
+      int _scorePTAway = match.score.penalties.away ?? 0;
+      int _scoreFTHome = match.score.fullTime.home ?? 0;
+      int _scoreFTAway = match.score.fullTime.away ?? 0;
       scoreRTHome += _scoreRTHome;
       scoreRTAway += _scoreRTAway;
       scoreETHome += _scoreETHome;
@@ -330,39 +387,37 @@ extension ListMatchesX on List<Matche> {
       },
     );
 
-    List<GoalRanking> gls = fold<List<GoalRanking>>(
+    return fold<List<GoalRanking>>(
       teams,
       (pm, cm) {
         GoalRanking? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
         GoalRanking? awayTeam = pm.firstWhereOrNull((e) => e.team.id == cm.awayTeam.id);
-        awayTeam?.receivedHT += cm.score.halfTime.home;
-        homeTeam?.scoredHT += cm.score.halfTime.home;
+        awayTeam?.receivedHT += cm.score.halfTime.home ?? 0;
+        homeTeam?.scoredHT += cm.score.halfTime.home ?? 0;
         //
-        awayTeam?.scoredHT += cm.score.halfTime.away;
-        homeTeam?.receivedHT += cm.score.halfTime.away;
+        awayTeam?.scoredHT += cm.score.halfTime.away ?? 0;
+        homeTeam?.receivedHT += cm.score.halfTime.away ?? 0;
         //
-        awayTeam?.receivedET += cm.score.extraTime.home;
-        homeTeam?.scoredET += cm.score.extraTime.home;
+        awayTeam?.receivedET += cm.score.extraTime.home ?? 0;
+        homeTeam?.scoredET += cm.score.extraTime.home ?? 0;
         //
-        awayTeam?.scoredET += cm.score.extraTime.away;
-        homeTeam?.receivedET += cm.score.extraTime.away;
+        awayTeam?.scoredET += cm.score.extraTime.away ?? 0;
+        homeTeam?.receivedET += cm.score.extraTime.away ?? 0;
         //
-        awayTeam?.receivedRT += cm.score.regularTime.home;
-        homeTeam?.scoredRT += cm.score.regularTime.home;
+        awayTeam?.receivedRT += cm.score.regularTime.home ?? 0;
+        homeTeam?.scoredRT += cm.score.regularTime.home ?? 0;
         //
-        awayTeam?.scoredRT += cm.score.regularTime.away;
-        homeTeam?.receivedRT += cm.score.regularTime.away;
+        awayTeam?.scoredRT += cm.score.regularTime.away ?? 0;
+        homeTeam?.receivedRT += cm.score.regularTime.away ?? 0;
         //
-        awayTeam?.receivedPT += cm.score.penalties.home;
-        homeTeam?.scoredPT += cm.score.penalties.home;
+        awayTeam?.receivedPT += cm.score.penalties.home ?? 0;
+        homeTeam?.scoredPT += cm.score.penalties.home ?? 0;
         //
-        awayTeam?.scoredPT += cm.score.penalties.away;
-        homeTeam?.receivedPT += cm.score.penalties.away;
+        awayTeam?.scoredPT += cm.score.penalties.away ?? 0;
+        homeTeam?.receivedPT += cm.score.penalties.away ?? 0;
         return pm;
       },
     );
-
-    return gls;
   }
 
   List<StagePhaseMatches> get _modelCL {
@@ -474,12 +529,12 @@ extension ListMatchesX on List<Matche> {
           var foldGroups = e.matches.fold(
             <StageWithMatches>[],
             (value, element) {
-              if (value.isEmpty) return value..add(StageWithMatches(stage: element.group, matches: [element]));
+              if (value.isEmpty) return value..add(StageWithMatches(stage: element.group ?? '', matches: [element]));
               bool foldCondition = value.map((e) => e.stage).contains(element.group);
               if (foldCondition) {
                 value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
               } else {
-                value.add(StageWithMatches(stage: element.group, matches: [element]));
+                value.add(StageWithMatches(stage: element.group ?? '', matches: [element]));
               }
               return value;
             },

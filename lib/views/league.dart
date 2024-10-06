@@ -87,7 +87,6 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
       vsync: this,
     );
     unawaited(SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]));
-
     WidgetsBinding.instance.addPostFrameCallback((_) => scrollToTile());
     super.initState();
   }

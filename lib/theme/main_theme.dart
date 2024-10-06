@@ -48,7 +48,7 @@ ThemeData mainTheme({required bool dark}) {
     colorSchemeSeed: null,
     fontFamilyFallback: null,
     package: null, */
-    fontFamily: 'Qatar2022',
+    fontFamily: 'AppFont',
     brightness: dark ? Brightness.dark : Brightness.light,
     scaffoldBackgroundColor: bgColor,
     dialogBackgroundColor: transparent,
@@ -112,8 +112,8 @@ ThemeData mainTheme({required bool dark}) {
     ),
     visualDensity: VisualDensity.comfortable,
     //
-    textTheme: TextTheme(labelLarge: TextStyle(fontSize: 20)),
-    primaryTextTheme: TextTheme(labelLarge: TextStyle(fontSize: 20)),
+    textTheme: TextTheme(labelLarge: TextStyle(fontSize: 20, fontFamily: 'AppFont')),
+    primaryTextTheme: TextTheme(labelLarge: TextStyle(fontSize: 20, fontFamily: 'AppFont')),
     hintColor: null,
     focusColor: null,
     hoverColor: null,

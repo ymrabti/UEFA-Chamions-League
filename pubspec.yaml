@@ -20,7 +20,7 @@ dependencies:
   provider: ^6.0.4
   flutter_svg: ^2.0.10+1
   path_provider: ^2.0.11
-  path: ^1.8.2
+  path: ^1.9.0
   intl: ^0.17.0
   get_time_ago: ^1.1.8
   flutter_form_builder: ^8.0.0
@@ -35,6 +35,7 @@ dependencies:
   shared_preferences: ^2.2.3
   animated_theme_switcher: ^2.0.10
   dio: ^5.7.0
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -50,9 +51,9 @@ flutter:
     - assets/
 
   fonts:
-    - family: Qatar2022
+    - family: AppFont
       fonts:
-        - asset: assets/Qatar2022/Qatar2022Arabic-Bold.ttf
-        - asset: assets/Qatar2022/Qatar2022Arabic-Heavy.ttf
+        - asset: assets/fonts/Qatar2022Arabic-Bold.ttf
+        - asset: assets/fonts/Qatar2022Arabic-Heavy.ttf
 
   #

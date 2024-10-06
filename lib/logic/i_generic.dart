@@ -48,6 +48,7 @@ abstract class IGenericAppModel {
     if (T == ElBotolaChampionsList) return ElBotolaChampionsList.fromJson(json);
     if (T == MapCompetitions) return MapCompetitions.fromJson(json);
     if (T == DataCompetition) return DataCompetition.fromJson(json);
+    if (T == BotolaHappening) return BotolaHappening.fromJson(json);
     if (T == Settings) return Settings.fromJson(json);
     return null;
   }

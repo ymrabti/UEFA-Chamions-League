@@ -1,10 +1,8 @@
 // import 'package:console_tools/console_tools.dart';
-import 'dart:async';
 import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart';
 
@@ -33,7 +31,6 @@ class MatchView extends StatefulWidget {
 class _MatchViewState extends State<MatchView> {
   @override
   void initState() {
-    unawaited(initializeDateFormatting('ar', null));
     super.initState();
   }
 
@@ -49,6 +46,8 @@ class _MatchViewState extends State<MatchView> {
     String localeDate = DateFormat.MEd(Get.locale?.languageCode).format(matchTime);
     String matchStat = widget.match.status;
     String machDura = widget.match.score.duration;
+    var away2 = widget.match.score.fullTime.away;
+    var home2 = widget.match.score.fullTime.home;
     return SizedBox(
       height: 100,
       child: Padding(
@@ -104,7 +103,7 @@ class _MatchViewState extends State<MatchView> {
                         Expanded(
                           flex: 1,
                           child: Text(
-                            '${isStarted ? widget.match.score.fullTime.away : '•'}',
+                            '${isStarted && away2 != null ? away2 : '•'}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),
@@ -122,7 +121,7 @@ class _MatchViewState extends State<MatchView> {
                         Expanded(
                           flex: 1,
                           child: Text(
-                            '${isStarted ? widget.match.score.fullTime.home : '•'}',
+                            '${isStarted && home2 != null ? home2 : '•'}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),

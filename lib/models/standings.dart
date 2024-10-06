@@ -201,6 +201,7 @@ class Team {
   final String shortName;
   final String tla;
   final String crest;
+
   const Team({
     required this.id,
     required this.name,

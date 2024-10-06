@@ -1,4 +1,9 @@
 import 'package:botola_max/lib.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ElBotolaChampionsList extends IGenericAppModel {
   final int count;
@@ -175,6 +180,118 @@ class Competitions {
       numberOfAvailableSeasons: numberOfAvailableSeasons ?? this.numberOfAvailableSeasons,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
+  }
+
+  Future<void> gotoParticularCompetition(BuildContext context, Competitions e) async {
+    context.read<AppState>().setLoading(true);
+    late DataCompetition dataMatches;
+    var exist = context.read<AppState>().isCompExist(e.code);
+    if (exist) {
+      dataMatches = context.read<AppState>().getCompetition(e.code);
+    } else {
+      dataMatches = await AppLogic.getCompetitionByID(e.code);
+      if (!context.mounted) return;
+      await context.read<AppState>().addCompetition(e.code, dataMatches);
+    }
+    if (!context.mounted) return;
+    context.read<AppState>().cleanExpansion();
+
+    List<Matche> list = dataMatches.matcheModel.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
+    List<StagePhaseMatches> stagePhaseData = list.stagePhaseData(
+      code: e.code,
+      standings: dataMatches.standingModel.standings,
+      type: e.type,
+    );
+    List<StagePhase> expd = extractStagePhasesWithFold(stagePhaseData);
+    Iterable<MapEntry<String, bool>> stagedData = expd.map(
+      (e) => MapEntry(e.uuid, e.initiallyExpanded),
+    );
+    StagePhase? expanded = expd.firstWhereOrNull(
+          (e) => e.initiallyExpanded && e.isSubPhase,
+        ) ??
+        expd.firstWhereOrNull(
+          (e) => e.initiallyExpanded,
+        );
+    context.read<AppState>().setExpansionAll(stagedData);
+    context.read<AppState>().setLoading(false);
+    await Get.to<void>(
+      () {
+        return AppLeague(
+          stagesData: stagePhaseData,
+          firstExpand: expanded,
+          model: ChampionshipModel(
+            assetAnthem: e.anthem,
+            competion: e,
+            color: Colors.pink,
+            colorText: Colors.black45,
+            matchesStandings: dataMatches,
+          ),
+        );
+      },
+      arguments: {'competition-id': e.code},
+    );
+  }
+
+  Widget view() {
+    Competitions e = this;
+    String startYear = DateFormat.y().format(e.currentSeason.startDate);
+    String endYear = DateFormat.y().format(e.currentSeason.endDate);
+    return Builder(builder: (context) {
+      return Card(
+        margin: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        child: InkWell(
+          onTap: () => gotoParticularCompetition(context, e),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
+            child: Row(
+              children: [
+                AppFileImageViewer(
+                  width: 40,
+                  url: context.watch<AppState>().exchangeCrest(e.emblem),
+                  color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.transform(true) : null,
+                ),
+                Gap(12),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      text: e.name,
+                      children: [
+                        TextSpan(
+                          text: ' (${e.code})',
+                          style: TextStyle(fontSize: 10),
+                        ),
+                        if (e.type == 'LEAGUE') ...[
+                          TextSpan(
+                            text: '\nMatchday: ',
+                            style: TextStyle(fontSize: 10),
+                          ),
+                          TextSpan(
+                            text: '${e.currentSeason.currentMatchday}',
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor.transform(
+                                      Theme.of(context).brightness == Brightness.dark,
+                                    ),
+                                fontSize: 10),
+                          ),
+                        ],
+                        TextSpan(
+                          text: '\nSeason: $startYear/$endYear',
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ],
+                    ),
+                    softWrap: true,
+                    maxLines: 4,
+                    // style: TextStyle(color: e.colorText),
+                  ),
+                ),
+                Text(e.area.name)
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Map<String, Object?> toJson() {
@@ -558,15 +675,6 @@ class Area {
   factory Area.fromJson(Map<String, Object?> json) {
     return Area(
       id: int.parse('${json[AreaEnum.id.name]}'),
-      name: json[AreaEnum.name.name] as String,
-      code: json[AreaEnum.code.name] as String,
-      flag: json[AreaEnum.flag.name] as String?,
-    );
-  }
-
-  factory Area.fromMap(Map<String, Object?> json) {
-    return Area(
-      id: json[AreaEnum.id.name] as int,
       name: json[AreaEnum.name.name] as String,
       code: json[AreaEnum.code.name] as String,
       flag: json[AreaEnum.flag.name] as String?,

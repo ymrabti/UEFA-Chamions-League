@@ -4,11 +4,13 @@ import 'dart:developer';
 
 import 'package:botola_max/lib.dart';
 import 'package:http/http.dart' show Response, get;
+import 'package:intl/intl.dart';
 
 enum AppSaveNames {
   all_competitions,
   settings,
   available_competitions_data,
+  today_matches,
 }
 
 abstract class AppLogic {
@@ -61,6 +63,18 @@ abstract class AppLogic {
       return value as T;
     }
     return null;
+  }
+
+  static Future<BotolaHappening> getTodayMatches(Iterable<int> ids) async {
+    String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    String tomorrow = DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)));
+    BotolaHappening? dataGeneric = await _iGetIt<BotolaHappening>(
+      'matches?dateFrom=$today&dateTo=$tomorrow&competitions=${ids.join(',')}',
+      AppSaveNames.today_matches.name,
+      Duration(hours: 1),
+    );
+    if (dataGeneric != null) return dataGeneric;
+    return BotolaHappening.fromJson(testAllCompetitions);
   }
 
   static Future<ElBotolaChampionsList> getCompetitions() async {
