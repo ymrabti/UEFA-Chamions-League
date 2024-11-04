@@ -248,7 +248,7 @@ class Competitions {
                 AppFileImageViewer(
                   width: 40,
                   url: context.watch<AppState>().exchangeCrest(e.emblem),
-                  color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.transform(true) : null,
+                  color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                 ),
                 Gap(12),
                 Expanded(
@@ -268,7 +268,7 @@ class Competitions {
                           TextSpan(
                             text: '${e.currentSeason.currentMatchday}',
                             style: TextStyle(
-                                color: Theme.of(context).primaryColor.transform(
+                                color: Theme.of(context).primaryColor.invers(
                                       Theme.of(context).brightness == Brightness.dark,
                                     ),
                                 fontSize: 10),

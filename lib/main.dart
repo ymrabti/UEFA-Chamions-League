@@ -17,12 +17,12 @@ import 'package:timezone/data/latest.dart' as tz;
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 Future<void> main() async {
-  tz.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   if ((Platform.isAndroid || Platform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
     // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   }
+  tz.initializeTimeZones();
   final SettingsController settingsController = SettingsController();
   await settingsController.loadSettings();
   ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
@@ -31,7 +31,6 @@ Future<void> main() async {
   Iterable<String> todayCrests = today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _);
   FallBackAndMap fallBackAndMap = await downloadCrests([...mapEmblems, ...todayCrests]);
   Map<String, String> allFileCrests = fallBackAndMap.map;
-
   Map<String, DataCompetition> availableCompetitionsData = await getAvailableCompetitions(fallBackAndMap.availableIds);
 
   runApp(

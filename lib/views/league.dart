@@ -130,7 +130,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
             url: context.watch<AppState>().exchangeCrest(widget.model.competion.emblem),
             width: 40,
             color: elbrem.contains(anthem)
-                ? Theme.of(context).colorScheme.background.transform(
+                ? Theme.of(context).colorScheme.background.invers(
                       true,
                     )
                 : null,
@@ -174,7 +174,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
                         child: AppFileImageViewer(
                           url: context.watch<AppState>().exchangeCrest(widget.model.competion.emblem),
                           width: 40,
-                          color: elbrem.contains(widget.model.competion.code) ? Theme.of(context).colorScheme.background.transform(true) : null,
+                          color: elbrem.contains(widget.model.competion.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                         ),
                       ),
                       title: Padding(
@@ -247,8 +247,8 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
 
   GoalRankk _rank(DataCompetition snapData) {
     return GoalRankk(
-      goals: snapData.matcheModel.matches.teamGoalRanking,
-      goalRanking: snapData.matcheModel.matches.goalsStatistics,
+      goals: snapData.matcheModel.matches.goalStatsTeam,
+      goalRanking: snapData.matcheModel.matches.goalStatsCompetition,
     );
   }
 
@@ -340,7 +340,7 @@ class CompetitionScorersPage extends StatelessWidget {
           child: AppFileImageViewer(
             url: context.watch<AppState>().exchangeCrest(scorers.competition.emblem),
             width: 40,
-            color: elbrem.contains(scorers.competition.code) ? Theme.of(context).colorScheme.background.transform(true) : null,
+            color: elbrem.contains(scorers.competition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
           ),
         ),
         title: Padding(
@@ -363,6 +363,7 @@ class CompetitionScorersPage extends StatelessWidget {
                   title: Text(
                     '${e.player.name}${shirtNumber != null ? ' (N° $shirtNumber)' : ''}',
                   ),
+                  maintainState: true,
                   subtitle: Text(
                     'Goals: ${e.goals}',
                     style: TextStyle(fontSize: 10),
@@ -400,7 +401,7 @@ class CompetitionScorersPage extends StatelessWidget {
                                         TextSpan(
                                           text: e.player.section,
                                           style: TextStyle(
-                                            color: Theme.of(context).primaryColor.transform(
+                                            color: Theme.of(context).primaryColor.invers(
                                                   Theme.of(context).brightness == Brightness.dark,
                                                 ),
                                           ),
@@ -409,7 +410,7 @@ class CompetitionScorersPage extends StatelessWidget {
                                         TextSpan(
                                           text: e.team.name,
                                           style: TextStyle(
-                                            color: Theme.of(context).primaryColor.transform(
+                                            color: Theme.of(context).primaryColor.invers(
                                                   Theme.of(context).brightness == Brightness.dark,
                                                 ),
                                           ),
@@ -429,7 +430,7 @@ class CompetitionScorersPage extends StatelessWidget {
                                         TextSpan(
                                           text: e.player.nationality,
                                           style: TextStyle(
-                                              color: Theme.of(context).primaryColor.transform(
+                                              color: Theme.of(context).primaryColor.invers(
                                                     Theme.of(context).brightness == Brightness.dark,
                                                   )),
                                         ),

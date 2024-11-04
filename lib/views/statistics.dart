@@ -9,38 +9,39 @@ class GoalRankk extends StatelessWidget {
     required this.goals,
     required this.goalRanking,
   });
-  final GlobalGoalRanking goalRanking;
-  final List<GoalRanking> goals;
+  final GoalRankingPerCompetition goalRanking;
+  final List<GoalRankingPerTeam> goals;
 
   @override
   Widget build(BuildContext context) {
     // var matchTimeLocal = DateFormat.MMMMd(Get.locale).format(matchTime);
-    List<GoalRanking> sortDownToUpReceived = goals.map((e) => e).toList()..sort((a, b) => a.allReceived - b.allReceived);
-    List<GoalRanking> sortUpToDownReceived = sortDownToUpReceived.reversed.toList();
-    GoalRanking leastReceived = sortDownToUpReceived.first;
-    GoalRanking mostReceived = sortUpToDownReceived.first;
+    List<GoalRankingPerTeam> sortDownToUpReceived = goals.map((e) => e).toList()..sort((a, b) => a.allReceived - b.allReceived);
+    List<GoalRankingPerTeam> sortUpToDownReceived = sortDownToUpReceived.reversed.toList();
+    GoalRankingPerTeam leastReceived = sortDownToUpReceived.first;
+    GoalRankingPerTeam mostReceived = sortUpToDownReceived.first;
     // // //
-    List<GoalRanking> sortUpToDownScored = goals.map((e) => e).toList()..sort((a, b) => a.allScored - b.allScored);
-    List<GoalRanking> sortDownToUpScored = sortUpToDownScored.reversed.toList();
-    GoalRanking leastScored = sortUpToDownScored.first;
-    GoalRanking mostScored = sortDownToUpScored.first;
+    List<GoalRankingPerTeam> sortUpToDownScored = goals.map((e) => e).toList()..sort((a, b) => a.allScored - b.allScored);
+    List<GoalRankingPerTeam> sortDownToUpScored = sortUpToDownScored.reversed.toList();
+    GoalRankingPerTeam leastScored = sortUpToDownScored.first;
+    GoalRankingPerTeam mostScored = sortDownToUpScored.first;
     // // //
-    List<GoalRanking> sortDownToUpScoreDifference = goals.map((e) => e).toList()..sort((a, b) => a.difference - b.difference);
-    List<GoalRanking> sortUpToDownScoreDifference = sortDownToUpScoreDifference.reversed.toList();
-    GoalRanking leastDifference = sortDownToUpScoreDifference.first;
-    GoalRanking mostDifference = sortUpToDownScoreDifference.first;
+    List<GoalRankingPerTeam> sortDownToUpScoreDifference = goals.map((e) => e).toList()..sort((a, b) => a.difference - b.difference);
+    List<GoalRankingPerTeam> sortUpToDownScoreDifference = sortDownToUpScoreDifference.reversed.toList();
+    GoalRankingPerTeam leastDifference = sortDownToUpScoreDifference.first;
+    GoalRankingPerTeam mostDifference = sortUpToDownScoreDifference.first;
     //
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         ExpansionTile(
+          maintainState: true,
           title: const Text(
             'Statistics',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           children: sortDownToUpScored.mapIndexed((index, teamLeft) {
-            GoalRanking teamRight = sortDownToUpReceived[index];
+            GoalRankingPerTeam teamRight = sortDownToUpReceived[index];
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: LimitedBox(
@@ -65,6 +66,7 @@ class GoalRankk extends StatelessWidget {
           }).toList(),
         ),
         ExpansionTile(
+          maintainState: true,
           title: const Text(
             'Quick statistics',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -137,6 +139,7 @@ class GoalRankk extends StatelessWidget {
             'Goal statistics',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          maintainState: true,
           initiallyExpanded: true,
           children: [
             GoalStatistic(text: 'regular time', home: goalRanking.scoredRTHome, away: goalRanking.scoredRTAway),
@@ -195,7 +198,7 @@ class GoalStatistic extends StatelessWidget {
                     TextSpan(
                       text: text,
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor.transform(
+                        color: Theme.of(context).primaryColor.invers(
                               Theme.of(context).brightness == Brightness.dark,
                             ),
                         fontWeight: FontWeight.bold,
@@ -218,7 +221,7 @@ class GoalStatistic extends StatelessWidget {
                           TextSpan(
                             text: '$home',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor.transform(
+                              color: Theme.of(context).primaryColor.invers(
                                     Theme.of(context).brightness == Brightness.dark,
                                   ),
                               fontWeight: FontWeight.bold,
@@ -241,7 +244,7 @@ class GoalStatistic extends StatelessWidget {
                           TextSpan(
                             text: '$away',
                             style: TextStyle(
-                              color: Theme.of(context).primaryColor.transform(
+                              color: Theme.of(context).primaryColor.invers(
                                     Theme.of(context).brightness == Brightness.dark,
                                   ),
                               fontWeight: FontWeight.bold,
@@ -266,7 +269,7 @@ class GoalStatistic extends StatelessWidget {
                 TextSpan(
                   text: '$home',
                   style: TextStyle(
-                    color: Theme.of(context).primaryColor.transform(
+                    color: Theme.of(context).primaryColor.invers(
                           Theme.of(context).brightness == Brightness.dark,
                         ),
                     fontWeight: FontWeight.bold,
@@ -351,7 +354,7 @@ class RoundedTeam extends StatelessWidget {
     this.left = true,
   }) : super(key: key);
 
-  final GoalRanking team;
+  final GoalRankingPerTeam team;
   final bool left;
 
   @override

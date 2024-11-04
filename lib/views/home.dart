@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _splashing = false;
   @override
   Widget build(BuildContext context) {
-    List<Widget> chuldren = children(context);
     return WidgetWithWaiter(
       child: Scaffold(
         appBar: AppBar(
@@ -77,77 +76,108 @@ class _HomeScreenState extends State<HomeScreen> {
               )
           ],
         ),
-        body: CustomScrollView(
+        body: bodyCSV(context),
+      ),
+    );
+  }
+
+  Stack bodyLV(BuildContext context) {
+    return Stack(
+      children: [
+        ListView(
           physics: BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              //   expandedHeight: 200.0,
-              leading: Builder(builder: (context) {
-                String? comp = _competition?.emblem;
-                return comp == null
-                    ? SizedBox()
-                    : Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: AppFileImageViewer(
-                          url: context.watch<AppState>().exchangeCrest(comp),
-                          color: elbrem.contains(_competition?.code)
-                              ? Theme.of(context).colorScheme.background.transform(
-                                    true,
-                                  )
-                              : null,
-                        ),
-                      );
-              }),
-              floating: false,
-              pinned: true,
-              stretch: true,
-              flexibleSpace: FlexibleSpaceBar(
-                title: dropDown(context),
-              ),
+          children: [
+            SizedBox(
+              height: 130,
             ),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return chuldren.elementAt(index);
-                },
-                childCount: chuldren.length,
-              ),
-            ),
+            ...children(context)
           ],
         ),
-      ),
+        bottom(context),
+      ],
+    );
+  }
+
+  CustomScrollView bodyCSV(BuildContext context) {
+    List<Widget> chuldren = children(context);
+    return CustomScrollView(
+      physics: BouncingScrollPhysics(),
+      slivers: [
+        SliverAppBar(
+          //   expandedHeight: 200.0,
+          leading: Builder(
+            builder: (context) {
+              String? comp = _competition?.emblem;
+              return comp == null
+                  ? SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: AppFileImageViewer(
+                        url: context.watch<AppState>().exchangeCrest(comp),
+                        color: elbrem.contains(_competition?.code)
+                            ? Theme.of(context).colorScheme.background.invers(
+                                  true,
+                                )
+                            : null,
+                      ),
+                    );
+            },
+          ),
+          floating: false,
+          pinned: true,
+          stretch: true,
+          flexibleSpace: FlexibleSpaceBar(
+            title: dropDown(context),
+          ),
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              return chuldren.elementAt(index);
+            },
+            childCount: chuldren.length,
+          ),
+        ),
+      ],
     );
   }
 
   List<Widget> children(BuildContext context) {
     return [
       ...getTodaySubPhases.map(
-        (e) => Stack(
-          children: [
-            ExpansionTile(
-              key: e.title.globalKey,
-              maintainState: true,
-              title: Text(e.title.name),
-              initiallyExpanded: true,
-              children: e.matches.map((f) => f.view()).toList(),
-            ),
-            if (_competition?.code == e.title.code && _splashing)
-              Positioned.fill(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor.withOpacity(0.7),
-                    Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
-                  ),
-                  child: Container(
-                    color: Colors.transparent,
-                  ),
+        (e) => Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              Container(
+                color: Colors.transparent,
+                child: ExpansionTile(
+                  key: e.title.globalKey,
+                  maintainState: true,
+                  title: Text(e.title.name),
+                  initiallyExpanded: !e.allFinished,
+                  children: e.matches.map((f) => f.view()).toList(),
                 ),
               ),
-          ],
+              if (_competition?.code == e.title.code && _splashing)
+                Positioned.fill(
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
+                    ),
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
       ExpansionTile(
         title: Text('Competitions'),
+        maintainState: true,
         children: widget.competitions.competitions
             .map(
               (Competitions e) => e.view(),
@@ -178,6 +208,9 @@ class _HomeScreenState extends State<HomeScreen> {
       isExpanded: true,
       borderRadius: BorderRadius.only(topLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
       value: _competition,
+      enableFeedback: true,
+      hint: Text('Select a competition'),
+      elevation: 0,
       underline: SizedBox(),
       dropdownColor: Theme.of(context).colorScheme.primary,
       items: getTodaySubPhases
@@ -192,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: AppFileImageViewer(
                         url: context.watch<AppState>().exchangeCrest(e.title.emblem),
-                        color: elbrem.contains(e.title.code) ? Theme.of(context).colorScheme.background.transform(true) : null,
+                        color: elbrem.contains(e.title.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                       ),
                     ),
                     Gap(20),
@@ -216,6 +249,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _getScroll(GlobalKey key) {
+    RenderObject? renderBox = key.currentContext?.findRenderObject();
+    if (renderBox == null) return;
+    if (renderBox is! RenderBox) return;
+    final Offset position = renderBox.localToGlobal(Offset.zero);
+    logg('Item position: $position');
+  }
+
   BuildContext? _getContext(GlobalKey targetKey) {
     BuildContext? currentContext = targetKey.currentContext;
     return currentContext;
@@ -225,6 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
     GlobalKey? globalKey = value?.globalKey;
     if (globalKey == null) return;
     BuildContext? currentContext = _getContext(globalKey);
+    _getScroll(globalKey);
     if (currentContext == null) {
       logg(value?.code, name: 'CURRENTCONTEXT is NULL');
       return;

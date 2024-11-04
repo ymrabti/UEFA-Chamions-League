@@ -87,7 +87,7 @@ MaterialColor textColor = MaterialColor(
 );
 
 extension ColorX on Color {
-  Color transform(bool reverse) {
+  Color invers(bool reverse) {
     return reverse ? Color.fromRGBO(255 - red, 255 - green, 255 - blue, opacity) : this;
   }
 

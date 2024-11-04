@@ -24,11 +24,11 @@ ThemeData mainTheme({required bool dark}) {
   Color shade600 = textColor.shade600;
   OutlineInputBorder outlineInputBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(28),
-    borderSide: BorderSide(color: shade600.transform(dark)),
+    borderSide: BorderSide(color: shade600.invers(dark)),
     gapPadding: 10,
   );
-  Color bgColor = textColor.shade800.transform(!dark);
-  Color fgColor = textColor.transform(dark);
+  Color bgColor = textColor.shade800.invers(!dark);
+  Color fgColor = textColor.invers(dark);
   ColorScheme colorScheme = dark
       ? ColorScheme.dark(
           primary: _primaryColorDark,

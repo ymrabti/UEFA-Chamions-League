@@ -48,6 +48,7 @@ class _MatchViewState extends State<MatchView> {
     String machDura = widget.match.score.duration;
     var away2 = widget.match.score.fullTime.away;
     var home2 = widget.match.score.fullTime.home;
+    var dark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       height: 100,
       child: Padding(
@@ -91,7 +92,7 @@ class _MatchViewState extends State<MatchView> {
               flex: 3,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 20),
+                  color: Theme.of(context).primaryColor.skin(dark, dark ? 20 : 10),
                 ),
                 alignment: Alignment.center,
                 child: Column(

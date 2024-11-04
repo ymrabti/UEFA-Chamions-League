@@ -1,6 +1,10 @@
 export 'api.dart';
-export 'test_all_competitions.dart';
-export 'svg_provider.dart';
-export 'power_json.dart';
+export 'extensions.dart';
 export 'i_generic.dart';
+export 'power_json.dart';
+export 'profile_test.dart';
 export 'settings.dart';
+export 'svg_provider.dart';
+export 'test.dart';
+export 'test_all_competitions.dart';
+export 'z_logic.dart';
