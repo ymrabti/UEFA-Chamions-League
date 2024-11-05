@@ -4,22 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart';
-
-extension DateTimeX on DateTime {
-  String eeeDDDMMM() {
-    return DateFormat("EEE, dd MMM", Get.locale?.languageCode).format(this);
-  }
-
-  String formated() {
-    // return DateFormat("hh:mm a").format(this);
-    return format(this, allowFromNow: isAfter(DateTime.now()));
-  }
-
-  bool sameDay(DateTime other) => sameMonth(other) && day == other.day;
-
-  bool sameMonth(DateTime other) => year == other.year && month == other.month;
-}
 
 class MatchView extends StatefulWidget {
   const MatchView({super.key, required this.match});
@@ -98,13 +82,13 @@ class _MatchViewState extends State<MatchView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Text('${statusMatch(matchStat)}${durationMatch(machDura, matchStat: matchStat)}'),
+                    Text('${BotolaServices.statusMatch(matchStat)}${BotolaServices.durationMatch(machDura, matchStat: matchStat)}'),
                     Row(
                       children: [
                         Expanded(
                           flex: 1,
                           child: Text(
-                            '${isStarted && away2 != null ? away2 : '•'}',
+                            '${isStarted ? away2 : '•'}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),
@@ -114,15 +98,15 @@ class _MatchViewState extends State<MatchView> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              if (matchTime.hour + matchTime.minute != 0) Text(convertNumbers(localeTime)),
-                              Text(convertNumbers(localeDate)),
+                              if (matchTime.hour + matchTime.minute != 0) Text(BotolaServices.convertNumbers(localeTime)),
+                              Text(BotolaServices.convertNumbers(localeDate)),
                             ],
                           ),
                         ),
                         Expanded(
                           flex: 1,
                           child: Text(
-                            '${isStarted && home2 != null ? home2 : '•'}',
+                            '${isStarted ? home2 : '•'}',
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 24),
                           ),
@@ -169,85 +153,5 @@ class _MatchViewState extends State<MatchView> {
         ),
       ),
     );
-  }
-}
-
-String convertNumbers(String str) {
-  return str
-      .replaceAll(
-        '٠',
-        '0',
-      )
-      .replaceAll(
-        '١',
-        '1',
-      )
-      .replaceAll(
-        '٢',
-        '2',
-      )
-      .replaceAll(
-        '٣',
-        '3',
-      )
-      .replaceAll(
-        '٤',
-        '4',
-      )
-      .replaceAll(
-        '٥',
-        '5',
-      )
-      .replaceAll(
-        '٦',
-        '6',
-      )
-      .replaceAll(
-        '٧',
-        '7',
-      )
-      .replaceAll(
-        '٨',
-        '8',
-      )
-      .replaceAll(
-        '٩',
-        '9',
-      );
-}
-
-String statusMatch(String status) {
-  switch (status) {
-    case AppConstants.FINISHED:
-      return "Finished";
-
-    case AppConstants.TIMED:
-      return "Next match";
-
-    case AppConstants.IN_PLAY:
-      return "Playing";
-
-    case AppConstants.PAUSED:
-      return "Half time";
-
-    default:
-      return status;
-  }
-}
-
-String durationMatch(String status, {String? matchStat}) {
-  if (['TIMED', 'SCHEDULED'].contains(matchStat)) return '';
-  switch (status) {
-    case 'PENALTY_SHOOTOUT':
-      return " : Penalty shootout";
-
-    case 'REGULAR':
-      return " : Regular time";
-
-    case 'EXTRA_TIME':
-      return " : Extra time";
-
-    default:
-      return ' : ' + status;
   }
 }

@@ -2,9 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:botola_max/lib.dart';
+import 'package:timeago/timeago.dart';
 import 'package:uuid/uuid.dart';
 
 abstract class AbstractGoalRanking {
@@ -18,10 +17,6 @@ abstract class AbstractGoalRanking {
   int scoredPTAway;
   int scoredHTHome;
   int scoredHTAway;
-  int get scoredFT => scoredFTHome + scoredFTAway;
-  int get scoredRT => scoredRTHome + scoredRTAway;
-  int get scoredET => scoredETHome + scoredETAway;
-  int get scoredPT => scoredPTHome + scoredPTAway;
   AbstractGoalRanking({
     this.scoredHTAway = 0,
     this.scoredHTHome = 0,
@@ -51,6 +46,10 @@ class GoalRankingPerCompetition extends AbstractGoalRanking {
     super.scoredETAway,
     super.scoredPTAway,
   });
+  int get scoredFT => scoredFTHome + scoredFTAway;
+  int get scoredRT => scoredRTHome + scoredRTAway;
+  int get scoredET => scoredETHome + scoredETAway;
+  int get scoredPT => scoredPTHome + scoredPTAway;
 }
 
 class GoalRankingPerTeam extends AbstractGoalRanking {
@@ -67,10 +66,10 @@ class GoalRankingPerTeam extends AbstractGoalRanking {
     super.scoredPTAway,
   });
 
-  int get allScooreed => scoredFTAway;
-  int get allReceived => scoredFTAway;
-//   int get allScooreed => scoredRTHome + scoredETHome + scoredPTAway;
-//   int get allReceived => scoredRTAway + scoredETAway + scoredPTAway;
+//   int get allScooreed => scoredFTHome;
+//   int get allReceived => scoredFTAway;
+  int get allScooreed => scoredRTHome + scoredETHome + scoredPTHome;
+  int get allReceived => scoredRTAway + scoredETAway + scoredPTAway;
   int get difference => allScooreed - allReceived;
 }
 
@@ -147,14 +146,14 @@ extension ListMatchesX on List<Matche> {
     int scoreFTHome = 0;
     int scoreFTAway = 0;
     for (var match in this) {
-      int _scoreRTHome = match.score.regularTime.home ?? 0;
-      int _scoreRTAway = match.score.regularTime.away ?? 0;
-      int _scoreETHome = match.score.extraTime.home ?? 0;
-      int _scoreETAway = match.score.extraTime.away ?? 0;
-      int _scorePTHome = match.score.penalties.home ?? 0;
-      int _scorePTAway = match.score.penalties.away ?? 0;
-      int _scoreFTHome = match.score.fullTime.home ?? 0;
-      int _scoreFTAway = match.score.fullTime.away ?? 0;
+      int _scoreRTHome = match.score.regularTime.home;
+      int _scoreRTAway = match.score.regularTime.away;
+      int _scoreETHome = match.score.extraTime.home;
+      int _scoreETAway = match.score.extraTime.away;
+      int _scorePTHome = match.score.penalties.home;
+      int _scorePTAway = match.score.penalties.away;
+      int _scoreFTHome = match.score.fullTime.home;
+      int _scoreFTAway = match.score.fullTime.away;
       scoreRTHome += _scoreRTHome;
       scoreRTAway += _scoreRTAway;
       scoreETHome += _scoreETHome;
@@ -195,27 +194,27 @@ extension ListMatchesX on List<Matche> {
         const String tla = 'FRA';
         // // //
         GoalRankingPerTeam? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
-        homeTeam?.scoredHTHome += cm.score.halfTime.home ?? 0;
-        homeTeam?.scoredHTAway += cm.score.halfTime.away ?? 0;
-        homeTeam?.scoredRTHome += cm.score.regularTime.home ?? 0;
-        homeTeam?.scoredRTAway += cm.score.regularTime.away ?? 0;
-        homeTeam?.scoredETHome += cm.score.extraTime.home ?? 0;
-        homeTeam?.scoredETAway += cm.score.extraTime.away ?? 0;
-        homeTeam?.scoredPTHome += cm.score.penalties.home ?? 0;
-        homeTeam?.scoredPTAway += cm.score.penalties.away ?? 0;
-        homeTeam?.scoredFTHome += cm.score.fullTime.home ?? 0;
-        homeTeam?.scoredFTAway += cm.score.fullTime.away ?? 0;
+        homeTeam?.scoredHTHome += cm.score.halfTime.home;
+        homeTeam?.scoredHTAway += cm.score.halfTime.away;
+        homeTeam?.scoredRTHome += cm.score.regularTime.home;
+        homeTeam?.scoredRTAway += cm.score.regularTime.away;
+        homeTeam?.scoredETHome += cm.score.extraTime.home;
+        homeTeam?.scoredETAway += cm.score.extraTime.away;
+        homeTeam?.scoredPTHome += cm.score.penalties.home;
+        homeTeam?.scoredPTAway += cm.score.penalties.away;
+        homeTeam?.scoredFTHome += cm.score.fullTime.home;
+        homeTeam?.scoredFTAway += cm.score.fullTime.away;
         GoalRankingPerTeam? awayTeam = pm.firstWhereOrNull((e) => e.team.id == cm.awayTeam.id);
-        awayTeam?.scoredHTAway += cm.score.halfTime.home ?? 0;
-        awayTeam?.scoredHTHome += cm.score.halfTime.away ?? 0;
-        awayTeam?.scoredRTAway += cm.score.regularTime.home ?? 0;
-        awayTeam?.scoredRTHome += cm.score.regularTime.away ?? 0;
-        awayTeam?.scoredETAway += cm.score.extraTime.home ?? 0;
-        awayTeam?.scoredETHome += cm.score.extraTime.away ?? 0;
-        awayTeam?.scoredPTAway += cm.score.penalties.home ?? 0;
-        awayTeam?.scoredPTHome += cm.score.penalties.away ?? 0;
-        awayTeam?.scoredFTAway += cm.score.fullTime.home ?? 0;
-        awayTeam?.scoredFTHome += cm.score.fullTime.away ?? 0;
+        awayTeam?.scoredHTAway += cm.score.halfTime.home;
+        awayTeam?.scoredHTHome += cm.score.halfTime.away;
+        awayTeam?.scoredRTAway += cm.score.regularTime.home;
+        awayTeam?.scoredRTHome += cm.score.regularTime.away;
+        awayTeam?.scoredETAway += cm.score.extraTime.home;
+        awayTeam?.scoredETHome += cm.score.extraTime.away;
+        awayTeam?.scoredPTAway += cm.score.penalties.home;
+        awayTeam?.scoredPTHome += cm.score.penalties.away;
+        awayTeam?.scoredFTAway += cm.score.fullTime.home;
+        awayTeam?.scoredFTHome += cm.score.fullTime.away;
         if (awayTeam?.team.tla == tla) {
           List<int> audit = [
             /*****/ cm.score.halfTime.home,
@@ -431,35 +430,17 @@ extension ListMatchesX on List<Matche> {
   }
 }
 
-class WidgetWithWaiter extends StatelessWidget {
-  WidgetWithWaiter({
-    super.key,
-    required this.child,
-  });
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomThemeSwitchingArea(
-      child: Stack(
-        children: [
-          child,
-          if (context.watch<AppState>().loading)
-            AbsorbPointer(
-              child: Container(
-                color: Theme.of(context).cardColor.withOpacity(0.4),
-                width: Get.width,
-                height: Get.height,
-                child: Center(
-                  child: LoadingAnimationWidget.discreteCircle(
-                    color: Theme.of(context).primaryColor,
-                    size: 125,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
+extension DateTimeX on DateTime {
+  String eeeDDDMMM() {
+    return DateFormat("EEE, dd MMM", Get.locale?.languageCode).format(this);
   }
+
+  String formated() {
+    // return DateFormat("hh:mm a").format(this);
+    return format(this, allowFromNow: isAfter(DateTime.now()));
+  }
+
+  bool sameDay(DateTime other) => sameMonth(other) && day == other.day;
+
+  bool sameMonth(DateTime other) => year == other.year && month == other.month;
 }

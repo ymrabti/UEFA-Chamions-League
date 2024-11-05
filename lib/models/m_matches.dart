@@ -26,7 +26,12 @@ class BotolaMatches {
   }
 
   static BotolaMatches fromJson(Map<String, Object?> json) {
-    return BotolaMatches(filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>), resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>), competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>), matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList());
+    return BotolaMatches(
+      filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
+      resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>),
+      competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
+      matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
+    );
   }
 
   @override
@@ -146,7 +151,13 @@ class Matche {
       homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
       awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
       score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
-      referees: json['referees'] == null ? [] : (json['referees'] as List).map<Referees>((data) => Referees.fromJson(data as Map<String, Object?>)).toList(),
+      referees: json['referees'] == null
+          ? []
+          : (json['referees'] as List)
+              .map<Referees>(
+                (data) => Referees.fromJson(data as Map<String, Object?>),
+              )
+              .toList(),
     );
   }
 
@@ -300,13 +311,13 @@ class Score {
     Map<String, Object?>? jsonRegulTime = json['regularTime'] as Map<String, Object?>?;
     Map<String, Object?>? jsonExtraTime = json['extraTime'] as Map<String, Object?>?;
     Map<String, Object?>? jsonPenalties = json['penalties'] as Map<String, Object?>?;
-    MatchScoreResult zero = MatchScoreResult(away: null, home: null);
+    MatchScoreResult zero = MatchScoreResult(away: 0, home: 0);
     MatchScoreResult regularTime = jsonRegulTime == null ? fullTime : MatchScoreResult.fromJson(jsonRegulTime);
     MatchScoreResult extraTime = jsonExtraTime == null ? zero : MatchScoreResult.fromJson(jsonExtraTime);
     MatchScoreResult penalties = jsonPenalties == null ? zero : MatchScoreResult.fromJson(jsonPenalties);
-    int gauche = fullTime.home ?? 0;
-    int droit = (regularTime.home ?? 0) + (extraTime.home ?? 0) + (penalties.home ?? 0);
-    if (gauche != droit) logg('Gauche=$gauche, Droit=$droit', name: 'GaucheDroit');
+    int gauche = fullTime.home;
+    int droit = regularTime.home + extraTime.home + penalties.home;
+    if (gauche == droit) logg('Gauche=$gauche, Droit=$droit', name: 'GaucheDroit');
     return Score(
       winner: json['winner'] as String?,
       duration: json['duration'] == null ? '' : json['duration'] as String,

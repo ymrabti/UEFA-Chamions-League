@@ -1,4 +1,5 @@
 import 'package:botola_max/lib.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
@@ -186,7 +187,7 @@ class Competitions {
     context.read<AppState>().setLoading(true);
     late DataCompetition dataMatches;
     var exist = context.read<AppState>().isCompExist(e.code);
-    if (exist) {
+    if (exist && !kDebugMode) {
       dataMatches = context.read<AppState>().getCompetition(e.code);
     } else {
       dataMatches = await AppLogic.getCompetitionByID(e.code);

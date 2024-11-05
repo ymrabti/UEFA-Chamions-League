@@ -132,4 +132,84 @@ abstract class BotolaServices {
         return title;
     }
   }
+
+  static String convertNumbers(String str) {
+    return str
+        .replaceAll(
+          '٠',
+          '0',
+        )
+        .replaceAll(
+          '١',
+          '1',
+        )
+        .replaceAll(
+          '٢',
+          '2',
+        )
+        .replaceAll(
+          '٣',
+          '3',
+        )
+        .replaceAll(
+          '٤',
+          '4',
+        )
+        .replaceAll(
+          '٥',
+          '5',
+        )
+        .replaceAll(
+          '٦',
+          '6',
+        )
+        .replaceAll(
+          '٧',
+          '7',
+        )
+        .replaceAll(
+          '٨',
+          '8',
+        )
+        .replaceAll(
+          '٩',
+          '9',
+        );
+  }
+
+  static String statusMatch(String status) {
+    switch (status) {
+      case AppConstants.FINISHED:
+        return "Finished";
+
+      case AppConstants.TIMED:
+        return "Next match";
+
+      case AppConstants.IN_PLAY:
+        return "Playing";
+
+      case AppConstants.PAUSED:
+        return "Half time";
+
+      default:
+        return status;
+    }
+  }
+
+  static String durationMatch(String status, {String? matchStat}) {
+    if (['TIMED', 'SCHEDULED'].contains(matchStat)) return '';
+    switch (status) {
+      case 'PENALTY_SHOOTOUT':
+        return " : Penalty shootout";
+
+      case 'REGULAR':
+        return " : Regular time";
+
+      case 'EXTRA_TIME':
+        return " : Extra time";
+
+      default:
+        return ' : ' + status;
+    }
+  }
 }

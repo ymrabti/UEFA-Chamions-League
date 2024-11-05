@@ -86,9 +86,9 @@ enum HalfTimeEnum {
 }
 
 class MatchScoreResult {
-  final int? home;
+  final int home;
 
-  final int? away;
+  final int away;
   MatchScoreResult({
     required this.home,
     required this.away,
@@ -120,8 +120,8 @@ class MatchScoreResult {
 
   factory MatchScoreResult.fromJson(Map<String, Object?> json) {
     return MatchScoreResult(
-      home: int.tryParse('${json[FullTimeEnum.home.name]}'),
-      away: int.tryParse('${json[FullTimeEnum.away.name]}'),
+      home: int.tryParse('${json[FullTimeEnum.home.name]}') ?? 0,
+      away: int.tryParse('${json[FullTimeEnum.away.name]}') ?? 0,
     );
   }
 
@@ -176,7 +176,6 @@ extension FullTimeSort on List<MatchScoreResult> {
 
           int? akey = a.home;
           int? bkey = b.home;
-          if (akey == null || bkey == null) return 0;
           return fact * (bkey - akey);
         }
 
@@ -185,7 +184,6 @@ extension FullTimeSort on List<MatchScoreResult> {
 
           int? akey = a.away;
           int? bkey = b.away;
-          if (akey == null || bkey == null) return 0;
           return fact * (bkey - akey);
         }
 

@@ -1,9 +1,9 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
-import 'svg_provider.dart';
+import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:botola_max/lib.dart';
 
 class AppFileImageViewer extends StatelessWidget {
   const AppFileImageViewer({
@@ -60,5 +60,38 @@ class AppFileImageViewer extends StatelessWidget {
     } else {
       return FileImage(File(img));
     }
+  }
+}
+
+class WidgetWithWaiter extends StatelessWidget {
+  WidgetWithWaiter({
+    super.key,
+    required this.child,
+  });
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomThemeSwitchingArea(
+      child: Stack(
+        children: [
+          child,
+          if (context.watch<AppState>().loading)
+            AbsorbPointer(
+              child: Container(
+                color: Theme.of(context).cardColor.withOpacity(0.4),
+                width: Get.width,
+                height: Get.height,
+                child: Center(
+                  child: LoadingAnimationWidget.discreteCircle(
+                    color: Theme.of(context).primaryColor,
+                    size: 125,
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
   }
 }
