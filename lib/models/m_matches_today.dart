@@ -85,20 +85,20 @@ enum HalfTimeEnum {
   none,
 }
 
-class FullTime {
+class MatchScoreResult {
   final int? home;
 
   final int? away;
-  FullTime({
+  MatchScoreResult({
     required this.home,
     required this.away,
   });
 
-  FullTime copyWith({
+  MatchScoreResult copyWith({
     int? home,
     int? away,
   }) {
-    return FullTime(
+    return MatchScoreResult(
       home: home ?? this.home,
       away: away ?? this.away,
     );
@@ -118,15 +118,15 @@ class FullTime {
     };
   }
 
-  factory FullTime.fromJson(Map<String, Object?> json) {
-    return FullTime(
+  factory MatchScoreResult.fromJson(Map<String, Object?> json) {
+    return MatchScoreResult(
       home: int.tryParse('${json[FullTimeEnum.home.name]}'),
       away: int.tryParse('${json[FullTimeEnum.away.name]}'),
     );
   }
 
-  factory FullTime.fromMap(Map<String, Object?> json) {
-    return FullTime(
+  factory MatchScoreResult.fromMap(Map<String, Object?> json) {
+    return MatchScoreResult(
       home: json[FullTimeEnum.home.name] as int,
       away: json[FullTimeEnum.away.name] as int,
     );
@@ -143,7 +143,7 @@ class FullTime {
 
   @override
   bool operator ==(Object other) {
-    return other is FullTime &&
+    return other is MatchScoreResult &&
         other.runtimeType == runtimeType &&
         other.home == home && //
         other.away == away;
@@ -165,8 +165,8 @@ enum FullTimeEnum {
   none,
 }
 
-extension FullTimeSort on List<FullTime> {
-  List<FullTime> sorty(String caseField, {bool desc = false}) {
+extension FullTimeSort on List<MatchScoreResult> {
+  List<MatchScoreResult> sorty(String caseField, {bool desc = false}) {
     return this
       ..sort((a, b) {
         int fact = (desc ? -1 : 1);

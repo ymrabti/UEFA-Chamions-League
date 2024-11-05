@@ -1,7 +1,36 @@
+import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:botola_max/lib.dart';
+
+class FallBackMap {
+  Map<String, String> map;
+  Map<String, bool> availableIds;
+  FallBackMap(
+    this.map,
+    this.availableIds,
+  );
+}
+
+class FallBackAndMap {
+  Map<String, String> map;
+  Map<String, bool> availableIds;
+  String fallback;
+  FallBackAndMap(
+    this.map,
+    this.fallback,
+    this.availableIds,
+  );
+}
+
+class CompetitonIdData {
+  String id;
+  DataCompetition data;
+  CompetitonIdData({
+    required this.data,
+    required this.id,
+  });
+}
 
 // LEAGUE
 class PhaseMatches {
@@ -200,62 +229,26 @@ class StagePhase {
   });
 }
 
-List<StagePhase> extractStagePhases(List<StagePhaseMatches> stagePhaseMatchesList) {
-  List<StagePhase> stagePhases = [];
-
-  // Helper function to convert StagePhaseMatches to StagePhase and flatten subphases
-  void flatten(StagePhaseMatches spm) {
-    // Convert StagePhaseMatches to StagePhase and add to the list
-    stagePhases.add(
-      StagePhase(
-        initiallyExpanded: spm.initiallyExpanded,
-        groupStanding: spm.groupStanding,
-        isSubPhase: spm.isSubPhase,
-        globalKey: spm.globalKey,
-        matches: spm.matches,
-        title: spm.title,
-        uuid: spm.uuid,
-      ),
-    );
-
-    // Recursively flatten subphases
-    for (var subPhase in spm.subPhase) {
-      flatten(subPhase);
-    }
-  }
-
-  // Iterate over the top-level list and flatten each item
-  for (var spm in stagePhaseMatchesList) {
-    flatten(spm);
-  }
-
-  return stagePhases;
+class ChampionshipModel extends ChampionshipModelParent {
+  DataCompetition matchesStandings;
+  ChampionshipModel({
+    required super.assetAnthem,
+    required super.color,
+    required super.colorText,
+    required super.competion,
+    required this.matchesStandings,
+  });
 }
 
-List<StagePhase> extractStagePhasesWithFold(List<StagePhaseMatches> stagePhaseMatchesList) {
-  // Helper function to convert StagePhaseMatches to StagePhase
-  List<StagePhase> flatten(StagePhaseMatches spm) {
-    List<StagePhase> stagePhases = [];
-
-    // Convert the StagePhaseMatches to StagePhase
-    stagePhases.add(
-      StagePhase(
-        initiallyExpanded: spm.initiallyExpanded,
-        groupStanding: spm.groupStanding,
-        isSubPhase: spm.isSubPhase,
-        globalKey: spm.globalKey,
-        matches: spm.matches,
-        title: spm.title,
-        uuid: spm.uuid,
-      ),
-    );
-
-    // Recursively flatten subphases
-    stagePhases.addAll(spm.subPhase.fold<List<StagePhase>>([], (acc, subPhase) => acc..addAll(flatten(subPhase))));
-
-    return stagePhases;
-  }
-
-  // Use fold to accumulate the result into a flat list
-  return stagePhaseMatchesList.fold<List<StagePhase>>([], (acc, spm) => acc..addAll(flatten(spm)));
+class ChampionshipModelParent {
+  String assetAnthem;
+  Color color;
+  Color colorText;
+  Competitions competion;
+  ChampionshipModelParent({
+    required this.assetAnthem,
+    required this.color,
+    required this.colorText,
+    required this.competion,
+  });
 }

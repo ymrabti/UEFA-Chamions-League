@@ -16,15 +16,15 @@ abstract class AbstractGoalRanking {
   int scoredRTAway;
   int scoredETAway;
   int scoredPTAway;
+  int scoredHTHome;
+  int scoredHTAway;
   int get scoredFT => scoredFTHome + scoredFTAway;
   int get scoredRT => scoredRTHome + scoredRTAway;
   int get scoredET => scoredETHome + scoredETAway;
   int get scoredPT => scoredPTHome + scoredPTAway;
   AbstractGoalRanking({
-    // this.scoredFT = 0,
-    // this.scoredRT = 0,
-    // this.scoredET = 0,
-    // this.scoredPT = 0,
+    this.scoredHTAway = 0,
+    this.scoredHTHome = 0,
     this.scoredFTHome = 0,
     this.scoredRTHome = 0,
     this.scoredETHome = 0,
@@ -35,11 +35,13 @@ abstract class AbstractGoalRanking {
     this.scoredPTAway = 0,
   });
 
-  int get allScored => scoredRT + scoredET + scoredPT;
+//   int get allScored => scoredRT + scoredET + scoredPT;
 }
 
 class GoalRankingPerCompetition extends AbstractGoalRanking {
   GoalRankingPerCompetition({
+    super.scoredHTAway,
+    super.scoredHTHome,
     super.scoredFTHome,
     super.scoredRTHome,
     super.scoredETHome,
@@ -53,12 +55,10 @@ class GoalRankingPerCompetition extends AbstractGoalRanking {
 
 class GoalRankingPerTeam extends AbstractGoalRanking {
   Team team;
-  int scoredHTHome;
-  int scoredHTAway;
   GoalRankingPerTeam({
     required this.team,
-    this.scoredHTAway = 0,
-    this.scoredHTHome = 0,
+    super.scoredHTAway,
+    super.scoredHTHome,
     super.scoredRTHome,
     super.scoredRTAway,
     super.scoredETHome,
@@ -67,9 +67,73 @@ class GoalRankingPerTeam extends AbstractGoalRanking {
     super.scoredPTAway,
   });
 
-  int get allScooreed => scoredRTHome + scoredETHome + scoredPTAway;
-  int get allReceived => scoredRTAway + scoredETAway + scoredPTAway;
-  int get difference => allScored - allReceived;
+  int get allScooreed => scoredFTAway;
+  int get allReceived => scoredFTAway;
+//   int get allScooreed => scoredRTHome + scoredETHome + scoredPTAway;
+//   int get allReceived => scoredRTAway + scoredETAway + scoredPTAway;
+  int get difference => allScooreed - allReceived;
+}
+
+extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
+  List<StagePhase> extractStagePhases() {
+    List<StagePhase> stagePhases = [];
+
+    // Helper function to convert StagePhaseMatches to StagePhase and flatten subphases
+    void flatten(StagePhaseMatches spm) {
+      // Convert StagePhaseMatches to StagePhase and add to the list
+      stagePhases.add(
+        StagePhase(
+          initiallyExpanded: spm.initiallyExpanded,
+          groupStanding: spm.groupStanding,
+          isSubPhase: spm.isSubPhase,
+          globalKey: spm.globalKey,
+          matches: spm.matches,
+          title: spm.title,
+          uuid: spm.uuid,
+        ),
+      );
+
+      // Recursively flatten subphases
+      for (var subPhase in spm.subPhase) {
+        flatten(subPhase);
+      }
+    }
+
+    // Iterate over the top-level list and flatten each item
+    for (var spm in this) {
+      flatten(spm);
+    }
+
+    return stagePhases;
+  }
+
+  List<StagePhase> extractStagePhasesWithFold() {
+    // Helper function to convert StagePhaseMatches to StagePhase
+    List<StagePhase> flatten(StagePhaseMatches spm) {
+      List<StagePhase> stagePhases = [];
+
+      // Convert the StagePhaseMatches to StagePhase
+      stagePhases.add(
+        StagePhase(
+          initiallyExpanded: spm.initiallyExpanded,
+          groupStanding: spm.groupStanding,
+          isSubPhase: spm.isSubPhase,
+          globalKey: spm.globalKey,
+          matches: spm.matches,
+          title: spm.title,
+          uuid: spm.uuid,
+        ),
+      );
+
+      // Recursively flatten subphases
+      stagePhases.addAll(spm.subPhase.fold<List<StagePhase>>([], (acc, subPhase) => acc..addAll(flatten(subPhase))));
+
+      return stagePhases;
+    }
+
+    // Use fold to accumulate the result into a flat list
+    return fold<List<StagePhase>>([], (acc, spm) => acc..addAll(flatten(spm)));
+  }
 }
 
 extension ListMatchesX on List<Matche> {
@@ -127,32 +191,45 @@ extension ListMatchesX on List<Matche> {
 
     return fold<List<GoalRankingPerTeam>>(
       teams,
-      (pm, cm) {
+      (List<GoalRankingPerTeam> pm, Matche cm) {
+        const String tla = 'FRA';
+        // // //
         GoalRankingPerTeam? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
+        homeTeam?.scoredHTHome += cm.score.halfTime.home ?? 0;
+        homeTeam?.scoredHTAway += cm.score.halfTime.away ?? 0;
+        homeTeam?.scoredRTHome += cm.score.regularTime.home ?? 0;
+        homeTeam?.scoredRTAway += cm.score.regularTime.away ?? 0;
+        homeTeam?.scoredETHome += cm.score.extraTime.home ?? 0;
+        homeTeam?.scoredETAway += cm.score.extraTime.away ?? 0;
+        homeTeam?.scoredPTHome += cm.score.penalties.home ?? 0;
+        homeTeam?.scoredPTAway += cm.score.penalties.away ?? 0;
+        homeTeam?.scoredFTHome += cm.score.fullTime.home ?? 0;
+        homeTeam?.scoredFTAway += cm.score.fullTime.away ?? 0;
         GoalRankingPerTeam? awayTeam = pm.firstWhereOrNull((e) => e.team.id == cm.awayTeam.id);
         awayTeam?.scoredHTAway += cm.score.halfTime.home ?? 0;
-        homeTeam?.scoredHTHome += cm.score.halfTime.home ?? 0;
-        //
         awayTeam?.scoredHTHome += cm.score.halfTime.away ?? 0;
-        homeTeam?.scoredHTAway += cm.score.halfTime.away ?? 0;
-        //
-        awayTeam?.scoredETAway += cm.score.extraTime.home ?? 0;
-        homeTeam?.scoredETHome += cm.score.extraTime.home ?? 0;
-        //
-        awayTeam?.scoredETHome += cm.score.extraTime.away ?? 0;
-        homeTeam?.scoredETAway += cm.score.extraTime.away ?? 0;
-        //
         awayTeam?.scoredRTAway += cm.score.regularTime.home ?? 0;
-        homeTeam?.scoredRTHome += cm.score.regularTime.home ?? 0;
-        //
         awayTeam?.scoredRTHome += cm.score.regularTime.away ?? 0;
-        homeTeam?.scoredRTAway += cm.score.regularTime.away ?? 0;
-        //
+        awayTeam?.scoredETAway += cm.score.extraTime.home ?? 0;
+        awayTeam?.scoredETHome += cm.score.extraTime.away ?? 0;
         awayTeam?.scoredPTAway += cm.score.penalties.home ?? 0;
-        homeTeam?.scoredPTHome += cm.score.penalties.home ?? 0;
-        //
         awayTeam?.scoredPTHome += cm.score.penalties.away ?? 0;
-        homeTeam?.scoredPTAway += cm.score.penalties.away ?? 0;
+        awayTeam?.scoredFTAway += cm.score.fullTime.home ?? 0;
+        awayTeam?.scoredFTHome += cm.score.fullTime.away ?? 0;
+        if (awayTeam?.team.tla == tla) {
+          List<int> audit = [
+            /*****/ cm.score.halfTime.home,
+            /**/ cm.score.regularTime.home,
+            /****/ cm.score.extraTime.home,
+            /****/ cm.score.penalties.home,
+            /*****/ cm.score.halfTime.away,
+            /**/ cm.score.regularTime.away,
+            /****/ cm.score.extraTime.away,
+            /****/ cm.score.penalties.away,
+          ].whereNotNull().toList();
+          logg('${cm.stage}\t${audit.sum}', name: tla);
+        }
+
         return pm;
       },
     );
@@ -176,7 +253,6 @@ extension ListMatchesX on List<Matche> {
       (index, elm) {
         bool thisFinished = elm.allFinished;
         bool initilExpand = index == 0 ? !thisFinished : foldingStage.elementAt(index - 1).allFinished && !thisFinished;
-        //
         List<MonthMatches> foldedMonths = elm.matches.fold(
           <MonthMatches>[],
           (value, element) {
@@ -195,13 +271,12 @@ extension ListMatchesX on List<Matche> {
           uuid: Uuid().v4(),
           globalKey: GlobalKey(),
           isSubPhase: false,
-          title: stageName(elm.stage),
+          title: BotolaServices.stageName(elm.stage),
           subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
               ? foldedMonths.mapIndexed(
                   (iiii, ffff) {
                     bool thisFinished = ffff.allFinished;
                     bool initilExpand = iiii == 0 ? !thisFinished : foldedMonths.elementAt(iiii - 1).allFinished && !thisFinished;
-                    //
                     List<PhaseMatches> foldedMatchdays = ffff.matches.fold(
                       <PhaseMatches>[],
                       (value, element) {
@@ -297,7 +372,7 @@ extension ListMatchesX on List<Matche> {
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
           globalKey: GlobalKey(),
-          title: stageName(e.stage),
+          title: BotolaServices.stageName(e.stage),
           isSubPhase: false,
           matches: (e.stage != AppConstants.GROUPSTAGE) ? e.matches : <Matche>[],
           subPhase: (e.stage == AppConstants.GROUPSTAGE) ? list() : <StagePhaseMatches>[],
@@ -330,7 +405,7 @@ extension ListMatchesX on List<Matche> {
           uuid: Uuid().v4(),
           globalKey: GlobalKey(),
           initiallyExpanded: initilExpand,
-          title: stageName('Matchday ${e.matchday}'),
+          title: BotolaServices.stageName('Matchday ${e.matchday}'),
           isSubPhase: false,
           matches: e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate)),
         );

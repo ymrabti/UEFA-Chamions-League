@@ -262,12 +262,6 @@ enum ScorersEnum {
   none,
 }
 
-class Scorers_Views {
-  final Scorers model;
-
-  Scorers_Views({required this.model});
-}
-
 extension ScorersSort on List<Scorers> {
   List<Scorers> sorty(String caseField, {bool desc = false}) {
     return this

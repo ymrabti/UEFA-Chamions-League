@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:botola_max/lib.dart';
 import 'package:http/http.dart' show Response, get;

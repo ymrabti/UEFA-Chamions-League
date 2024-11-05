@@ -202,7 +202,7 @@ class Competitions {
       standings: dataMatches.standingModel.standings,
       type: e.type,
     );
-    List<StagePhase> expd = extractStagePhasesWithFold(stagePhaseData);
+    List<StagePhase> expd = stagePhaseData.extractStagePhasesWithFold();
     Iterable<MapEntry<String, bool>> stagedData = expd.map(
       (e) => MapEntry(e.uuid, e.initiallyExpanded),
     );

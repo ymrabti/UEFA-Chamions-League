@@ -20,7 +20,7 @@ class GoalRankk extends StatelessWidget {
     GoalRankingPerTeam leastReceived = sortDownToUpReceived.first;
     GoalRankingPerTeam mostReceived = sortUpToDownReceived.first;
     // // //
-    List<GoalRankingPerTeam> sortUpToDownScored = goals.map((e) => e).toList()..sort((a, b) => a.allScored - b.allScored);
+    List<GoalRankingPerTeam> sortUpToDownScored = goals.map((e) => e).toList()..sort((a, b) => a.allScooreed - b.allScooreed);
     List<GoalRankingPerTeam> sortDownToUpScored = sortUpToDownScored.reversed.toList();
     GoalRankingPerTeam leastScored = sortUpToDownScored.first;
     GoalRankingPerTeam mostScored = sortDownToUpScored.first;
@@ -52,7 +52,7 @@ class GoalRankk extends StatelessWidget {
                     children: [
                       RoundedTeam(team: teamLeft, left: false),
                       CenterContent(
-                        valueLeft: teamLeft.allScored,
+                        valueLeft: teamLeft.allScooreed,
                         valueRight: teamRight.allReceived,
                         textLeft: _scoringText(index, sortDownToUpScored.length),
                         textRight: _receiveText(index, sortDownToUpScored.length),
@@ -82,7 +82,7 @@ class GoalRankk extends StatelessWidget {
                     CenterContent(
                       textLeft: 'لأكثر تسجيلا', //
                       textRight: 'الأقل استقبالا',
-                      valueLeft: mostScored.allScored,
+                      valueLeft: mostScored.allScooreed,
                       valueRight: leastReceived.allReceived,
                     ),
                     RoundedTeam(team: leastReceived, left: true),
@@ -102,7 +102,7 @@ class GoalRankk extends StatelessWidget {
                       CenterContent(
                         textLeft: 'الأقل تسجيلا',
                         textRight: 'لأكثر استقبالا',
-                        valueLeft: leastScored.allScored,
+                        valueLeft: leastScored.allScooreed,
                         valueRight: mostReceived.allReceived,
                       ),
                       RoundedTeam(team: mostReceived, left: true),

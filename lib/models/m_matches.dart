@@ -246,11 +246,11 @@ class Referees {
 class Score {
   final String? winner;
   final String duration;
-  final FullTime fullTime;
-  final FullTime halfTime;
-  final FullTime regularTime;
-  final FullTime extraTime;
-  final FullTime penalties;
+  final MatchScoreResult fullTime;
+  final MatchScoreResult halfTime;
+  final MatchScoreResult regularTime;
+  final MatchScoreResult extraTime;
+  final MatchScoreResult penalties;
 
   const Score({
     required this.winner,
@@ -265,11 +265,11 @@ class Score {
   Score copyWith({
     String? winner,
     String? duration,
-    FullTime? fullTime,
-    FullTime? halfTime,
-    FullTime? regularTime,
-    FullTime? extraTime,
-    FullTime? penalties,
+    MatchScoreResult? fullTime,
+    MatchScoreResult? halfTime,
+    MatchScoreResult? regularTime,
+    MatchScoreResult? extraTime,
+    MatchScoreResult? penalties,
   }) {
     return Score(
       winner: winner ?? this.winner,
@@ -295,18 +295,26 @@ class Score {
   }
 
   static Score fromJson(Map<String, Object?> json) {
+    MatchScoreResult halfTime = MatchScoreResult.fromJson(json['halfTime'] as Map<String, Object?>);
+    MatchScoreResult fullTime = MatchScoreResult.fromJson(json['fullTime'] as Map<String, Object?>);
+    Map<String, Object?>? jsonRegulTime = json['regularTime'] as Map<String, Object?>?;
+    Map<String, Object?>? jsonExtraTime = json['extraTime'] as Map<String, Object?>?;
+    Map<String, Object?>? jsonPenalties = json['penalties'] as Map<String, Object?>?;
+    MatchScoreResult zero = MatchScoreResult(away: null, home: null);
+    MatchScoreResult regularTime = jsonRegulTime == null ? fullTime : MatchScoreResult.fromJson(jsonRegulTime);
+    MatchScoreResult extraTime = jsonExtraTime == null ? zero : MatchScoreResult.fromJson(jsonExtraTime);
+    MatchScoreResult penalties = jsonPenalties == null ? zero : MatchScoreResult.fromJson(jsonPenalties);
+    int gauche = fullTime.home ?? 0;
+    int droit = (regularTime.home ?? 0) + (extraTime.home ?? 0) + (penalties.home ?? 0);
+    if (gauche != droit) logg('Gauche=$gauche, Droit=$droit', name: 'GaucheDroit');
     return Score(
       winner: json['winner'] as String?,
       duration: json['duration'] == null ? '' : json['duration'] as String,
-      fullTime: json['fullTime'] == null ? FullTime.fromJson({}) : FullTime.fromJson(json['fullTime'] as Map<String, Object?>),
-      halfTime: json['halfTime'] == null ? FullTime.fromJson({}) : FullTime.fromJson(json['halfTime'] as Map<String, Object?>),
-      regularTime: json['regularTime'] == null
-          ? FullTime.fromJson(
-              json['fullTime'] as Map<String, Object?>,
-            )
-          : FullTime.fromJson(json['regularTime'] as Map<String, Object?>),
-      extraTime: json['extraTime'] == null ? FullTime.fromJson({}) : FullTime.fromJson(json['extraTime'] as Map<String, Object?>),
-      penalties: json['penalties'] == null ? FullTime.fromJson({}) : FullTime.fromJson(json['penalties'] as Map<String, Object?>),
+      halfTime: halfTime,
+      fullTime: fullTime,
+      extraTime: extraTime,
+      penalties: penalties,
+      regularTime: regularTime,
     );
   }
 

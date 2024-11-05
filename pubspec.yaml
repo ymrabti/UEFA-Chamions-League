@@ -24,6 +24,10 @@ dependencies:
   intl: ^0.17.0
   get_time_ago: ^1.1.8
   flutter_form_builder: ^8.0.0
+  power_geojson:
+    git:
+      url: https://github.com/youmtinetflutterpacks/power_geojson.git
+      ref: v1.0.8+14(sdk3.1.0)
   gap: ^3.0.1
   wakelock_plus: ^1.1.4
   visibility_detector: ^0.4.0+2

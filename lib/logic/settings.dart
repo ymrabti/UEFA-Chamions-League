@@ -20,7 +20,7 @@ class SettingsController with ChangeNotifier {
   Settings get settings => _settings;
 
   Future<void> loadSettings() async {
-    if ((Platform.isAndroid || Platform.isIOS) && kDebugMode) {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS) && kDebugMode) {
       await WakelockPlus.enable();
     }
     _settings = await _settingsService._getSettings();

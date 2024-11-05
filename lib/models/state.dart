@@ -43,7 +43,7 @@ class AppState extends ChangeNotifier {
   Future<void> addCompetition(String compID, DataCompetition datum) async {
     data.addAll({compID: datum});
     Directory appDirectory = await getApplicationDocumentsDirectory();
-    FallBackMap locateds = await updateLocalCrests(datum.teams.teams.map((e) => e.crest).toList(), appDirectory);
+    FallBackMap locateds = await SharedPrefsDatabase.updateLocalCrests(datum.teams.teams.map((e) => e.crest).toList(), appDirectory);
     MapCompetitions dataClass = MapCompetitions(
       data.map((key, value) => MapEntry(key, true)),
       mapCrests..addAll(locateds.map),

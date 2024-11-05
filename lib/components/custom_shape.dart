@@ -20,28 +20,3 @@ class Customshape extends CustomClipper<Path> {
     return true;
   }
 }
-
-/* body: VimeoVideoPlayer(
-vimeoPlayerModel: VimeoPlayerModel(
-url: 'https://vimeo.com/70591644',
-
-),
-), */
-/* body: ClipRect(
-child: AspectRatio(
-aspectRatio: videoPlayerController.value.aspectRatio,
-child: VideoPlayer(videoPlayerController),
-),
-), */
-/* FittedBox(
-fit: BoxFit.fitWidth,
-child: SizedBox(
-width: Get.width,
-height: Get.height,
-child: AnimatedOpacity(
-opacity: _visible ? 1.0 : 0.0,
-duration: const Duration(milliseconds: 1000),
-child: VideoPlayer(_controller),
-),
-),
-), */
