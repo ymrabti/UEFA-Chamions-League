@@ -1,10 +1,11 @@
+import "dart:io";
+
 import "package:botola_max/lib.dart";
 import "package:flutter/foundation.dart";
-import 'dart:io';
-import "package:wakelock_plus/wakelock_plus.dart" show WakelockPlus;
 import "package:get/get.dart";
 
 import "package:intl/date_symbol_data_local.dart" show initializeDateFormatting;
+import "package:path_provider/path_provider.dart";
 
 class SettingsController with ChangeNotifier {
   SettingsController();
@@ -12,6 +13,7 @@ class SettingsController with ChangeNotifier {
   final _SettingsService _settingsService = _SettingsService();
 
   late Brightness _themeMode;
+  late final String fallback;
 
   bool get isDark => _themeMode == Brightness.dark;
 
@@ -20,11 +22,11 @@ class SettingsController with ChangeNotifier {
   Settings get settings => _settings;
 
   Future<void> loadSettings() async {
-    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS) && kDebugMode) {
-      await WakelockPlus.enable();
-    }
+    Directory appDirectory = await getApplicationDocumentsDirectory();
+    String fallbackUrl = await SharedPrefsDatabase.saveAssetImage(appDirectory);
     _settings = await _settingsService._getSettings();
     _themeMode = _settings.brightness;
+    fallback = fallbackUrl;
     await initializeDateFormatting();
     notifyListeners();
   }

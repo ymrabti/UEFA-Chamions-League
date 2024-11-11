@@ -1,5 +1,4 @@
 import 'package:botola_max/lib.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
@@ -9,7 +8,7 @@ import 'package:provider/provider.dart';
 class ElBotolaChampionsList extends IGenericAppModel {
   final int count;
 
-  final List<Competitions> competitions;
+  final List<TheCompetition> competitions;
   ElBotolaChampionsList({
     required this.count,
     required this.competitions,
@@ -17,7 +16,7 @@ class ElBotolaChampionsList extends IGenericAppModel {
 
   ElBotolaChampionsList copyWith({
     int? count,
-    List<Competitions>? competitions,
+    List<TheCompetition>? competitions,
   }) {
     return ElBotolaChampionsList(
       count: count ?? this.count,
@@ -47,8 +46,8 @@ class ElBotolaChampionsList extends IGenericAppModel {
     return ElBotolaChampionsList(
       count: int.parse('${json[ElBotolaChampionsListEnum.count.name]}'),
       competitions: (json[ElBotolaChampionsListEnum.competitions.name] as List)
-          .map<Competitions>(
-            (data) => Competitions.fromJson(data as Map<String, Object?>),
+          .map<TheCompetition>(
+            (data) => TheCompetition.fromJson(data as Map<String, Object?>),
           )
           .toList(),
     );
@@ -57,7 +56,7 @@ class ElBotolaChampionsList extends IGenericAppModel {
   factory ElBotolaChampionsList.fromMap(Map<String, Object?> json) {
     return ElBotolaChampionsList(
       count: json[ElBotolaChampionsListEnum.count.name] as int,
-      competitions: json[ElBotolaChampionsListEnum.competitions.name] as List<Competitions>,
+      competitions: json[ElBotolaChampionsListEnum.competitions.name] as List<TheCompetition>,
     );
   }
 
@@ -113,7 +112,7 @@ extension ElBotolaChampionsListSort on List<ElBotolaChampionsList> {
   }
 }
 
-class Competitions {
+class TheCompetition {
   final int id;
 
   final Area area;
@@ -133,7 +132,7 @@ class Competitions {
   final int numberOfAvailableSeasons;
 
   final DateTime lastUpdated;
-  Competitions({
+  TheCompetition({
     required this.id,
     required this.area,
     required this.name,
@@ -157,7 +156,7 @@ class Competitions {
     }
   }
 
-  Competitions copyWith({
+  TheCompetition copyWith({
     int? id,
     Area? area,
     String? name,
@@ -169,7 +168,7 @@ class Competitions {
     int? numberOfAvailableSeasons,
     DateTime? lastUpdated,
   }) {
-    return Competitions(
+    return TheCompetition(
       id: id ?? this.id,
       area: area ?? this.area,
       name: name ?? this.name,
@@ -183,49 +182,22 @@ class Competitions {
     );
   }
 
-  Future<void> gotoParticularCompetition(BuildContext context, Competitions e) async {
-    context.read<AppState>().setLoading(true);
-    late DataCompetition dataMatches;
-    var exist = context.read<AppState>().isCompExist(e.code);
-    if (exist && !kDebugMode) {
-      dataMatches = context.read<AppState>().getCompetition(e.code);
-    } else {
-      dataMatches = await AppLogic.getCompetitionByID(e.code);
-      if (!context.mounted) return;
-      await context.read<AppState>().addCompetition(e.code, dataMatches);
-    }
+  Future<void> gotoParticularCompetition(BuildContext context, TheCompetition e) async {
+    RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(context: context, theCompetition: e);
     if (!context.mounted) return;
-    context.read<AppState>().cleanExpansion();
-
-    List<Matche> list = dataMatches.matcheModel.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-    List<StagePhaseMatches> stagePhaseData = list.stagePhaseData(
-      code: e.code,
-      standings: dataMatches.standingModel.standings,
-      type: e.type,
-    );
-    List<StagePhase> expd = stagePhaseData.extractStagePhasesWithFold();
-    Iterable<MapEntry<String, bool>> stagedData = expd.map(
-      (e) => MapEntry(e.uuid, e.initiallyExpanded),
-    );
-    StagePhase? expanded = expd.firstWhereOrNull(
-          (e) => e.initiallyExpanded && e.isSubPhase,
-        ) ??
-        expd.firstWhereOrNull(
-          (e) => e.initiallyExpanded,
-        );
-    context.read<AppState>().setExpansionAll(stagedData);
-    context.read<AppState>().setLoading(false);
+    if (refreshCompetition == null) return;
+    context.read<AppState>().setExpansionAll(refreshCompetition.stagedData);
     await Get.to<void>(
       () {
         return AppLeague(
-          stagesData: stagePhaseData,
-          firstExpand: expanded,
+          stagesData: refreshCompetition.stagePhaseData,
+          firstExpand: refreshCompetition.expanded,
           model: ChampionshipModel(
             assetAnthem: e.anthem,
             competion: e,
             color: Colors.pink,
             colorText: Colors.black45,
-            matchesStandings: dataMatches,
+            matchesStandings: refreshCompetition.dataMatches,
           ),
         );
       },
@@ -234,7 +206,7 @@ class Competitions {
   }
 
   Widget view() {
-    Competitions e = this;
+    TheCompetition e = this;
     String startYear = DateFormat.y().format(e.currentSeason.startDate);
     String endYear = DateFormat.y().format(e.currentSeason.endDate);
     return Builder(builder: (context) {
@@ -248,6 +220,7 @@ class Competitions {
               children: [
                 AppFileImageViewer(
                   width: 40,
+                  urlNetwork: e.emblem,
                   url: context.watch<AppState>().exchangeCrest(e.emblem),
                   color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                 ),
@@ -310,8 +283,8 @@ class Competitions {
     };
   }
 
-  factory Competitions.fromJson(Map<String, Object?> json) {
-    return Competitions(
+  factory TheCompetition.fromJson(Map<String, Object?> json) {
+    return TheCompetition(
       id: int.parse('${json[CompetitionsEnum.id.name]}'),
       area: Area.fromJson(json[CompetitionsEnum.area.name] as Map<String, Object?>),
       name: json[CompetitionsEnum.name.name] as String,
@@ -325,8 +298,8 @@ class Competitions {
     );
   }
 
-  factory Competitions.fromMap(Map<String, Object?> json) {
-    return Competitions(
+  factory TheCompetition.fromMap(Map<String, Object?> json) {
+    return TheCompetition(
       id: json[CompetitionsEnum.id.name] as int,
       area: json[CompetitionsEnum.area.name] as Area,
       name: json[CompetitionsEnum.name.name] as String,
@@ -347,7 +320,7 @@ class Competitions {
 
   @override
   bool operator ==(Object other) {
-    return other is Competitions &&
+    return other is TheCompetition &&
         other.runtimeType == runtimeType &&
         other.id == id && //
         other.area == area && //
@@ -393,8 +366,8 @@ enum CompetitionsEnum {
   none,
 }
 
-extension CompetitionsSort on List<Competitions> {
-  List<Competitions> sorty(String caseField, {bool desc = false}) {
+extension CompetitionsSort on List<TheCompetition> {
+  List<TheCompetition> sorty(String caseField, {bool desc = false}) {
     return this
       ..sort((a, b) {
         int fact = (desc ? -1 : 1);

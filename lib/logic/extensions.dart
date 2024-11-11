@@ -66,8 +66,9 @@ class GoalRankingPerTeam extends AbstractGoalRanking {
     super.scoredPTAway,
   });
 
-//   int get allScooreed => scoredFTHome;
-//   int get allReceived => scoredFTAway;
+  // int get allScooreed => scoredFTHome;
+  // int get allReceived => scoredFTAway;
+
   int get allScooreed => scoredRTHome + scoredETHome + scoredPTHome;
   int get allReceived => scoredRTAway + scoredETAway + scoredPTAway;
   int get difference => allScooreed - allReceived;
@@ -191,7 +192,6 @@ extension ListMatchesX on List<Matche> {
     return fold<List<GoalRankingPerTeam>>(
       teams,
       (List<GoalRankingPerTeam> pm, Matche cm) {
-        const String tla = 'FRA';
         // // //
         GoalRankingPerTeam? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
         homeTeam?.scoredHTHome += cm.score.halfTime.home;
@@ -215,20 +215,6 @@ extension ListMatchesX on List<Matche> {
         awayTeam?.scoredPTHome += cm.score.penalties.away;
         awayTeam?.scoredFTAway += cm.score.fullTime.home;
         awayTeam?.scoredFTHome += cm.score.fullTime.away;
-        if (awayTeam?.team.tla == tla) {
-          List<int> audit = [
-            /*****/ cm.score.halfTime.home,
-            /**/ cm.score.regularTime.home,
-            /****/ cm.score.extraTime.home,
-            /****/ cm.score.penalties.home,
-            /*****/ cm.score.halfTime.away,
-            /**/ cm.score.regularTime.away,
-            /****/ cm.score.extraTime.away,
-            /****/ cm.score.penalties.away,
-          ].whereNotNull().toList();
-          logg('${cm.stage}\t${audit.sum}', name: tla);
-        }
-
         return pm;
       },
     );

@@ -35,10 +35,15 @@ class BotolaHappening extends IGenericAppModel {
   }
 
   factory BotolaHappening.fromJson(Map<String, Object?> json) {
-    // logg(PowerJSON(json).toText());
+    Map<String, Object?> resultSet = json[BotolaHappeningEnum.resultSet.name] as Map<String, Object?>;
+    List matches = json[BotolaHappeningEnum.matches.name] as List;
     return BotolaHappening(
-      HappeningresultSet: HappeningResultSet.fromJson(json[BotolaHappeningEnum.resultSet.name] as Map<String, Object?>),
-      matches: (json[BotolaHappeningEnum.matches.name] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
+      HappeningresultSet: HappeningResultSet.fromJson(
+        resultSet,
+      ),
+      matches: [
+        for (var data in matches) Matche.fromJson(data as Map<String, Object?>),
+      ],
     );
   }
 
@@ -307,7 +312,7 @@ enum SeasonEnum {
 class HappeningResultSet {
   final int count;
 
-  final String competitions;
+  final String? competitions;
 
   final DateTime first;
 
@@ -359,19 +364,20 @@ class HappeningResultSet {
   }
 
   factory HappeningResultSet.fromJson(Map<String, Object?> json) {
+    int counter = int.tryParse('${json[HappeningResultSetEnum.count.name]}') ?? 0;
     return HappeningResultSet(
-      count: int.parse('${json[HappeningResultSetEnum.count.name]}'),
-      competitions: json[HappeningResultSetEnum.competitions.name] as String,
-      first: DateTime.parse('${json[HappeningResultSetEnum.first.name]}'),
-      last: DateTime.parse('${json[HappeningResultSetEnum.last.name]}'),
-      played: int.parse('${json[HappeningResultSetEnum.played.name]}'),
+      count: counter,
+      competitions: json[HappeningResultSetEnum.competitions.name] as String?,
+      first: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.first.name]}'),
+      last: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.last.name]}'),
+      played: counter == 0 ? 0 : int.parse('${json[HappeningResultSetEnum.played.name]}'),
     );
   }
 
   factory HappeningResultSet.fromMap(Map<String, Object?> json) {
     return HappeningResultSet(
       count: json[HappeningResultSetEnum.count.name] as int,
-      competitions: json[HappeningResultSetEnum.competitions.name] as String,
+      competitions: json[HappeningResultSetEnum.competitions.name] as String?,
       first: json[HappeningResultSetEnum.first.name] as DateTime,
       last: json[HappeningResultSetEnum.last.name] as DateTime,
       played: json[HappeningResultSetEnum.played.name] as int,
@@ -433,15 +439,6 @@ extension HappeningResultSetSort on List<HappeningResultSet> {
           int bkey = b.count;
 
           return fact * (bkey - akey);
-        }
-
-        if (caseField == HappeningResultSetEnum.competitions.name) {
-          // unsortable
-
-          String akey = a.competitions;
-          String bkey = b.competitions;
-
-          return fact * (bkey.compareTo(akey));
         }
 
         if (caseField == HappeningResultSetEnum.first.name) {

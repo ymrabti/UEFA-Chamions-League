@@ -40,6 +40,7 @@ class GoalRankk extends StatelessWidget {
             'Statistics',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
+          initiallyExpanded: true,
           children: sortDownToUpScored.mapIndexed((index, teamLeft) {
             GoalRankingPerTeam teamRight = sortDownToUpReceived[index];
             return Padding(

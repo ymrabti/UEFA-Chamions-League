@@ -315,9 +315,6 @@ class Score {
     MatchScoreResult regularTime = jsonRegulTime == null ? fullTime : MatchScoreResult.fromJson(jsonRegulTime);
     MatchScoreResult extraTime = jsonExtraTime == null ? zero : MatchScoreResult.fromJson(jsonExtraTime);
     MatchScoreResult penalties = jsonPenalties == null ? zero : MatchScoreResult.fromJson(jsonPenalties);
-    int gauche = fullTime.home;
-    int droit = regularTime.home + extraTime.home + penalties.home;
-    if (gauche == droit) logg('Gauche=$gauche, Droit=$droit', name: 'GaucheDroit');
     return Score(
       winner: json['winner'] as String?,
       duration: json['duration'] == null ? '' : json['duration'] as String,

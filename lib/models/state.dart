@@ -5,18 +5,23 @@ import 'package:botola_max/lib.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AppState extends ChangeNotifier {
-  final String fallback;
   Map<String, DataCompetition> data = {};
   Map<String, String> mapCrests = {};
-  Map<String, bool> expansion = {};
 
+  set setData(Map<String, DataCompetition> datum) => data = datum;
+
+  get getMapCrests => mapCrests;
+
+  set setMapCrests(Map<String, String> mapCrests) => this.mapCrests = mapCrests;
+
+  final String fallback;
   bool loading = false;
-
   void setLoading(l) {
     loading = l;
     notifyListeners();
   }
 
+  Map<String, bool> expansion = {};
   void setExpansion(String compID, bool datum) {
     expansion.addAll({compID: datum});
     notifyListeners();
@@ -64,6 +69,15 @@ class AppState extends ChangeNotifier {
     Map<String, DataCompetition> dataMap,
     Map<String, String> crests,
   ) {
+    data = Map.from(dataMap);
+    mapCrests = Map.from(crests);
+  }
+
+  AppState.empty(
+    this.fallback, [
+    Map<String, DataCompetition> dataMap = const {},
+    Map<String, String> crests = const {},
+  ]) {
     data = Map.from(dataMap);
     mapCrests = Map.from(crests);
   }

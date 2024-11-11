@@ -10,12 +10,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 final List<String> elbrem = ['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
 
 class AppLeague extends StatefulWidget {
-  const AppLeague({
-    super.key,
-    required this.model,
-    required this.stagesData,
-    this.firstExpand,
-  });
+  const AppLeague({super.key, required this.model, required this.stagesData, this.firstExpand});
   final ChampionshipModel model;
   final List<StagePhaseMatches> stagesData;
   final StagePhase? firstExpand;
@@ -27,51 +22,8 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
   double _visiblePercentage = .0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
-
   bool zoomed = false;
   bool _splashing = false;
-
-  Size? getRenderBox() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
-    if (globalKey == null) return null;
-    BuildContext? currentContext = _getContext(globalKey);
-    if (currentContext == null) return null;
-    final RenderBox renderBox = currentContext.findRenderObject() as RenderBox;
-    return renderBox.size;
-  }
-
-  void scrollToTile() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
-    if (globalKey == null) return;
-    BuildContext? currentContext = _getContext(globalKey);
-    if (currentContext == null) return;
-    setState(() {
-      _splashing = true;
-    });
-    if (zoomed) return;
-    Scrollable.ensureVisible(
-      currentContext,
-      duration: Duration(seconds: 1),
-      curve: Curves.easeInOut,
-    ).then((value) {
-      setState(() {
-        zoomed = true;
-      });
-      Future.delayed(
-        Duration(milliseconds: 400),
-        () {
-          setState(() {
-            _splashing = false;
-          });
-        },
-      );
-    });
-  }
-
-  BuildContext? _getContext(GlobalKey<State<StatefulWidget>> targetKey) {
-    BuildContext? currentContext = targetKey.currentContext;
-    return currentContext;
-  }
 
   @override
   void initState() {
@@ -94,28 +46,6 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
     super.didChangeDependencies();
   }
 
-  Future<void> startAudio(String anthem) async {
-    await player.setAudioSource(AudioSource.asset(anthem));
-    await player.setVolume(0.5);
-    await player.setLoopMode(LoopMode.all);
-    await player.play();
-    // await player.pause();
-    // await player.seek(const Duration(seconds: 10));
-    // await player.setSpeed(2.0);
-    // await player.stop();
-  }
-
-  Future<void> pauseAudio() async {
-    await player.pause();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    unawaited(pauseAudio());
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     DataCompetition snapData = widget.model.matchesStandings;
@@ -126,6 +56,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
         leading: _animated(
           AppFileImageViewer(
             url: context.watch<AppState>().exchangeCrest(widget.model.competion.emblem),
+            urlNetwork: widget.model.competion.emblem,
             width: 40,
             color: elbrem.contains(anthem)
                 ? Theme.of(context).colorScheme.background.invers(
@@ -226,19 +157,27 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
         flexibleSpace: Container(decoration: const BoxDecoration()),
         elevation: 0,
       ),
-      body: ListView(
-        children: <Widget>[
-          _brand(context),
-          ...widget.stagesData.map(
-            (e) => e.view(
-              context,
-              //   splashedSize:getRenderBox(),
-              splashedId: widget.firstExpand?.uuid,
-              splashing: _splashing,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          /* RefreshCompetiton? refreshCompetition =  */ await SharedPrefsDatabase.refreshCompetition(
+            context: context,
+            theCompetition: widget.model.competion,
+          );
+        },
+        child: ListView(
+          children: <Widget>[
+            _brand(context),
+            ...widget.stagesData.map(
+              (e) => e.view(
+                context,
+                //   splashedSize:getRenderBox(),
+                splashedId: widget.firstExpand?.uuid,
+                splashing: _splashing,
+              ),
             ),
-          ),
-          _rank(snapData),
-        ],
+            _rank(snapData),
+          ],
+        ),
       ),
     );
   }
@@ -272,28 +211,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
                     setState(() {});
                   }
                 },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                  child: SizedBox(
-                    width: Get.width * .35,
-                    child: CustomPaint(
-                      painter: BorderedRadiusBoxPainter(
-                        backgroundColor: Colors.white,
-                        borderColor: Colors.transparent,
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                        borderWidth: 0,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: AppFileImageViewer(
-                          url: context.watch<AppState>().exchangeCrest(
-                                widget.model.competion.emblem,
-                              ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                child: _logoCompetition(),
               ),
               Expanded(
                 //   width: Get.width * .75,
@@ -314,6 +232,33 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
     );
   }
 
+  Widget _logoCompetition() {
+    return Builder(builder: (context) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: SizedBox(
+          width: Get.width * .35,
+          child: CustomPaint(
+            painter: BorderedRadiusBoxPainter(
+              backgroundColor: Colors.white,
+              borderColor: Colors.transparent,
+              borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderWidth: 0,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: AppFileImageViewer(
+                url: context.watch<AppState>().exchangeCrest(
+                      widget.model.competion.emblem,
+                    ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
   Widget _animated(Widget child) {
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 200),
@@ -323,5 +268,69 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
       ),
       child: _visiblePercentage > 10 ? null : child,
     );
+  }
+
+  Size? getRenderBox() {
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
+    if (globalKey == null) return null;
+    BuildContext? currentContext = _getContext(globalKey);
+    if (currentContext == null) return null;
+    final RenderBox renderBox = currentContext.findRenderObject() as RenderBox;
+    return renderBox.size;
+  }
+
+  void scrollToTile() {
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
+    if (globalKey == null) return;
+    BuildContext? currentContext = _getContext(globalKey);
+    if (currentContext == null) return;
+    setState(() {
+      _splashing = true;
+    });
+    if (zoomed) return;
+    Scrollable.ensureVisible(
+      currentContext,
+      duration: Duration(seconds: 1),
+      curve: Curves.easeInOut,
+    ).then((value) {
+      setState(() {
+        zoomed = true;
+      });
+      Future.delayed(
+        Duration(milliseconds: 400),
+        () {
+          setState(() {
+            _splashing = false;
+          });
+        },
+      );
+    });
+  }
+
+  BuildContext? _getContext(GlobalKey<State<StatefulWidget>> targetKey) {
+    BuildContext? currentContext = targetKey.currentContext;
+    return currentContext;
+  }
+
+  Future<void> startAudio(String anthem) async {
+    await player.setAudioSource(AudioSource.asset(anthem));
+    await player.setVolume(0.5);
+    await player.setLoopMode(LoopMode.all);
+    await player.play();
+    // await player.pause();
+    // await player.seek(const Duration(seconds: 10));
+    // await player.setSpeed(2.0);
+    // await player.stop();
+  }
+
+  Future<void> pauseAudio() async {
+    await player.pause();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    unawaited(pauseAudio());
+    super.dispose();
   }
 }

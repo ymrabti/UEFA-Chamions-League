@@ -12,16 +12,10 @@ class FallBackMap {
   );
 }
 
-class FallBackAndMap {
-  Map<String, String> map;
-  Map<String, bool> availableIds;
-  String fallback;
-  FallBackAndMap(
-    this.map,
-    this.fallback,
-    this.availableIds,
-  );
-}
+typedef FallBackAndMap = ({
+  Map<String, String> map,
+  Map<String, bool> availableIds,
+});
 
 class CompetitonIdData {
   String id;
@@ -244,7 +238,7 @@ class ChampionshipModelParent {
   String assetAnthem;
   Color color;
   Color colorText;
-  Competitions competion;
+  TheCompetition competion;
   ChampionshipModelParent({
     required this.assetAnthem,
     required this.color,

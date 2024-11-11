@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +10,14 @@ class AppFileImageViewer extends StatelessWidget {
   const AppFileImageViewer({
     super.key,
     required this.url,
+    this.urlNetwork,
     this.width,
     this.height,
     this.color,
-    this.boxFit = BoxFit.cover,
+    this.boxFit = BoxFit.fill,
     this.blendMode,
   });
+  final String? urlNetwork;
   final String? url;
   final BlendMode? blendMode;
   final double? width;
@@ -23,6 +26,31 @@ class AppFileImageViewer extends StatelessWidget {
   final BoxFit boxFit;
   @override
   Widget build(BuildContext context) {
+    /* var img = url;
+    return img != null ? _body2(img) : _body(); */
+    return _body();
+  }
+
+  Widget _body() {
+    var img = url;
+    if (img == null) return Image.asset('assets/logo-light.png');
+    if (img.endsWith('.svg')) {
+      return SvgPicture.file(
+        File(img),
+        width: width,
+        height: height,
+        fit: boxFit,
+        // colorFilter: ColorFilter.mode(color ?? Colors.transparent, BlendMode.overlay),
+        // theme: SvgTheme(currentColor: color ?? Colors.white),
+        // ignore: deprecated_member_use
+        color: color,
+      );
+    } else {
+      return _image();
+    }
+  }
+
+  Image _image() {
     return Image(
       image: _imageSource(url),
       width: width, color: color,
@@ -38,15 +66,12 @@ class AppFileImageViewer extends StatelessWidget {
         );
       },
       alignment: Alignment.center,
-
       colorBlendMode: blendMode,
       // frameBuilder: (context, child, frame, wasSynchronouslyLoaded) => wasSynchronouslyLoaded ? child : CupertinoActivityIndicator(),
       errorBuilder: (context, error, stackTrace) {
         log(error.toString());
-        return Icon(
-          Icons.warning_amber_rounded,
-          color: Colors.red,
-          size: 50,
+        return FittedBox(
+          child: Image.asset('assets/logo-light.png'),
         );
       },
     );
@@ -55,11 +80,7 @@ class AppFileImageViewer extends StatelessWidget {
   ImageProvider<Object> _imageSource(String? e) {
     var img = e;
     if (img == null) return AssetImage('assets/logo-light.png');
-    if (img.endsWith('.svg')) {
-      return Svg(img, source: SvgSource.file);
-    } else {
-      return FileImage(File(img));
-    }
+    return FileImage(File(img));
   }
 }
 

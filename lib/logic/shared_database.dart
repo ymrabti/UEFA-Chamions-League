@@ -1,23 +1,67 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:botola_max/lib.dart';
 // import 'package:flutter/services.dart';
 import 'package:path/path.dart' show basename;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:flutter_svg/flutter_svg.dart' hide SvgPicture;
+import 'dart:ui' show Image, ImageByteFormat;
+import 'dart:io';
+
+class SvgTextToPngConverter {
+  final String url;
+
+  SvgTextToPngConverter(this.url);
+
+  Future<void> convertSvgToPng(String outputPath) async {
+    try {
+      PictureInfo pictureInfo = await pictInfo();
+
+      Image? image = pictureInfo.picture.toImageSync(pictureInfo.size.width.floor(), pictureInfo.size.height.floor());
+
+      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+      Uint8List? pngBytes = byteData?.buffer.asUint8List();
+
+      if (pngBytes == null) return;
+      File file = File(outputPath);
+      file.writeAsBytesSync(pngBytes);
+      //   pictureInfo.picture.dispose();
+      return;
+    } catch (e) {
+      //   return null;
+    }
+  }
+
+  Future<PictureInfo> pictInfo() async {
+    return await vg.loadPicture(SvgNetworkLoader(url), null);
+  }
+}
+
+typedef RefreshCompetiton = ({
+  DataCompetition dataMatches,
+  StagePhase? expanded,
+  List<StagePhaseMatches> stagePhaseData,
+  Iterable<MapEntry<String, bool>> stagedData,
+});
 
 abstract class SharedPrefsDatabase {
   static Future<Map<String, DataCompetition>> getAvailableCompetitions(Map<String, bool> availableIDs) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    Iterable<Future<IGenericAppMap<DataCompetition>?>?> map2 = availableIDs.keys.map<Future<IGenericAppMap<DataCompetition>?>?>((e) {
-      String? data = prefs.getString(e);
-      if (data == null) return null;
-      return IGenericAppModel.load<DataCompetition>(e);
-    });
-    List<IGenericAppMap<DataCompetition>?> map = await Future.wait(map2.whereNotNull());
+
+    var mapp = availableIDs.keys.map(
+      (e) {
+        String? data = prefs.getString(e);
+        if (data == null) return null;
+        return IGenericAppModel.load<DataCompetition>(e);
+      },
+    );
+    List<IGenericAppMap<DataCompetition>?> map = await Future.wait(mapp.whereNotNull());
     Iterable<DataCompetition> where = map
         .whereNotNull() //
         .where((d) => d.dateTime.isAfter(competitionExpire))
@@ -42,17 +86,9 @@ abstract class SharedPrefsDatabase {
 
   static Future<FallBackAndMap> downloadCrests(List<String> imageUrls) async {
     Directory appDirectory = await getApplicationDocumentsDirectory();
-    String fallback = await saveAssetImage(appDirectory);
 
-    FallBackMap mapAll = await updateLocalCrests(
-      imageUrls,
-      appDirectory,
-    );
-    return FallBackAndMap(
-      mapAll.map,
-      fallback,
-      mapAll.availableIds,
-    );
+    FallBackMap mapAll = await updateLocalCrests(imageUrls, appDirectory);
+    return (map: mapAll.map, availableIds: mapAll.availableIds);
   }
 
   static Future<FallBackMap> updateLocalCrests(List<String> imageUrls, Directory appDirectory) async {
@@ -68,7 +104,7 @@ abstract class SharedPrefsDatabase {
           .toList()
           .map(
         (e) {
-          return downloadImages(dio, appDirectory, e);
+          return _downloadImages(dio, appDirectory, e);
         },
       ),
     );
@@ -80,21 +116,55 @@ abstract class SharedPrefsDatabase {
     return FallBackMap(mapAll, availableCompetitionsIDs);
   }
 
-  static Future<MapEntry<String, String>?> downloadImages(Dio dio, Directory appDirectory, String imageUrl) async {
+  static Future<MapEntry<String, String>?> _downloadImages(Dio dio, Directory appDirectory, String imageUrl) async {
     try {
       // Get the file name from the URL
-      String fileName = basename(imageUrl);
+      String fileName /***/ = basename(imageUrl);
 
       // Create a file path in the app's private directory
-      String savePath = '${appDirectory.path}/$fileName';
+      String savePath = '${appDirectory.path}/$fileName' /* .replaceAll('.svg', '.png') */;
 
+      // if (exte == '.svg') {
+      // String exte /******/ = extension(imageUrl);
+      // await SvgTextToPngConverter(imageUrl).convertSvgToPng(savePath);
+      // } else {
       await dio.download(imageUrl, savePath);
+      // }
 
       return MapEntry<String, String>(imageUrl, savePath);
     } catch (e) {
       logg('Failed to download $imageUrl: $e');
     }
     return null;
+  }
+
+  static Future<RefreshCompetiton?> refreshCompetition({
+    required BuildContext context,
+    required TheCompetition theCompetition,
+    bool getLocal = true,
+  }) async {
+    context.read<AppState>().setLoading(true);
+    late DataCompetition dataMatches;
+    bool exist = context.read<AppState>().isCompExist(theCompetition.code);
+    if (exist && getLocal) {
+      dataMatches = context.read<AppState>().getCompetition(theCompetition.code);
+    } else {
+      dataMatches = await AppLogic.getCompetitionByID(theCompetition.code, false);
+      if (!context.mounted) return null;
+      await context.read<AppState>().addCompetition(theCompetition.code, dataMatches);
+    }
+    if (!context.mounted) return null;
+    context.read<AppState>().cleanExpansion();
+    List<Matche> list = dataMatches.matcheModel.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
+    var standings = dataMatches.standingModel.standings;
+    var stagePhaseData = list.stagePhaseData(code: theCompetition.code, standings: standings, type: theCompetition.type);
+    List<StagePhase> expd = stagePhaseData.extractStagePhasesWithFold();
+    var stagedData = expd.map((e) => MapEntry(e.uuid, e.initiallyExpanded));
+    var first1 = expd.firstWhereOrNull((e) => e.initiallyExpanded && e.isSubPhase);
+    var first2 = expd.firstWhereOrNull((e) => e.initiallyExpanded);
+    StagePhase? expanded = first1 ?? first2;
+    context.read<AppState>().setLoading(false);
+    return (expanded: expanded, stagePhaseData: stagePhaseData, stagedData: stagedData, dataMatches: dataMatches);
   }
 }
 
@@ -210,6 +280,26 @@ abstract class BotolaServices {
 
       default:
         return ' : ' + status;
+    }
+  }
+
+  static Future<void> deleteFolderRecursively(String folderPath) async {
+    final directory = Directory(folderPath);
+
+    if (await directory.exists()) {
+      try {
+        // List all files and subdirectories inside the folder
+        final contents = directory.listSync();
+        logg(contents.length, name: 'FOLDER LENGTH');
+        for (var fileOrDir in contents) {
+          // Delete each file and directory inside the folder
+          await fileOrDir.delete(recursive: true);
+        }
+      } catch (e) {
+        // print("Error deleting folder contents: $e");
+      }
+    } else {
+      //   print("Folder does not exist.");
     }
   }
 }

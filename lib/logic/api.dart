@@ -30,11 +30,11 @@ abstract class AppLogic {
     );
   }
 
-  static Future<DataCompetition> getCompetitionByID(String competionID) async {
+  static Future<DataCompetition> getCompetitionByID(String competionID, [bool getLocal = true]) async {
     IGenericAppMap? localAppCompetitions = await IGenericAppModel.load<DataCompetition>(competionID);
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
-    if (dateTime == null || value == null || dateTime.isBefore(competitionExpire)) {
+    if (dateTime == null || value == null || dateTime.isBefore(getLocal ? competitionExpire : DateTime.now())) {
       IGenericAppModel? fromJson = await _getCompetition(competionID);
       await fromJson.save(competionID);
       return fromJson as DataCompetition;

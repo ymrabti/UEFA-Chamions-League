@@ -136,26 +136,47 @@ class TeamAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double size = 33;
-    return SizedBox(
-      width: size,
-      height: size,
-      child: () {
-        if (team.crest.isEmpty) {
-          return const Icon(
-            Icons.sports_soccer_sharp,
-            size: size - 8,
-            color: Colors.white,
-            shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-          );
-        } else {
-          return AppFileImageViewer(
-            url: context.watch<AppState>().exchangeCrest(team.crest),
-            width: size,
-            height: size,
-            boxFit: BoxFit.fitHeight,
-          );
-        }
-      }(),
+    String crest = context.watch<AppState>().exchangeCrest(team.crest);
+    return InkWell(
+      onTap: () {
+        Get.to(
+          () {
+            return Scaffold(
+              body: Center(
+                child: InteractiveViewer(
+                  maxScale: 10,
+                  child: AppFileImageViewer(
+                    url: crest,
+                    width: Get.width,
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: () {
+          if (team.crest.isEmpty) {
+            return const Icon(
+              Icons.sports_soccer_sharp,
+              size: size - 8,
+              color: Colors.white,
+              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+            );
+          } else {
+            return AppFileImageViewer(
+              url: crest,
+              urlNetwork: team.crest,
+              width: size,
+              height: size,
+              boxFit: BoxFit.fitWidth,
+            );
+          }
+        }(),
+      ),
     );
   }
 }
