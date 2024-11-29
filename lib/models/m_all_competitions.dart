@@ -197,40 +197,40 @@ class TheCompetition {
   }
 
   Widget view() {
-    TheCompetition e = this;
-    String startYear = DateFormat.y().format(e.currentSeason.startDate);
-    String endYear = DateFormat.y().format(e.currentSeason.endDate);
+    TheCompetition theCompitition = this;
+    String startYear = DateFormat.y().format(theCompitition.currentSeason.startDate);
+    String endYear = DateFormat.y().format(theCompitition.currentSeason.endDate);
     return Builder(builder: (context) {
       return Card(
         margin: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: InkWell(
-          onTap: () => gotoParticularCompetition(context, e),
+          onTap: () => gotoParticularCompetition(context, theCompitition),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
             child: Row(
               children: [
                 AppFileImageViewer(
                   width: 40,
-                  url: context.watch<AppState>().exchangeCrest(e.emblem),
-                  color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+                  url: (theCompitition.emblem),
+                  color: elbrem.contains(theCompitition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                 ),
                 Gap(12),
                 Expanded(
                   child: Text.rich(
                     TextSpan(
-                      text: e.name,
+                      text: theCompitition.name,
                       children: [
                         TextSpan(
-                          text: ' (${e.code})',
+                          text: ' (${theCompitition.code})',
                           style: TextStyle(fontSize: 10),
                         ),
-                        if (e.type == 'LEAGUE') ...[
+                        if (theCompitition.type == 'LEAGUE') ...[
                           TextSpan(
                             text: '\nMatchday: ',
                             style: TextStyle(fontSize: 10),
                           ),
                           TextSpan(
-                            text: '${e.currentSeason.currentMatchday}',
+                            text: '${theCompitition.currentSeason.currentMatchday}',
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor.invers(
                                       Theme.of(context).brightness == Brightness.dark,
@@ -249,7 +249,7 @@ class TheCompetition {
                     // style: TextStyle(color: e.colorText),
                   ),
                 ),
-                Text(e.area.name)
+                Text(theCompitition.area.name)
               ],
             ),
           ),

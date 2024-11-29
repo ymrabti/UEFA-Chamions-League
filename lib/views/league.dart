@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 final List<String> elbrem = ['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
@@ -58,7 +57,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
         title: _animated(Text(widget.competition.name)),
         leading: _animated(
           AppFileImageViewer(
-            url: context.watch<AppState>().exchangeCrest(widget.competition.emblem),
+            url: (widget.competition.emblem),
             width: 40,
             color: elbrem.contains(anthem)
                 ? Theme.of(context).colorScheme.background.invers(
@@ -228,9 +227,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: AppFileImageViewer(
-                url: context.watch<AppState>().exchangeCrest(
-                      widget.competition.emblem,
-                    ),
+                url: widget.competition.emblem,
               ),
             ),
           ),
@@ -328,7 +325,7 @@ class LeagueStandings extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppFileImageViewer(
-            url: context.watch<AppState>().exchangeCrest(model.emblem),
+            url: (model.emblem),
             width: 40,
             color: elbrem.contains(model.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
           ),
