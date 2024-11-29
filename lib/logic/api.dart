@@ -58,13 +58,43 @@ abstract class AppLogic {
         await fromJson?.save(name);
         return fromJson as T;
       }
+      logg(getGet.body, name: name);
     } else {
       return value as T;
     }
     return null;
   }
 
-  static Future<BotolaHappening> getTodayMatches(Iterable<int> ids) async {
+  static Future<MatchDetailsModel> getMatchDetails(int matchId) async {
+    MatchDetailsModel? dataGeneric = await _iGetIt<MatchDetailsModel>(
+      'matches/$matchId',
+      'match_details_of_$matchId',
+      Duration(minutes: 5),
+    );
+    if (dataGeneric != null) return dataGeneric;
+    return MatchDetailsModel.fromJson(testAllCompetitions);
+  }
+
+  static Future<Teams?> getTeam(int teamId) async {
+    Teams? dataGeneric = await _iGetIt<Teams>(
+      'teams/$teamId',
+      'team_of_$teamId',
+      Duration(days: 30),
+    );
+    return dataGeneric;
+  }
+
+  static Future<MatchHead2HeadModel> head2head(int matchId) async {
+    MatchHead2HeadModel? dataGeneric = await _iGetIt<MatchHead2HeadModel>(
+      'matches/$matchId/head2head?limit=6',
+      'match_head2head_of_$matchId',
+      Duration(hours: 12),
+    );
+    if (dataGeneric != null) return dataGeneric;
+    return MatchHead2HeadModel.fromJson(testAllCompetitions);
+  }
+
+  static Future<BotolaHappening?> getTodayMatches(Iterable<int> ids) async {
     String today = DateFormat('yyyy-MM-dd').format(DateTime.now());
     String tomorrow = DateFormat('yyyy-MM-dd').format(DateTime.now().add(Duration(days: 1)));
     BotolaHappening? dataGeneric = await _iGetIt<BotolaHappening>(
@@ -72,8 +102,7 @@ abstract class AppLogic {
       AppSaveNames.today_matches.name,
       Duration(hours: 1),
     );
-    if (dataGeneric != null) return dataGeneric;
-    return BotolaHappening.fromJson(testAllCompetitions);
+    return dataGeneric;
   }
 
   static Future<ElBotolaChampionsList> getCompetitions() async {
@@ -138,6 +167,7 @@ class DataCompetition extends IGenericAppModel {
   BotolaStandings standingModel;
   BotolaScorers scorers;
   BotolaTeams teams;
+
   DataCompetition({
     required this.matcheModel,
     required this.standingModel,
@@ -173,11 +203,12 @@ class DataCompetition extends IGenericAppModel {
   }
 }
 
-void logg(dynamic message, {String name = 'BOTOLA'}) {
+void logg(Object? message, {String name = 'BOTOLA'}) {
   log('$message', name: name);
 }
 
 abstract class AppConstants {
+  static const String REGULAR_SEASON = 'REGULAR_SEASON';
   static const String GROUPSTAGE = 'GROUP_STAGE';
   static const String LEAGUESTAGE = 'LEAGUE_STAGE';
   static const String LAST16 = 'LAST_16';

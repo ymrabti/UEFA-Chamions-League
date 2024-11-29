@@ -197,118 +197,6 @@ extension FullTimeSort on List<MatchScoreResult> {
   }
 }
 
-class Season {
-  final int id;
-  final DateTime startDate;
-  final DateTime endDate;
-  final int currentMatchday;
-  final dynamic winner;
-  Season({
-    required this.id,
-    required this.startDate,
-    required this.endDate,
-    required this.currentMatchday,
-    required this.winner,
-  });
-
-  Season copyWith({
-    int? id,
-    DateTime? startDate,
-    DateTime? endDate,
-    int? currentMatchday,
-    dynamic winner,
-  }) {
-    return Season(
-      id: id ?? this.id,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      currentMatchday: currentMatchday ?? this.currentMatchday,
-      winner: winner ?? this.winner,
-    );
-  }
-
-  Map<String, Object?> toJson() {
-    return {
-      SeasonEnum.id.name: id,
-      SeasonEnum.startDate.name: startDate,
-      SeasonEnum.endDate.name: endDate,
-      SeasonEnum.currentMatchday.name: currentMatchday,
-      SeasonEnum.winner.name: winner,
-    };
-  }
-
-  Map<String, Object?> toMap() {
-    return {
-      SeasonEnum.id.name: id.toString(),
-      SeasonEnum.startDate.name: startDate,
-      SeasonEnum.endDate.name: endDate,
-      SeasonEnum.currentMatchday.name: currentMatchday.toString(),
-      SeasonEnum.winner.name: winner,
-    };
-  }
-
-  factory Season.fromJson(Map<String, Object?> json) {
-    return Season(
-      id: int.parse('${json[SeasonEnum.id.name]}'),
-      startDate: DateTime.parse('${json[SeasonEnum.startDate.name]}'),
-      endDate: DateTime.parse('${json[SeasonEnum.endDate.name]}'),
-      currentMatchday: int.parse('${json[SeasonEnum.currentMatchday.name]}'),
-      winner: json[SeasonEnum.winner.name],
-    );
-  }
-
-  factory Season.fromMap(Map<String, Object?> json) {
-    return Season(
-      id: json[SeasonEnum.id.name] as int,
-      startDate: json[SeasonEnum.startDate.name] as DateTime,
-      endDate: json[SeasonEnum.endDate.name] as DateTime,
-      currentMatchday: json[SeasonEnum.currentMatchday.name] as int,
-      winner: json[SeasonEnum.winner.name] as dynamic,
-    );
-  }
-
-  @override
-  String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Season(id:$id, startDate:$startDate, endDate:$endDate, currentMatchday:$currentMatchday, winner:$winner)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is Season &&
-        other.runtimeType == runtimeType &&
-        other.id == id && //
-        other.startDate == startDate && //
-        other.endDate == endDate && //
-        other.currentMatchday == currentMatchday && //
-        other.winner == winner;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      runtimeType,
-      id,
-      startDate,
-      endDate,
-      currentMatchday,
-      winner,
-    );
-  }
-}
-
-enum SeasonEnum {
-  id,
-  startDate,
-  endDate,
-  currentMatchday,
-  winner,
-  none,
-}
-
 class HappeningResultSet {
   final int count;
 
@@ -368,8 +256,8 @@ class HappeningResultSet {
     return HappeningResultSet(
       count: counter,
       competitions: json[HappeningResultSetEnum.competitions.name] as String?,
-      first: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.first.name]}'),
-      last: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.last.name]}'),
+      first: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.first.name]}').add(DateTime.now().timeZoneOffset),
+      last: counter == 0 ? DateTime.now() : DateTime.parse('${json[HappeningResultSetEnum.last.name]}').add(DateTime.now().timeZoneOffset),
       played: counter == 0 ? 0 : int.parse('${json[HappeningResultSetEnum.played.name]}'),
     );
   }

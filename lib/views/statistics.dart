@@ -51,14 +51,14 @@ class GoalRankk extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      RoundedTeam(team: teamLeft, left: false),
+                      RoundedTeam(team: teamLeft, left: false, tag: 'Statistics'),
                       CenterContent(
                         valueLeft: teamLeft.allScooreed,
                         valueRight: teamRight.allReceived,
                         textLeft: _scoringText(index, sortDownToUpScored.length),
                         textRight: _receiveText(index, sortDownToUpScored.length),
                       ),
-                      RoundedTeam(team: teamRight, left: true),
+                      RoundedTeam(team: teamRight, left: true, tag: 'Statistics'),
                     ],
                   ),
                 ),
@@ -79,14 +79,14 @@ class GoalRankk extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                 child: Row(
                   children: [
-                    RoundedTeam(team: mostScored, left: false),
+                    RoundedTeam(team: mostScored, left: false, tag: 'mostScored'),
                     CenterContent(
                       textLeft: 'لأكثر تسجيلا', //
                       textRight: 'الأقل استقبالا',
                       valueLeft: mostScored.allScooreed,
                       valueRight: leastReceived.allReceived,
                     ),
-                    RoundedTeam(team: leastReceived, left: true),
+                    RoundedTeam(team: leastReceived, left: true, tag: 'leastReceived'),
                   ],
                 ),
               ),
@@ -99,14 +99,14 @@ class GoalRankk extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      RoundedTeam(team: leastScored, left: false),
+                      RoundedTeam(team: leastScored, left: false, tag: 'leastScored'),
                       CenterContent(
                         textLeft: 'الأقل تسجيلا',
                         textRight: 'لأكثر استقبالا',
                         valueLeft: leastScored.allScooreed,
                         valueRight: mostReceived.allReceived,
                       ),
-                      RoundedTeam(team: mostReceived, left: true),
+                      RoundedTeam(team: mostReceived, left: true, tag: 'mostReceived'),
                     ],
                   ),
                 ),
@@ -120,14 +120,14 @@ class GoalRankk extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
                     children: [
-                      RoundedTeam(team: leastDifference, left: false),
+                      RoundedTeam(team: leastDifference, left: false, tag: 'leastDifference'),
                       CenterContent(
                         textLeft: 'Less difference',
                         textRight: 'Most difference',
                         valueLeft: leastDifference.difference,
                         valueRight: mostDifference.difference,
                       ),
-                      RoundedTeam(team: mostDifference, left: true),
+                      RoundedTeam(team: mostDifference, left: true, tag: 'mostDifference'),
                     ],
                   ),
                 ),
@@ -352,10 +352,12 @@ class RoundedTeam extends StatelessWidget {
   const RoundedTeam({
     Key? key,
     required this.team,
+    required this.tag,
     this.left = true,
   }) : super(key: key);
 
   final GoalRankingPerTeam team;
+  final String tag;
   final bool left;
 
   @override
@@ -378,7 +380,10 @@ class RoundedTeam extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              TeamAvatar(team: team.team),
+              TeamAvatar(
+                team: team.team,
+                tag: '${left ? 'LEFT' : 'RIGHT'}${team.team.name}$tag',
+              ),
               const Gap(5),
               Text(
                 team.team.tla,

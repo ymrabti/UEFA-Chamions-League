@@ -6,4 +6,6 @@ export 'm_scorers.dart';
 export 'm_teams.dart';
 export 'm_matches_today.dart';
 export 'business_classes.dart';
+export 'm_match_detail.dart';
 export 'package:power_geojson/power_geojson.dart' hide ListABC;
+export 'm_head2head.dart';

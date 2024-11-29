@@ -10,14 +10,12 @@ class AppFileImageViewer extends StatelessWidget {
   const AppFileImageViewer({
     super.key,
     required this.url,
-    this.urlNetwork,
     this.width,
     this.height,
     this.color,
     this.boxFit = BoxFit.fill,
     this.blendMode,
   });
-  final String? urlNetwork;
   final String? url;
   final BlendMode? blendMode;
   final double? width;
@@ -26,31 +24,26 @@ class AppFileImageViewer extends StatelessWidget {
   final BoxFit boxFit;
   @override
   Widget build(BuildContext context) {
-    /* var img = url;
-    return img != null ? _body2(img) : _body(); */
-    return _body();
-  }
-
-  Widget _body() {
-    var img = url;
-    if (img == null) return Image.asset('assets/logo-light.png');
+    var lurl = url;
+    if (lurl == null) return Image.asset('assets/logo-light.png');
+    var img = context.watch<AppState>() /*  */ .exchangeCrest(lurl);
     if (img.endsWith('.svg')) {
       return SvgPicture.file(
         File(img),
         width: width,
         height: height,
         fit: boxFit,
-        // colorFilter: ColorFilter.mode(color ?? Colors.transparent, BlendMode.overlay),
-        // theme: SvgTheme(currentColor: color ?? Colors.white),
         // ignore: deprecated_member_use
         color: color,
+        // colorFilter: ColorFilter.mode(color ?? Colors.transparent, BlendMode.overlay),
+        // theme: SvgTheme(currentColor: color ?? Colors.white),
       );
     } else {
-      return _image();
+      return _image(img);
     }
   }
 
-  Image _image() {
+  Image _image(String url) {
     return Image(
       image: _imageSource(url),
       width: width, color: color,

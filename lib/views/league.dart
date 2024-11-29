@@ -10,16 +10,19 @@ import 'package:visibility_detector/visibility_detector.dart';
 final List<String> elbrem = ['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
 
 class AppLeague extends StatefulWidget {
-  const AppLeague({super.key, required this.model, required this.stagesData, this.firstExpand});
-  final ChampionshipModel model;
-  final List<StagePhaseMatches> stagesData;
-  final StagePhase? firstExpand;
+  const AppLeague({
+    super.key,
+    required this.competition,
+    required this.refreshCompetition,
+  });
+  final RefreshCompetiton refreshCompetition;
+  final TheCompetition competition;
   @override
-  State<AppLeague> createState() => _ChampionsLeagueAppState();
+  State<AppLeague> createState() => _AppLeagueState();
 }
 
-class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProviderStateMixin {
-  double _visiblePercentage = .0;
+class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMixin {
+  double _visiblePercentage = 100.0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
   bool zoomed = false;
@@ -27,8 +30,8 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
 
   @override
   void initState() {
-    String competitionCode = widget.model.competion.code;
-    String anthem = widget.model.assetAnthem;
+    String competitionCode = widget.competition.code;
+    String anthem = widget.competition.anthem;
     if (competitionCode.isNotEmpty && anthem.isNotEmpty) {
       unawaited(startAudio(anthem));
     }
@@ -48,15 +51,14 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
-    DataCompetition snapData = widget.model.matchesStandings;
-    String anthem = widget.model.competion.anthem;
+    DataCompetition snapData = widget.refreshCompetition.dataMatches;
+    String anthem = widget.competition.anthem;
     return Scaffold(
       appBar: AppBar(
-        title: _animated(Text(widget.model.competion.name)),
+        title: _animated(Text(widget.competition.name)),
         leading: _animated(
           AppFileImageViewer(
-            url: context.watch<AppState>().exchangeCrest(widget.model.competion.emblem),
-            urlNetwork: widget.model.competion.emblem,
+            url: context.watch<AppState>().exchangeCrest(widget.competition.emblem),
             width: 40,
             color: elbrem.contains(anthem)
                 ? Theme.of(context).colorScheme.background.invers(
@@ -96,29 +98,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
             child: InkWell(
               onTap: () async {
                 await Get.to<void>(
-                  () => Scaffold(
-                    appBar: AppBar(
-                      leading: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: AppFileImageViewer(
-                          url: context.watch<AppState>().exchangeCrest(widget.model.competion.emblem),
-                          width: 40,
-                          color: elbrem.contains(widget.model.competion.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
-                        ),
-                      ),
-                      title: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.model.competion.name + ' standings'),
-                      ),
-                    ),
-                    body: ListView(
-                      children: widget.model.matchesStandings.standingModel.standings
-                          .map(
-                            (e) => e.view(),
-                          )
-                          .toList(),
-                    ),
-                  ),
+                  () => LeagueStandings(model: widget.competition, standings: widget.refreshCompetition.dataMatches),
                 );
               },
               child: Card(
@@ -138,7 +118,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
               onTap: () async {
                 await Get.to<void>(
                   () => CompetitionScorersPage(
-                    scorers: widget.model.matchesStandings.scorers,
+                    scorers: widget.refreshCompetition.dataMatches.scorers,
                   ),
                 );
               },
@@ -161,17 +141,17 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
         onRefresh: () async {
           /* RefreshCompetiton? refreshCompetition =  */ await SharedPrefsDatabase.refreshCompetition(
             context: context,
-            theCompetition: widget.model.competion,
+            theCompetition: widget.competition,
           );
         },
         child: ListView(
           children: <Widget>[
             _brand(context),
-            ...widget.stagesData.map(
+            ...widget.refreshCompetition.stagePhaseData.map(
               (e) => e.view(
                 context,
                 //   splashedSize:getRenderBox(),
-                splashedId: widget.firstExpand?.uuid,
+                splashedId: widget.refreshCompetition.expanded?.uuid,
                 splashing: _splashing,
               ),
             ),
@@ -216,7 +196,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
               Expanded(
                 //   width: Get.width * .75,
                 child: Text(
-                  widget.model.competion.name,
+                  widget.competition.name,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 24,
@@ -249,7 +229,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
               padding: const EdgeInsets.all(12.0),
               child: AppFileImageViewer(
                 url: context.watch<AppState>().exchangeCrest(
-                      widget.model.competion.emblem,
+                      widget.competition.emblem,
                     ),
               ),
             ),
@@ -271,7 +251,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
   }
 
   Size? getRenderBox() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.refreshCompetition.expanded?.globalKey;
     if (globalKey == null) return null;
     BuildContext? currentContext = _getContext(globalKey);
     if (currentContext == null) return null;
@@ -280,7 +260,7 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
   }
 
   void scrollToTile() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.firstExpand?.globalKey;
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.refreshCompetition.expanded?.globalKey;
     if (globalKey == null) return;
     BuildContext? currentContext = _getContext(globalKey);
     if (currentContext == null) return;
@@ -332,5 +312,39 @@ class _ChampionsLeagueAppState extends State<AppLeague> with SingleTickerProvide
     _controller.dispose();
     unawaited(pauseAudio());
     super.dispose();
+  }
+}
+
+class LeagueStandings extends StatelessWidget {
+  const LeagueStandings({super.key, required this.model, required this.standings});
+
+  final TheCompetition model;
+  final DataCompetition standings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: AppFileImageViewer(
+            url: context.watch<AppState>().exchangeCrest(model.emblem),
+            width: 40,
+            color: elbrem.contains(model.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+          ),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(model.name + ' standings'),
+        ),
+      ),
+      body: ListView(
+        children: standings.standingModel.standings
+            .map(
+              (e) => e.view(),
+            )
+            .toList(),
+      ),
+    );
   }
 }

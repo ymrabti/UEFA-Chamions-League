@@ -198,6 +198,9 @@ abstract class BotolaServices {
       case AppConstants.FINAL:
         return "Final";
 
+      case AppConstants.REGULAR_SEASON:
+        return "Regular season";
+
       default:
         return title;
     }

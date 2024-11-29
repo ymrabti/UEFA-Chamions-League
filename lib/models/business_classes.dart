@@ -154,7 +154,7 @@ class StagePhaseMatches {
           children: [
             ...(subPhase.isEmpty
                 ? matches.map(
-                    (e) => e.view(),
+                    (e) => e.view,
                   )
                 : [
                     ...subPhase.map(
@@ -220,17 +220,6 @@ class StagePhase {
     this.initiallyExpanded = false,
     required this.isSubPhase,
     this.matches = const [],
-  });
-}
-
-class ChampionshipModel extends ChampionshipModelParent {
-  DataCompetition matchesStandings;
-  ChampionshipModel({
-    required super.assetAnthem,
-    required super.color,
-    required super.colorText,
-    required super.competion,
-    required this.matchesStandings,
   });
 }
 

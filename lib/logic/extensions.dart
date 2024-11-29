@@ -429,4 +429,22 @@ extension DateTimeX on DateTime {
   bool sameDay(DateTime other) => sameMonth(other) && day == other.day;
 
   bool sameMonth(DateTime other) => year == other.year && month == other.month;
+
+  bool between(DateTime down, DateTime up) => isAfter(down) && isBefore(up);
+}
+
+extension ListX<T> on List<T> {
+  List<T> reverse(arabic) {
+    return arabic ? reversed.toList() : this;
+  }
+
+  List<T> joinBy({required T item, T Function(T index)? transformer, bool outline = true}) {
+    var inline = mapIndexed((i, e) => [if (i != 0) item, (transformer ?? (T it) => it)(e)]).toList().expand((ex) => ex).toList();
+    return [if (outline) item, ...inline, if (outline) item];
+  }
+
+  List<T> joinByBuilder(T Function(int index) builder, {bool outline = true}) {
+    var inline = mapIndexed((i, e) => [if (i != 0) builder(i), e]).toList().expand((e) => e).toList();
+    return [if (outline) builder(0), ...inline, if (outline) builder(length)];
+  }
 }

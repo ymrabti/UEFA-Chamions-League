@@ -182,26 +182,17 @@ class TheCompetition {
     );
   }
 
-  Future<void> gotoParticularCompetition(BuildContext context, TheCompetition e) async {
-    RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(context: context, theCompetition: e);
+  Future<void> gotoParticularCompetition(BuildContext context, TheCompetition competition) async {
+    RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(
+      context: context,
+      theCompetition: competition,
+    );
     if (!context.mounted) return;
     if (refreshCompetition == null) return;
     context.read<AppState>().setExpansionAll(refreshCompetition.stagedData);
     await Get.to<void>(
-      () {
-        return AppLeague(
-          stagesData: refreshCompetition.stagePhaseData,
-          firstExpand: refreshCompetition.expanded,
-          model: ChampionshipModel(
-            assetAnthem: e.anthem,
-            competion: e,
-            color: Colors.pink,
-            colorText: Colors.black45,
-            matchesStandings: refreshCompetition.dataMatches,
-          ),
-        );
-      },
-      arguments: {'competition-id': e.code},
+      () => AppLeague(refreshCompetition: refreshCompetition, competition: competition),
+      arguments: {'competition-id': competition.code},
     );
   }
 
@@ -220,7 +211,6 @@ class TheCompetition {
               children: [
                 AppFileImageViewer(
                   width: 40,
-                  urlNetwork: e.emblem,
                   url: context.watch<AppState>().exchangeCrest(e.emblem),
                   color: elbrem.contains(e.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                 ),
@@ -294,7 +284,7 @@ class TheCompetition {
       plan: json[CompetitionsEnum.plan.name] as String,
       currentSeason: CurrentSeason.fromJson(json[CompetitionsEnum.currentSeason.name] as Map<String, Object?>),
       numberOfAvailableSeasons: int.parse('${json[CompetitionsEnum.numberOfAvailableSeasons.name]}'),
-      lastUpdated: DateTime.parse('${json[CompetitionsEnum.lastUpdated.name]}'),
+      lastUpdated: DateTime.parse('${json[CompetitionsEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
     );
   }
 
@@ -502,8 +492,8 @@ class CurrentSeason {
   factory CurrentSeason.fromJson(Map<String, Object?> json) {
     return CurrentSeason(
       id: int.parse('${json[CurrentSeasonEnum.id.name]}'),
-      startDate: DateTime.parse('${json[CurrentSeasonEnum.startDate.name]}'),
-      endDate: DateTime.parse('${json[CurrentSeasonEnum.endDate.name]}'),
+      startDate: DateTime.parse('${json[CurrentSeasonEnum.startDate.name]}').add(DateTime.now().timeZoneOffset),
+      endDate: DateTime.parse('${json[CurrentSeasonEnum.endDate.name]}').add(DateTime.now().timeZoneOffset),
       currentMatchday: int.parse('${json[CurrentSeasonEnum.currentMatchday.name]}'),
       winner: json[CurrentSeasonEnum.winner.name],
     );

@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-Future<int> _delayed(int input) async {
-  int i = await Future.delayed(Duration(milliseconds: 500), () => input);
-  return i;
+Future<int> _delayed(int input) {
+  return Future.delayed(Duration(milliseconds: 500), () => input);
 }
 
 class SplashScreen extends StatefulWidget {
@@ -45,7 +44,8 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> callApi() async {
     ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    BotolaHappening today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
+    BotolaHappening? today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
+    if (today == null) return;
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
     List<String> mapEmblems = competitions.competitions.map((e) => e.emblem).toList();
     Iterable<String> todayCrests = today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _);
@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Map<String, String> allFileCrests = fallBackAndMap.map;
     Map<String, DataCompetition> availableCompetitionsData = await SharedPrefsDatabase.getAvailableCompetitions(fallBackAndMap.availableIds);
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    await forEachList(List.generate(30, (i) => i), (e) async => await _delayed(e), kDebugMode ? 80 : 0);
+    await forEachList(List.generate(10, (i) => i), (e) async => await _delayed(e), kDebugMode ? 80 : 0);
 
     logg('✔ ✔ ✔ ✔');
     if (!mounted) return;
@@ -82,6 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
       child: WillPopScope(
         onWillPop: () async => false,
         child: Scaffold(
+          backgroundColor: Color(0xff18282f),
           body: Stack(
             children: [
               Center(

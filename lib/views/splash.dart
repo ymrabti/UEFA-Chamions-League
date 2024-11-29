@@ -1,14 +1,13 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key, required this.seek, required this.model}) : super(key: key);
-  final ChampionshipModel model;
+  const SplashPage({Key? key, required this.seek}) : super(key: key);
+
   final bool seek;
   @override
   State<StatefulWidget> createState() => _SplashPageState();

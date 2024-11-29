@@ -47,9 +47,12 @@ abstract class IGenericAppModel {
   static IGenericAppModel? fromJson<T extends IGenericAppModel>(Map<String, Object?> json) {
     if (T == ElBotolaChampionsList) return ElBotolaChampionsList.fromJson(json);
     if (T == MapCompetitions) return MapCompetitions.fromJson(json);
+    if (T == MatchDetailsModel) return MatchDetailsModel.fromJson(json);
+    if (T == MatchHead2HeadModel) return MatchHead2HeadModel.fromJson(json);
     if (T == DataCompetition) return DataCompetition.fromJson(json);
     if (T == BotolaHappening) return BotolaHappening.fromJson(json);
     if (T == Settings) return Settings.fromJson(json);
+    if (T == Teams) return Teams.fromJson(json);
     return null;
   }
 

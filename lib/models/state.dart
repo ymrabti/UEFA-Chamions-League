@@ -16,7 +16,7 @@ class AppState extends ChangeNotifier {
 
   final String fallback;
   bool loading = false;
-  void setLoading(l) {
+  void setLoading(bool l) {
     loading = l;
     notifyListeners();
   }

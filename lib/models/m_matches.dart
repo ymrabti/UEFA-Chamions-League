@@ -142,12 +142,12 @@ class Matche {
       competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
       season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
       id: id2,
-      utcDate: DateTime.parse(json['utcDate'] as String),
+      utcDate: DateTime.parse(json['utcDate'] as String).add(DateTime.now().timeZoneOffset),
       status: json['status'] == null ? '' : json['status'] as String,
       matchday: json['matchday'] == null ? 0 : json['matchday'] as int,
       stage: json['stage'] == null ? '' : json['stage'] as String,
       group: json['group'] as String?,
-      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+      lastUpdated: DateTime.parse(json['lastUpdated'] as String).add(DateTime.now().timeZoneOffset),
       homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
       awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
       score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
@@ -166,7 +166,7 @@ class Matche {
     return PowerJSON(toJson()).toText();
   }
 
-  Widget view() => MatchView(match: this);
+  Widget get view => MatchView(match: this);
 
   @override
   bool operator ==(Object other) {

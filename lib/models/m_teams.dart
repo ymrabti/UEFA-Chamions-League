@@ -2,9 +2,9 @@ import 'package:botola_max/lib.dart';
 import 'package:intl/intl.dart';
 
 class BotolaTeams {
-  final int count;
+  final int? count;
 
-  final Filters filters;
+  final Filters? filters;
 
   final Competition competition;
 
@@ -38,7 +38,7 @@ class BotolaTeams {
   Map<String, Object?> toJson() {
     return {
       BotolaMaxTeamsEnum.count.name: count,
-      BotolaMaxTeamsEnum.filters.name: filters.toJson(),
+      BotolaMaxTeamsEnum.filters.name: filters?.toJson(),
       BotolaMaxTeamsEnum.competition.name: competition.toJson(),
       BotolaMaxTeamsEnum.season.name: season.toJson(),
       BotolaMaxTeamsEnum.teams.name: teams.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
@@ -46,9 +46,10 @@ class BotolaTeams {
   }
 
   factory BotolaTeams.fromJson(Map<String, Object?> json) {
+    Map<String, Object?>? filtersJson = json[BotolaMaxTeamsEnum.filters.name] as Map<String, Object?>?;
     return BotolaTeams(
-      count: int.parse('${json[BotolaMaxTeamsEnum.count.name]}'),
-      filters: Filters.fromJson(json[BotolaMaxTeamsEnum.filters.name] as Map<String, Object?>),
+      count: int.tryParse('${json[BotolaMaxTeamsEnum.count.name]}'),
+      filters: filtersJson == null ? null : Filters.fromJson(filtersJson),
       competition: Competition.fromJson(json[BotolaMaxTeamsEnum.competition.name] as Map<String, Object?>),
       season: Season.fromJson(json[BotolaMaxTeamsEnum.season.name] as Map<String, Object?>),
       teams: (json[BotolaMaxTeamsEnum.teams.name] as List).map<Teams>((data) => Teams.fromJson(data as Map<String, Object?>)).toList(),
@@ -68,10 +69,6 @@ class BotolaTeams {
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'BotolaMaxTeams(count:$count, filters:${filters.toString()}, competition:${competition.toString()}, season:${season.toString()}, teams:${teams.toString()})';
   }
 
   @override
@@ -107,7 +104,7 @@ enum BotolaMaxTeamsEnum {
   none,
 }
 
-class Teams {
+class Teams extends IGenericAppModel {
   final Area area;
 
   final int id;
@@ -196,6 +193,7 @@ class Teams {
     );
   }
 
+  @override
   Map<String, Object?> toJson() {
     return {
       TeamsEnum.area.name: area.toJson(),
@@ -255,7 +253,7 @@ class Teams {
       coach: Coach.fromJson(json[TeamsEnum.coach.name] as Map<String, Object?>),
       squad: (json[TeamsEnum.squad.name] as List).map<Squad>((data) => Squad.fromJson(data as Map<String, Object?>)).toList(),
       staff: (json[TeamsEnum.staff.name] as List<Object?>).map((el) => el).toList(),
-      lastUpdated: DateTime.parse('${json[TeamsEnum.lastUpdated.name]}'),
+      lastUpdated: DateTime.parse('${json[TeamsEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
     );
   }
 
@@ -420,7 +418,7 @@ class Squad {
       id: int.parse('${json[SquadEnum.id.name]}'),
       name: json[SquadEnum.name.name] as String,
       position: json[SquadEnum.position.name] as String?,
-      dateOfBirth: DateTime.tryParse('${json[SquadEnum.dateOfBirth.name]}'),
+      dateOfBirth: DateTime.tryParse('${json[SquadEnum.dateOfBirth.name]}')?.add(DateTime.now().timeZoneOffset),
       nationality: json[SquadEnum.nationality.name] as String?,
     );
   }
@@ -604,7 +602,7 @@ class Coach {
       firstName: json[CoachEnum.firstName.name] as String?,
       lastName: json[CoachEnum.lastName.name] as String?,
       name: json[CoachEnum.name.name] as String?,
-      dateOfBirth: DateTime.tryParse('${json[CoachEnum.dateOfBirth.name]}'),
+      dateOfBirth: DateTime.tryParse('${json[CoachEnum.dateOfBirth.name]}')?.add(DateTime.now().timeZoneOffset),
       nationality: json[CoachEnum.nationality.name] as String?,
       contract: json[CoachEnum.contract.name] == null
           ? null

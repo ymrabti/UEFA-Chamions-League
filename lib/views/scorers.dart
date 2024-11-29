@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
 
 class CompetitionScorersPage extends StatelessWidget {
   const CompetitionScorersPage({super.key, required this.scorers});
@@ -22,7 +21,7 @@ class CompetitionScorersPage extends StatelessWidget {
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppFileImageViewer(
-            url: context.watch<AppState>().exchangeCrest(scorers.competition.emblem),
+            url: (scorers.competition.emblem),
             width: 40,
             color: elbrem.contains(scorers.competition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
           ),
@@ -63,7 +62,7 @@ class CompetitionScorersPage extends StatelessWidget {
                     child: Row(
                       children: [
                         AppFileImageViewer(
-                          url: context.watch<AppState>().exchangeCrest(e.team.crest),
+                          url: (e.team.crest),
                           width: 36,
                           height: 36,
                         ),

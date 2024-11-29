@@ -172,6 +172,7 @@ Map<String, Object> testAllCompetitions = {
     }
   ]
 };
+
 Map<String, Object> testChampionsLeagueMatches = {
   "filters": {
     "season": "2024",
@@ -4456,6 +4457,7 @@ Map<String, Object> testChampionsLeagueMatches = {
     }
   ]
 };
+
 Map<String, Object> testLaLigaMatches = {
   "filters": {"season": "2024"},
   "resultSet": {"count": 380, "first": "2024-08-15", "last": "2025-05-25", "played": 79},
@@ -12981,6 +12983,7 @@ Map<String, Object> testLaLigaMatches = {
     }
   ]
 };
+
 Map<String, Object> testStandings = {
   "filters": {"season": "2024"},
   "area": {"id": 2077, "name": "Europe", "code": "EUR", "flag": "https://crests.football-data.org/EUR.svg"},
@@ -13464,6 +13467,7 @@ Map<String, Object> testStandings = {
     }
   ]
 };
+
 Map<String, Object> testStandings1 = {
   "filters": {"season": "2024"},
   "area": {"id": 2224, "name": "Spain", "code": "ESP", "flag": "https://crests.football-data.org/760.svg"},
@@ -13739,6 +13743,7 @@ Map<String, Object> testStandings1 = {
     }
   ]
 };
+
 Map<String, Object> testTeams = {
   "count": 36,
   "filters": {"season": "2024"},
@@ -15954,4 +15959,72 @@ Map<String, Object> testTeams = {
       "lastUpdated": "2022-10-27T17:29:42Z"
     }
   ]
+};
+
+Map<String, Object> testTeam = {
+  "area": {"id": 2224, "name": "Spain", "code": "ESP", "flag": "https://crests.football-data.org/760.svg"},
+  "id": 90,
+  "name": "Real Betis Balompié",
+  "shortName": "Real Betis",
+  "tla": "BET",
+  "crest": "https://crests.football-data.org/90.png",
+  "address": "Avenida de Heliópolis, s/n Sevilla 41012",
+  "website": "http://www.realbetisbalompie.es",
+  "founded": 1907,
+  "clubColors": "Green / White",
+  "venue": "Estadio Benito Villamarín",
+  "runningCompetitions": [
+    {"id": 2014, "name": "Primera Division", "code": "PD", "type": "LEAGUE", "emblem": "https://crests.football-data.org/laliga.png"},
+    {"id": 2154, "name": "UEFA Conference League", "code": "UCL", "type": "CUP", "emblem": "https://crests.football-data.org/UCL.png"}
+  ],
+  "coach": {
+    "id": 11630,
+    "firstName": "Manuel",
+    "lastName": "Pellegrini",
+    "name": "Manuel Pellegrini",
+    "dateOfBirth": "1953-09-16",
+    "nationality": "Chile",
+    "contract": {"start": "2020-08", "until": "2026-06"}
+  },
+  "squad": [
+    {"id": 8197, "name": "Adrián", "position": "Goalkeeper", "dateOfBirth": "1987-01-03", "nationality": "Spain"},
+    {"id": 32014, "name": "Rui Silva", "position": "Goalkeeper", "dateOfBirth": "1994-02-07", "nationality": "Portugal"},
+    {"id": 180215, "name": "Fran Vieites", "position": "Goalkeeper", "dateOfBirth": "1999-05-07", "nationality": "Spain"},
+    {"id": 203476, "name": "Germán García", "position": "Goalkeeper", "dateOfBirth": "2004-02-01", "nationality": "Spain"},
+    {"id": 217557, "name": "Guilherme Fernandes", "position": "Goalkeeper", "dateOfBirth": "2001-03-28", "nationality": "Portugal"},
+    {"id": 265440, "name": "Manu González", "position": "Goalkeeper", "dateOfBirth": "2007-04-18", "nationality": "Spain"},
+    {"id": 203505, "name": "Félix Martí", "position": "Defence", "dateOfBirth": "2004-04-21", "nationality": "Spain"},
+    {"id": 264161, "name": "Lucas Alcázar", "position": "Defence", "dateOfBirth": "2002-07-11", "nationality": "Spain"},
+    {"id": 272694, "name": "Ángel Ortiz", "position": "Defence", "dateOfBirth": "2004-07-25", "nationality": "Spain"},
+    {"id": 264229, "name": "Carlos Guirao", "position": "Midfield", "dateOfBirth": "2003-04-27", "nationality": "Spain"},
+    {"id": 270254, "name": "Jesús Rodríguez", "position": "Midfield", "dateOfBirth": "2005-11-21", "nationality": "Spain"},
+    {"id": 270595, "name": "Mateo Flores", "position": "Midfield", "dateOfBirth": "2004-04-07", "nationality": "Spain"},
+    {"id": 126913, "name": "Iker Losada", "position": "Offence", "dateOfBirth": "2001-08-01", "nationality": "Spain"},
+    {"id": 175941, "name": "Abdessamad Ezzalzouli", "position": "Offence", "dateOfBirth": "2001-12-17", "nationality": "Morocco"},
+    {"id": 213268, "name": "Ezequiel Ávila", "position": "Offence", "dateOfBirth": "1994-02-06", "nationality": "Argentina"},
+    {"id": 123265, "name": "Johnny", "position": "Defensive Midfield", "dateOfBirth": "2001-09-20", "nationality": "USA"},
+    {"id": 33117, "name": "Pablo Fornals", "position": "Attacking Midfield", "dateOfBirth": "1996-02-22", "nationality": "Spain"},
+    {"id": 33045, "name": "Aitor Ruibal", "position": "Right Winger", "dateOfBirth": "1996-03-22", "nationality": "Spain"},
+    {"id": 33038, "name": "Bartra", "position": "Centre-Back", "dateOfBirth": "1991-01-15", "nationality": "Spain"},
+    {"id": 32710, "name": "Marc Roca", "position": "Defensive Midfield", "dateOfBirth": "1996-11-26", "nationality": "Spain"},
+    {"id": 21583, "name": "Cédric Bakambu", "position": "Centre-Forward", "dateOfBirth": "1991-04-11", "nationality": "DR Congo"},
+    {"id": 8435, "name": "Romain Perraud", "position": "Left-Back", "dateOfBirth": "1997-09-22", "nationality": "France"},
+    {"id": 7783, "name": "Héctor Bellerín", "position": "Right-Back", "dateOfBirth": "1995-03-19", "nationality": "Spain"},
+    {"id": 3624, "name": "Youssouf Sabaly", "position": "Right-Back", "dateOfBirth": "1993-03-05", "nationality": "Senegal"},
+    {"id": 3250, "name": "William Carvalho", "position": "Defensive Midfield", "dateOfBirth": "1992-04-07", "nationality": "Portugal"},
+    {"id": 3216, "name": "Giovani Lo Celso", "position": "Central Midfield", "dateOfBirth": "1996-04-09", "nationality": "Argentina"},
+    {"id": 1745, "name": "Ricardo Rodriguez", "position": "Left-Back", "dateOfBirth": "1992-08-25", "nationality": "Switzerland"},
+    {"id": 66, "name": "Isco", "position": "Attacking Midfield", "dateOfBirth": "1992-04-21", "nationality": "Spain"},
+    {"id": 9, "name": "Diego Llorente", "position": "Centre-Back", "dateOfBirth": "1993-08-16", "nationality": "Spain"},
+    {"id": 2, "name": "Juanmi", "position": "Left Winger", "dateOfBirth": "1993-05-20", "nationality": "Spain"},
+    {"id": 218485, "name": "Pablo Busto", "position": "Right-Back", "dateOfBirth": "2005-09-15", "nationality": "Spain"},
+    {"id": 218474, "name": "Assane Diao", "position": "Right Winger", "dateOfBirth": "2005-09-07", "nationality": "Spain"},
+    {"id": 212861, "name": "Sergi Altimira", "position": "Central Midfield", "dateOfBirth": "2001-08-25", "nationality": "Spain"},
+    {"id": 190558, "name": "Nobel Mendy", "position": "Centre-Back", "dateOfBirth": "2004-08-16", "nationality": "Senegal"},
+    {"id": 189529, "name": "Dani Perez", "position": "Attacking Midfield", "dateOfBirth": "2005-07-26", "nationality": "Spain"},
+    {"id": 181439, "name": "Vítor Roque", "position": "Centre-Forward", "dateOfBirth": "2005-02-28", "nationality": "Brazil"},
+    {"id": 138031, "name": "Natan", "position": "Centre-Back", "dateOfBirth": "2001-02-06", "nationality": "Brazil"}
+  ],
+  "staff": [],
+  "lastUpdated": "2022-05-03T08:22:26Z"
 };

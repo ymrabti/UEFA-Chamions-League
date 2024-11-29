@@ -85,7 +85,10 @@ class TableStanding extends StatelessWidget {
                                   children: [
                                     Stack(
                                       children: [
-                                        TeamAvatar(team: e.team),
+                                        TeamAvatar(
+                                          team: e.team,
+                                          tag: e.team.crest,
+                                        ),
                                         if (index < 2)
                                           Align(
                                             alignment: Alignment.bottomRight,
@@ -129,53 +132,52 @@ class TableStanding extends StatelessWidget {
 class TeamAvatar extends StatelessWidget {
   const TeamAvatar({
     Key? key,
+    required this.tag,
     required this.team,
   }) : super(key: key);
+  final String tag;
   final Team team;
 
   @override
   Widget build(BuildContext context) {
     const double size = 33;
-    String crest = context.watch<AppState>().exchangeCrest(team.crest);
+    String crest = (team.crest);
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        context.read<AppState>().setLoading(true);
+        Teams? teams = await AppLogic.getTeam(team.id);
+        if (!context.mounted) return;
+        context.read<AppState>().setLoading(false);
+        if (teams == null) return;
         Get.to(
           () {
-            return Scaffold(
-              body: Center(
-                child: InteractiveViewer(
-                  maxScale: 10,
-                  child: AppFileImageViewer(
-                    url: crest,
-                    width: Get.width,
-                  ),
-                ),
-              ),
-            );
+            return TeamDetails(team: teams, tag: tag);
           },
         );
       },
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: () {
-          if (team.crest.isEmpty) {
-            return const Icon(
-              Icons.sports_soccer_sharp,
-              size: size - 8,
-              color: Colors.white,
-              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-            );
-          } else {
-            return AppFileImageViewer(
-              url: crest,
-              urlNetwork: team.crest,
-              width: size,
-              height: size,
-              boxFit: BoxFit.fitWidth,
-            );
-          }
-        }(),
+      child: Hero(
+        tag: tag,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: () {
+            if (team.crest.isEmpty) {
+              return const Icon(
+                Icons.sports_soccer_sharp,
+                size: size - 8,
+                color: Colors.white,
+                shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+              );
+            } else {
+              return AppFileImageViewer(
+                url: crest,
+                width: size,
+                height: size,
+                boxFit: BoxFit.fitWidth,
+              );
+            }
+          }(),
+        ),
       ),
     );
   }

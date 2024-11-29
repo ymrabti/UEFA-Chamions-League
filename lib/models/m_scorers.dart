@@ -398,12 +398,12 @@ class Player {
       name: json[PlayerEnum.name.name] as String,
       firstName: json[PlayerEnum.firstName.name] as String,
       lastName: json[PlayerEnum.lastName.name] as String,
-      dateOfBirth: DateTime.tryParse('${json[PlayerEnum.dateOfBirth.name]}'),
+      dateOfBirth: DateTime.tryParse('${json[PlayerEnum.dateOfBirth.name]}')?.add(DateTime.now().timeZoneOffset),
       nationality: json[PlayerEnum.nationality.name] as String,
       section: json[PlayerEnum.section.name] as String,
       position: json[PlayerEnum.position.name],
       shirtNumber: json[PlayerEnum.shirtNumber.name] as int?,
-      lastUpdated: DateTime.parse('${json[PlayerEnum.lastUpdated.name]}'),
+      lastUpdated: DateTime.parse('${json[PlayerEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
     );
   }
 

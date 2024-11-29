@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:botola_max/lib.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen(
@@ -97,7 +96,7 @@ class HomeScreenState extends State<HomeScreen> {
                   return Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: AppFileImageViewer(
-                      url: context.watch<AppState>().exchangeCrest(comp),
+                      url: (comp),
                       color: condition ? bg.invers(true) : null,
                     ),
                   );
@@ -143,15 +142,12 @@ class HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Stack(
           children: [
-            Container(
-              color: Colors.transparent,
-              child: ExpansionTile(
-                key: e.title.globalKey,
-                maintainState: true,
-                title: Text(e.title.name),
-                initiallyExpanded: !e.allFinished,
-                children: e.matches.map((f) => f.view()).toList(),
-              ),
+            ExpansionTile(
+              key: e.title.globalKey,
+              maintainState: true,
+              title: Text(e.title.name),
+              initiallyExpanded: !e.allFinished,
+              children: e.matches.map((f) => f.view).toList(),
             ),
             if (_competition?.code == e.title.code && _splashing)
               Positioned.fill(
@@ -211,7 +207,7 @@ class HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: AppFileImageViewer(
-                          url: context.watch<AppState>().exchangeCrest(e.title.emblem),
+                          url: (e.title.emblem),
                           color: elbrem.contains(e.title.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                         ),
                       ),
