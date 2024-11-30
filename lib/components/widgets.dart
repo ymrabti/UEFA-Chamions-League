@@ -109,3 +109,24 @@ class WidgetWithWaiter extends StatelessWidget {
     );
   }
 }
+
+class ScaffoldWidget extends StatelessWidget {
+  const ScaffoldWidget({
+    super.key,
+    required this.body,
+    this.backgroundColor,
+    this.appBar,
+  });
+  final Widget body;
+  final PreferredSizeWidget? appBar;
+  final Color? backgroundColor;
+  @override
+  Widget build(BuildContext context) {
+    return WidgetWithWaiter(
+      child: Scaffold /*  */ (
+        appBar: appBar,
+        body: body,
+      ),
+    );
+  }
+}

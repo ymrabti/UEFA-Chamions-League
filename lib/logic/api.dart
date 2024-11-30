@@ -30,15 +30,19 @@ abstract class AppLogic {
     );
   }
 
-  static Future<DataCompetition> getCompetitionByID(String competionID, [bool getLocal = true]) async {
+  static Future<DataCompetition> getCompetitionByID(
+    String competionID, [
+    bool getLocal = true,
+  ]) async {
     IGenericAppMap? localAppCompetitions = await IGenericAppModel.load<DataCompetition>(competionID);
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
-    if (dateTime == null || value == null || dateTime.isBefore(getLocal ? competitionExpire : DateTime.now())) {
+    if (dateTime == null || value == null || DateTime.now().isAfter(dateTime.add(getLocal ? Duration(days: 1) : Duration(minutes: 10)))) {
       IGenericAppModel? fromJson = await _getCompetition(competionID);
       await fromJson.save(competionID);
       return fromJson as DataCompetition;
     } else {
+      logg(DateTime.now().difference(dateTime).inHours, name: 'LOCAL_DATA_DIFFERENCE');
       return value as DataCompetition;
     }
   }

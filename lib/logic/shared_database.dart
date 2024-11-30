@@ -43,13 +43,6 @@ class SvgTextToPngConverter {
   }
 }
 
-typedef RefreshCompetiton = ({
-  DataCompetition dataMatches,
-  StagePhase? expanded,
-  List<StagePhaseMatches> stagePhaseData,
-  Iterable<MapEntry<String, bool>> stagedData,
-});
-
 abstract class SharedPrefsDatabase {
   static Future<Map<String, DataCompetition>> getAvailableCompetitions(Map<String, bool> availableIDs) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -306,3 +299,10 @@ abstract class BotolaServices {
     }
   }
 }
+
+typedef RefreshCompetiton = ({
+  DataCompetition dataMatches,
+  StagePhase? expanded,
+  List<StagePhaseMatches> stagePhaseData,
+  Iterable<MapEntry<String, bool>> stagedData,
+});

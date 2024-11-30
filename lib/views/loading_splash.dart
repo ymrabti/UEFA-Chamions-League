@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async => false,
-        child: Scaffold(
+        child: ScaffoldWidget(
           backgroundColor: Color(0xff18282f),
           body: Stack(
             children: [

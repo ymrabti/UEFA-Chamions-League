@@ -52,7 +52,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     DataCompetition snapData = widget.refreshCompetition.dataMatches;
     String anthem = widget.competition.anthem;
-    return Scaffold(
+    return ScaffoldWidget(
       appBar: AppBar(
         title: _animated(Text(widget.competition.name)),
         leading: _animated(
@@ -138,9 +138,20 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          /* RefreshCompetiton? refreshCompetition =  */ await SharedPrefsDatabase.refreshCompetition(
+          RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(
             context: context,
             theCompetition: widget.competition,
+            getLocal: true,
+          );
+          if (!mounted) return;
+          if (refreshCompetition == null) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => AppLeague(
+                competition: widget.competition,
+                refreshCompetition: refreshCompetition,
+              ),
+            ),
           );
         },
         child: ListView(
@@ -320,7 +331,7 @@ class LeagueStandings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return ScaffoldWidget(
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),

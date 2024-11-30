@@ -24,38 +24,36 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: WidgetWithWaiter(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Botola Max'),
-            leading: InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Image.asset(
-                  'assets/max-botola-logo.png',
-                ),
+      child: ScaffoldWidget(
+        appBar: AppBar(
+          title: Text('Botola Max'),
+          leading: InkWell(
+            onTap: () {},
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/max-botola-logo.png',
               ),
             ),
-            actions: [
-              ThemeModeToggler(),
-              if (kDebugMode)
-                InkWell(
-                  onTap: () {},
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.textsms,
-                        color: Theme.of(context).primaryColorLight,
-                      ),
+          ),
+          actions: [
+            ThemeModeToggler(),
+            if (kDebugMode)
+              InkWell(
+                onTap: () {},
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.textsms,
+                      color: Theme.of(context).primaryColorLight,
                     ),
                   ),
-                )
-            ],
-          ),
-          body: _bodyCSV(),
+                ),
+              )
+          ],
         ),
+        body: _bodyCSV(),
       ),
     );
   }
@@ -198,7 +196,7 @@ class HomeScreenState extends State<HomeScreen> {
         dropdownColor: Theme.of(context).colorScheme.primary,
         items: getTodaySubPhases
             .map(
-              (GeneralStageWithMatchesData<Competition> e) => DropdownMenuItem<Competition>(
+              (e) => DropdownMenuItem<Competition>(
                 value: e.title,
                 child: Card(
                   color: Theme.of(context).colorScheme.primary,

@@ -16,7 +16,7 @@ class CompetitionScorersPage extends StatelessWidget {
     } else {
       logg("AscensorType widget not found in the widget tree.");
     }
-    return Scaffold(
+    return ScaffoldWidget(
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),

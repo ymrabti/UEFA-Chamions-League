@@ -82,7 +82,7 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
     void flatten(StagePhaseMatches spm) {
       // Convert StagePhaseMatches to StagePhase and add to the list
       stagePhases.add(
-        StagePhase(
+        StagePhase /*  */ (
           initiallyExpanded: spm.initiallyExpanded,
           groupStanding: spm.groupStanding,
           isSubPhase: spm.isSubPhase,
@@ -131,7 +131,7 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
       return stagePhases;
     }
 
-    // Use fold to accumulate the result into a flat list
+    // Use Fold to accumulate the result into a flat list
     return fold<List<StagePhase>>([], (acc, spm) => acc..addAll(flatten(spm)));
   }
 }
@@ -254,7 +254,7 @@ extension ListMatchesX on List<Matche> {
         return StagePhaseMatches(
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
-          globalKey: GlobalKey(),
+          globalKey: GlobalKey(debugLabel: Uuid().v6()),
           isSubPhase: false,
           title: BotolaServices.stageName(elm.stage),
           subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
@@ -266,7 +266,7 @@ extension ListMatchesX on List<Matche> {
                       <PhaseMatches>[],
                       (value, element) {
                         if (value.isEmpty) return value..add(PhaseMatches(matchday: element.matchday, matches: [element]));
-                        bool sameMonth = value.last.matchday == (element.matchday);
+                        bool sameMonth = value.last.matchday == element.matchday;
                         if (sameMonth) {
                           value.last.matches.add(element);
                         } else {
@@ -275,9 +275,13 @@ extension ListMatchesX on List<Matche> {
                         return value;
                       },
                     )..sort((a, b) => a.matchday.compareTo(b.matchday));
-                    logg(foldedMatchdays.map((e) => e.matchday), name: 'matchdays');
+                    List<GeneralStageWithMatchesData<Matche>> g = GeneralStageWithMatches<Matche>(
+                      getTitle: (data) => data,
+                      matches: ffff.matches,
+                      test: (prev, last) => last.matchday == prev.matchday,
+                    ).subphases;
                     return StagePhaseMatches(
-                      globalKey: GlobalKey(),
+                      globalKey: GlobalKey(debugLabel: Uuid().v6()),
                       uuid: Uuid().v4(),
                       initiallyExpanded: initilExpand,
                       title: DateFormat.yMMMM().format(ffff.month),
@@ -289,7 +293,7 @@ extension ListMatchesX on List<Matche> {
                           title: 'Matchday ${gggg.matchday}',
                           uuid: Uuid().v4(),
                           initiallyExpanded: initilExpand,
-                          globalKey: GlobalKey(),
+                          globalKey: GlobalKey(debugLabel: Uuid().v6()),
                           matches: gggg.matches..sort((a, b) => a.matchday.compareTo(b.matchday)),
                         );
                       }).toList(),
@@ -343,7 +347,7 @@ extension ListMatchesX on List<Matche> {
               bool initilExpand = i == 0 ? !thisFinished : foldGroups.elementAt(i - 1).allFinished && !thisFinished;
               Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
               return StagePhaseMatches(
-                globalKey: GlobalKey(),
+                globalKey: GlobalKey(debugLabel: Uuid().v6()),
                 initiallyExpanded: initilExpand,
                 uuid: Uuid().v4(),
                 title: f.stage.replaceAll('GROUP_', 'Group '),
@@ -356,7 +360,7 @@ extension ListMatchesX on List<Matche> {
         return StagePhaseMatches(
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
-          globalKey: GlobalKey(),
+          globalKey: GlobalKey(debugLabel: Uuid().v6()),
           title: BotolaServices.stageName(e.stage),
           isSubPhase: false,
           matches: (e.stage != AppConstants.GROUPSTAGE) ? e.matches : <Matche>[],
@@ -388,7 +392,7 @@ extension ListMatchesX on List<Matche> {
         bool initilExpand = i == 0 ? !thisFinished : reducingMatchdays.elementAt(i - 1).allFinished && !thisFinished;
         return StagePhaseMatches(
           uuid: Uuid().v4(),
-          globalKey: GlobalKey(),
+          globalKey: GlobalKey(debugLabel: Uuid().v6()),
           initiallyExpanded: initilExpand,
           title: BotolaServices.stageName('Matchday ${e.matchday}'),
           isSubPhase: false,

@@ -24,12 +24,12 @@ class TeamDetails extends StatelessWidget {
     DateTime? coachBirth = team.coach.dateOfBirth;
     DateTime? coachContractStart = team.coach.contract?.start;
     DateTime? coachContractEnd = team.coach.contract?.until;
-    return Scaffold(
+    return ScaffoldWidget(
       appBar: AppBar(
         leading: InkWell(
           onTap: () async {
             await Get.to<void>(
-              () => Scaffold(
+              () => ScaffoldWidget(
                 body: InteractiveCrest(crest: crest, tag: tag),
               ),
             );
@@ -55,7 +55,7 @@ class TeamDetails extends StatelessWidget {
                       if (flag == null) return;
                       await Get.to<void>(
                         () {
-                          return Scaffold(
+                          return ScaffoldWidget(
                             body: InteractiveCrest(crest: flag, tag: tag),
                           );
                         },
