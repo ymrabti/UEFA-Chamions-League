@@ -56,16 +56,6 @@ class BotolaTeams {
     );
   }
 
-  factory BotolaTeams.fromMap(Map<String, Object?> json) {
-    return BotolaTeams(
-      count: json[BotolaMaxTeamsEnum.count.name] as int,
-      filters: json[BotolaMaxTeamsEnum.filters.name] as Filters,
-      competition: json[BotolaMaxTeamsEnum.competition.name] as Competition,
-      season: json[BotolaMaxTeamsEnum.season.name] as Season,
-      teams: json[BotolaMaxTeamsEnum.teams.name] as List<Teams>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
@@ -257,34 +247,9 @@ class Teams extends IGenericAppModel {
     );
   }
 
-  factory Teams.fromMap(Map<String, Object?> json) {
-    return Teams(
-      area: json[TeamsEnum.area.name] as Area,
-      id: json[TeamsEnum.id.name] as int,
-      name: json[TeamsEnum.name.name] as String,
-      shortName: json[TeamsEnum.shortName.name] as String,
-      tla: json[TeamsEnum.tla.name] as String,
-      crest: json[TeamsEnum.crest.name] as String,
-      address: json[TeamsEnum.address.name] as String,
-      website: json[TeamsEnum.website.name] as String,
-      founded: json[TeamsEnum.founded.name] as int,
-      clubColors: json[TeamsEnum.clubColors.name] as String,
-      venue: json[TeamsEnum.venue.name] as String,
-      runningCompetitions: json[TeamsEnum.runningCompetitions.name] as List<RunningCompetitions>,
-      coach: json[TeamsEnum.coach.name] as Coach,
-      squad: json[TeamsEnum.squad.name] as List<Squad>,
-      staff: json[TeamsEnum.staff.name] as List<dynamic>,
-      lastUpdated: json[TeamsEnum.lastUpdated.name] as DateTime,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Teams(area:${area.toString()}, id:$id, name:$name, shortName:$shortName, tla:$tla, crest:$crest, address:$address, website:$website, founded:$founded, clubColors:$clubColors, venue:$venue, runningCompetitions:${runningCompetitions.toString()}, coach:${coach.toString()}, squad:${squad.toString()}, staff:$staff, lastUpdated:$lastUpdated)';
   }
 
   @override
@@ -612,25 +577,9 @@ class Coach {
     );
   }
 
-  factory Coach.fromMap(Map<String, Object?> json) {
-    return Coach(
-      id: json[CoachEnum.id.name] as int,
-      firstName: json[CoachEnum.firstName.name] as String,
-      lastName: json[CoachEnum.lastName.name] as String,
-      name: json[CoachEnum.name.name] as String,
-      dateOfBirth: json[CoachEnum.dateOfBirth.name] as DateTime,
-      nationality: json[CoachEnum.nationality.name] as String,
-      contract: json[CoachEnum.contract.name] as Contract,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Coach(id:$id, firstName:$firstName, lastName:$lastName, name:$name, dateOfBirth:$dateOfBirth, nationality:$nationality, contract:${contract.toString()})';
   }
 
   @override
@@ -718,20 +667,9 @@ class Contract {
     );
   }
 
-  factory Contract.fromMap(Map<String, Object?> json) {
-    return Contract(
-      start: json[ContractEnum.start.name] as DateTime,
-      until: json[ContractEnum.until.name] as DateTime,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Contract(start:$start, until:$until)';
   }
 
   @override
@@ -861,23 +799,9 @@ class RunningCompetitions {
     );
   }
 
-  factory RunningCompetitions.fromMap(Map<String, Object?> json) {
-    return RunningCompetitions(
-      id: json[RunningCompetitionsEnum.id.name] as int,
-      name: json[RunningCompetitionsEnum.name.name] as String,
-      code: json[RunningCompetitionsEnum.code.name] as String,
-      type: json[RunningCompetitionsEnum.type.name] as String,
-      emblem: json[RunningCompetitionsEnum.emblem.name] as String,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'RunningCompetitions(id:$id, name:$name, code:$code, type:$type, emblem:$emblem)';
   }
 
   @override

@@ -6,3 +6,4 @@ export 'statistics.dart';
 export 'league.dart';
 export 'scorers.dart';
 export 'team_details.dart';
+export 'person.dart';

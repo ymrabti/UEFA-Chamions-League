@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 class TableStanding extends StatelessWidget {
   const TableStanding({super.key, required this.standing});
@@ -124,60 +123,6 @@ class TableStanding extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class TeamAvatar extends StatelessWidget {
-  const TeamAvatar({
-    Key? key,
-    required this.tag,
-    required this.team,
-  }) : super(key: key);
-  final String tag;
-  final Team team;
-
-  @override
-  Widget build(BuildContext context) {
-    const double size = 33;
-    String crest = (team.crest);
-    return InkWell(
-      onTap: () async {
-        context.read<AppState>().setLoading(true);
-        Teams? teams = await AppLogic.getTeam(team.id);
-        if (!context.mounted) return;
-        context.read<AppState>().setLoading(false);
-        if (teams == null) return;
-        Get.to(
-          () {
-            return TeamDetails(team: teams, tag: tag);
-          },
-        );
-      },
-      child: Hero(
-        tag: tag,
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: () {
-            if (team.crest.isEmpty) {
-              return const Icon(
-                Icons.sports_soccer_sharp,
-                size: size - 8,
-                color: Colors.white,
-                shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-              );
-            } else {
-              return AppFileImageViewer(
-                url: crest,
-                width: size,
-                height: size,
-                boxFit: BoxFit.fitWidth,
-              );
-            }
-          }(),
-        ),
       ),
     );
   }

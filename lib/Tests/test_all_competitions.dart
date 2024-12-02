@@ -1,4 +1,4 @@
-Map<String, Object> testAllCompetitions = {
+Map<String, Object> abctestAllCompetitions = {
   "count": 13,
   "filters": {"client": "younes"},
   "competitions": [
@@ -173,7 +173,7 @@ Map<String, Object> testAllCompetitions = {
   ]
 };
 
-Map<String, Object> testChampionsLeagueMatches = {
+Map<String, Object> abctestChampionsLeagueMatches = {
   "filters": {
     "season": "2024",
   },
@@ -4458,7 +4458,7 @@ Map<String, Object> testChampionsLeagueMatches = {
   ]
 };
 
-Map<String, Object> testLaLigaMatches = {
+Map<String, Object> abctestLaLigaMatches = {
   "filters": {"season": "2024"},
   "resultSet": {"count": 380, "first": "2024-08-15", "last": "2025-05-25", "played": 79},
   "competition": {"id": 2014, "name": "Primera Division", "code": "PD", "type": "LEAGUE", "emblem": "https://crests.football-data.org/laliga.png"},
@@ -12984,7 +12984,7 @@ Map<String, Object> testLaLigaMatches = {
   ]
 };
 
-Map<String, Object> testStandings = {
+Map<String, Object> abctestStandings = {
   "filters": {"season": "2024"},
   "area": {"id": 2077, "name": "Europe", "code": "EUR", "flag": "https://crests.football-data.org/EUR.svg"},
   "competition": {"id": 2001, "name": "UEFA Champions League", "code": "CL", "type": "CUP", "emblem": "https://crests.football-data.org/CL.png"},
@@ -13468,7 +13468,7 @@ Map<String, Object> testStandings = {
   ]
 };
 
-Map<String, Object> testStandings1 = {
+Map<String, Object> abctestStandings1 = {
   "filters": {"season": "2024"},
   "area": {"id": 2224, "name": "Spain", "code": "ESP", "flag": "https://crests.football-data.org/760.svg"},
   "competition": {"id": 2014, "name": "Primera Division", "code": "PD", "type": "LEAGUE", "emblem": "https://crests.football-data.org/laliga.png"},
@@ -13744,7 +13744,7 @@ Map<String, Object> testStandings1 = {
   ]
 };
 
-Map<String, Object> testTeams = {
+Map<String, Object> abctestTeams = {
   "count": 36,
   "filters": {"season": "2024"},
   "competition": {"id": 2001, "name": "UEFA Champions League", "code": "CL", "type": "CUP", "emblem": "https://crests.football-data.org/CL.png"},
@@ -15961,7 +15961,7 @@ Map<String, Object> testTeams = {
   ]
 };
 
-Map<String, Object> testTeam = {
+Map<String, Object> abctestTeam = {
   "area": {"id": 2224, "name": "Spain", "code": "ESP", "flag": "https://crests.football-data.org/760.svg"},
   "id": 90,
   "name": "Real Betis Balompié",

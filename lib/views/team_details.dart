@@ -4,8 +4,154 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
+
+class RoundedTeam extends StatelessWidget {
+  const RoundedTeam({
+    Key? key,
+    required this.team,
+    required this.tag,
+    this.left = true,
+  }) : super(key: key);
+
+  final GoalRankingPerTeam team;
+  final String tag;
+  final bool left;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: 1,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.only(
+            topRight: left ? const Radius.circular(36) : Radius.zero,
+            bottomRight: left ? const Radius.circular(36) : Radius.zero,
+            topLeft: !left ? const Radius.circular(36) : Radius.zero,
+            bottomLeft: !left ? const Radius.circular(36) : Radius.zero,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: FittedBox(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TeamAvatar(
+                team: team.team,
+                tag: '${left ? 'LEFT' : 'RIGHT'}${team.team.name}$tag',
+              ),
+              const Gap(5),
+              Text(
+                team.team.tla,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class TeamAvatar extends StatelessWidget {
+  const TeamAvatar({
+    Key? key,
+    required this.tag,
+    required this.team,
+  }) : super(key: key);
+  final String tag;
+  final Team team;
+
+  @override
+  Widget build(BuildContext context) {
+    const double size = 33;
+    String crest = (team.crest);
+    return TeamDetailsEntry(
+      id: team.id,
+      tag: tag,
+      child: Hero(
+        tag: tag,
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: () {
+            if (team.crest.isEmpty) {
+              return const Icon(
+                Icons.sports_soccer_sharp,
+                size: size - 8,
+                color: Colors.white,
+                shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+              );
+            } else {
+              return AppFileImageViewer(
+                url: crest,
+                width: size,
+                height: size,
+                boxFit: BoxFit.fitWidth,
+              );
+            }
+          }(),
+        ),
+      ),
+    );
+  }
+}
+
+class TeamDetailsEntry extends StatelessWidget {
+  const TeamDetailsEntry({
+    super.key,
+    required this.child,
+    required this.tag,
+    required this.id,
+  });
+  final Widget child;
+  final String tag;
+  final int id;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        context.read<AppState>().setLoading(true);
+        Teams? teams = await AppLogic.getTeam(id);
+        if (!context.mounted) return;
+        context.read<AppState>().setLoading(false);
+        if (teams == null) return;
+        Get.to(
+          () {
+            return TeamDetails(team: teams, tag: tag);
+          },
+        );
+      },
+      child: child,
+    );
+  }
+}
+
+class PersonEntry extends StatelessWidget {
+  const PersonEntry({
+    super.key,
+    required this.child,
+    required this.id,
+  });
+  final Widget child;
+  final int id;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        context.read<AppState>().setLoading(true);
+        BotolaXPerson? person = await AppLogic.person(id);
+        if (person == null) return;
+        if (!context.mounted) return;
+        context.read<AppState>().setLoading(false);
+        await Get.to(() => BotolaPerson(player: person));
+      },
+      child: child,
+    );
+  }
+}
 
 class TeamDetails extends StatelessWidget {
   const TeamDetails({
@@ -20,16 +166,18 @@ class TeamDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     String crest = (team.crest);
     String? website = team.website;
-    var founded = team.founded;
+    int? founded = team.founded;
     DateTime? coachBirth = team.coach.dateOfBirth;
     DateTime? coachContractStart = team.coach.contract?.start;
     DateTime? coachContractEnd = team.coach.contract?.until;
-    return ScaffoldWidget(
+    String? nationality = team.coach.nationality;
+    // int? coachID = team.coach.id;
+    return ScaffoldBuilder(
       appBar: AppBar(
         leading: InkWell(
           onTap: () async {
             await Get.to<void>(
-              () => ScaffoldWidget(
+              () => ScaffoldBuilder(
                 body: InteractiveCrest(crest: crest, tag: tag),
               ),
             );
@@ -55,7 +203,7 @@ class TeamDetails extends StatelessWidget {
                       if (flag == null) return;
                       await Get.to<void>(
                         () {
-                          return ScaffoldWidget(
+                          return ScaffoldBuilder(
                             body: InteractiveCrest(crest: flag, tag: tag),
                           );
                         },
@@ -112,18 +260,7 @@ class TeamDetails extends StatelessWidget {
                   Expanded(child: Text.rich(TextSpan(text: team.clubColors))),
                 ],
               ),
-              if (website != null)
-                InkWell(
-                  onTap: () async {
-                    !await launchUrl(Uri.parse(website), mode: LaunchMode.inAppBrowserView);
-                  },
-                  child: Row(
-                    children: [
-                      SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.intercom, color: Colors.blue.shade700)),
-                      Expanded(child: Text.rich(TextSpan(text: team.website, style: TextStyle(color: Colors.blue.shade700)))),
-                    ],
-                  ),
-                ),
+              if (website != null) BotolaWebsite(website: website),
             ].joinBy(
               item: Gap(12.w),
             ),
@@ -138,126 +275,33 @@ class TeamDetails extends StatelessWidget {
                   Expanded(child: Text.rich(TextSpan(text: team.coach.name))),
                 ],
               ),
-              Row(
-                children: [
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
-                  Expanded(child: Text.rich(TextSpan(text: team.coach.nationality))),
-                ],
-              ),
-              if (coachBirth != null)
-                Row(
-                  children: [
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing)),
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                          text: (DateTime.now().difference(coachBirth).inDays / 365).round().toString() + ' Y.O',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              BotolaNationality(nationality: nationality),
+              if (coachBirth != null) BotolaPersonAge(birth: coachBirth),
               if (coachContractStart != null)
-                Row(
-                  children: [
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.fileContract)),
-                    Expanded(
-                      child: Text.rich(
-                        TextSpan(
-                          text: DateFormat.yMMMM().format(coachContractStart),
-                          children: [
-                            TextSpan(text: ' - '),
-                            if (coachContractEnd != null)
-                              TextSpan(
-                                text: DateFormat.yMMMM().format(coachContractEnd),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                BotolaContract(
+                  contractStart: coachContractStart,
+                  contractEnd: coachContractEnd,
                 ),
-            ].joinBy(
-              item: Gap(12.w),
-            ),
+              /* if (coachID != null)
+                PersonEntry(
+                  id: coachID,
+                  child: BootolaLinq(text: 'Infos'),
+                ), */
+            ].joinBy(item: Gap(12.w)),
           ),
           ExpansionTile(
             title: Text('Squad'),
             initiallyExpanded: false,
             children: <Widget>[
-              for (var player in team.squad)
-                Builder(builder: (context) {
-                  var playerBirth = player.dateOfBirth;
-                  return ExpansionTile(
-                    title: Text(player.name),
-                    initiallyExpanded: false,
-                    children: <Widget>[
-                      Row(
-                        children: [
-                          SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personChalkboard)),
-                          Expanded(child: Text.rich(TextSpan(text: player.position))),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
-                          Expanded(child: Text.rich(TextSpan(text: player.nationality))),
-                        ],
-                      ),
-                      if (playerBirth != null)
-                        Row(
-                          children: [
-                            SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing)),
-                            Expanded(
-                              child: Text.rich(
-                                TextSpan(
-                                  text: (DateTime.now().difference(playerBirth).inDays / 365).round().toString() + ' Y.O',
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                    ].joinBy(
-                      item: Gap(12.w),
-                    ),
-                  );
-                }),
-            ].joinBy(
-              item: Gap(12.w),
-            ),
+              for (var player in team.squad) TeamSquadMember(player: player),
+            ].joinBy(item: Gap(12.w)),
           ),
           ExpansionTile(
             title: Text('Running Competitions'),
             initiallyExpanded: true,
             children: <Widget>[
-              for (var runnin in team.runningCompetitions)
-                CompetitionEntry(
-                  code: runnin.code,
-                  child: Row(
-                    children: [
-                      SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
-                      Expanded(child: Text.rich(TextSpan(text: runnin.name))),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(20)),
-                          color: Theme.of(context).colorScheme.background.darker(20),
-                        ),
-                        padding: EdgeInsets.all(8.r),
-                        child: SizedBox(
-                          width: 50.w,
-                          child: AppFileImageViewer(
-                            url: runnin.emblem,
-                            color: elbrem.contains(runnin.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                    ],
-                  ),
-                ),
-            ].joinBy(
-              item: Gap(12.w),
-            ),
+              for (var runnin in team.runningCompetitions) TeamRunningCompetition(runnin: runnin),
+            ].joinBy(item: Gap(12.w)),
           ),
         ],
       ),
@@ -265,58 +309,96 @@ class TeamDetails extends StatelessWidget {
   }
 }
 
-class CompetitionEntry extends StatelessWidget {
-  const CompetitionEntry({
+class TeamRunningCompetition extends StatelessWidget {
+  const TeamRunningCompetition({
     super.key,
-    this.code,
-    required this.child,
+    required this.runnin,
   });
 
-  final String? code;
-  final Widget child;
+  final RunningCompetitions runnin;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () async {
-        /* await Get.to(
-          () => AppLeague(
-            competition: competition,
-            refreshCompetition: refreshCompetition,
+    return CompetitionEntry(
+      code: runnin.code,
+      type: runnin.type,
+      child: Row(
+        children: [
+          SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
+          Expanded(child: Text.rich(TextSpan(text: runnin.name))),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: Theme.of(context).colorScheme.background.darker(20),
+            ),
+            padding: EdgeInsets.all(8.r),
+            child: SizedBox(
+              width: 50.w,
+              child: AppFileImageViewer(
+                url: runnin.emblem,
+                color: elbrem.contains(runnin.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+              ),
+            ),
           ),
-        ); */
-      },
-      child: child,
+          SizedBox(width: 12.w),
+        ],
+      ),
     );
   }
 }
 
-class InteractiveCrest extends StatelessWidget {
-  const InteractiveCrest({
+class TeamSquadMember extends StatelessWidget {
+  const TeamSquadMember({
     super.key,
-    required this.crest,
-    required this.tag,
+    required this.player,
   });
 
-  final String crest;
-  final String tag;
+  final Squad player;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: Get.width,
-      height: Get.height,
-      child: InteractiveViewer(
-        maxScale: crest.endsWith('.svg') ? 2000 : 16,
-        child: Center(
-          child: Hero(
-            tag: tag,
-            child: AppFileImageViewer(
-              url: crest,
-              width: Get.width,
+    return Builder(builder: (context) {
+      DateTime? playerBirth = player.dateOfBirth;
+      var position = player.position;
+      return ExpansionTile(
+        title: Text(player.name),
+        initiallyExpanded: false,
+        children: <Widget>[
+          PersonEntry(id: player.id, child: BootolaLinq(text: player.name)),
+          PlayerPosition(position: position),
+          BotolaNationality(nationality: player.nationality),
+          if (playerBirth != null) BotolaPersonAge(birth: playerBirth),
+        ].joinBy(item: Gap(12.w)),
+      );
+    });
+  }
+}
+
+class BootolaLinq extends StatelessWidget {
+  const BootolaLinq({super.key, required this.text, this.onTap});
+  final String text;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 50.w,
+            child: Icon(
+              // ignore: deprecated_member_use
+              FontAwesomeIcons.externalLink,
+              color: Colors.blue.shade700,
             ),
           ),
-        ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(color: Colors.blue.shade700),
+            ),
+          ),
+        ],
       ),
     );
   }

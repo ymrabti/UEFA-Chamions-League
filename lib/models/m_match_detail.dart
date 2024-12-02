@@ -238,26 +238,6 @@ class MatchDetailsModel extends IGenericAppModel {
     );
   }
 
-  factory MatchDetailsModel.fromMap(Map<String, Object?> json, {String? id}) {
-    return MatchDetailsModel(
-      area: json[MatchDetailsModelEnum.area.name] as Area,
-      competition: json[MatchDetailsModelEnum.competition.name] as Competition,
-      season: json[MatchDetailsModelEnum.season.name] as Season,
-      id: json[MatchDetailsModelEnum.id.name] as int,
-      utcDate: json[MatchDetailsModelEnum.utcDate.name] as DateTime,
-      status: json[MatchDetailsModelEnum.status.name] as String,
-      venue: json[MatchDetailsModelEnum.venue.name] as dynamic,
-      matchday: json[MatchDetailsModelEnum.matchday.name] as int,
-      stage: json[MatchDetailsModelEnum.stage.name] as String,
-      group: json[MatchDetailsModelEnum.group.name] as dynamic,
-      lastUpdated: json[MatchDetailsModelEnum.lastUpdated.name] as DateTime,
-      homeTeam: json[MatchDetailsModelEnum.homeTeam.name] as Team,
-      awayTeam: json[MatchDetailsModelEnum.awayTeam.name] as Team,
-      score: json[MatchDetailsModelEnum.score.name] as Score,
-      referees: json[MatchDetailsModelEnum.referees.name] as List<Referees>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();

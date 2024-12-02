@@ -222,16 +222,3 @@ class StagePhase {
     this.matches = const [],
   });
 }
-
-class ChampionshipModelParent {
-  String assetAnthem;
-  Color color;
-  Color colorText;
-  TheCompetition competion;
-  ChampionshipModelParent({
-    required this.assetAnthem,
-    required this.color,
-    required this.colorText,
-    required this.competion,
-  });
-}

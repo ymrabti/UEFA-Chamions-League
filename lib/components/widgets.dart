@@ -1,10 +1,16 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:botola_max/lib.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppFileImageViewer extends StatelessWidget {
   const AppFileImageViewer({
@@ -24,9 +30,9 @@ class AppFileImageViewer extends StatelessWidget {
   final BoxFit boxFit;
   @override
   Widget build(BuildContext context) {
-    var lurl = url;
+    String? lurl = url;
     if (lurl == null) return Image.asset('assets/logo-light.png');
-    var img = context.watch<AppState>() /*  */ .exchangeCrest(lurl);
+    String img = context.watch<AppState>() /*  */ .exchangeCrest(lurl);
     if (img.endsWith('.svg')) {
       return SvgPicture.file(
         File(img),
@@ -87,31 +93,36 @@ class WidgetWithWaiter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomThemeSwitchingArea(
-      child: Stack(
-        children: [
-          child,
-          if (context.watch<AppState>().loading)
-            AbsorbPointer(
-              child: Container(
-                color: Theme.of(context).cardColor.withOpacity(0.4),
-                width: Get.width,
-                height: Get.height,
-                child: Center(
-                  child: LoadingAnimationWidget.discreteCircle(
-                    color: Theme.of(context).primaryColor,
-                    size: 125,
+      child: InkWell(
+        onLongPress: () {
+          context.read<AppState>().setLoading(false);
+        },
+        child: Stack(
+          children: [
+            child,
+            if (context.watch<AppState>().loading)
+              AbsorbPointer(
+                child: Container(
+                  color: Theme.of(context).cardColor.withOpacity(0.4),
+                  width: Get.width,
+                  height: Get.height,
+                  child: Center(
+                    child: LoadingAnimationWidget.discreteCircle(
+                      color: Theme.of(context).primaryColor,
+                      size: 125,
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
-class ScaffoldWidget extends StatelessWidget {
-  const ScaffoldWidget({
+class ScaffoldBuilder extends StatefulWidget {
+  const ScaffoldBuilder({
     super.key,
     required this.body,
     this.backgroundColor,
@@ -120,13 +131,220 @@ class ScaffoldWidget extends StatelessWidget {
   final Widget body;
   final PreferredSizeWidget? appBar;
   final Color? backgroundColor;
+
+  @override
+  State<ScaffoldBuilder> createState() => _ScaffoldBuilderState();
+}
+
+final Connectivity connectivity = Connectivity();
+
+Stream<ConnectivityResult> subscription = connectivity.onConnectivityChanged;
+
+class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
+  ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
+  @override
+  void initState() {
+    subscription.listen((ConnectivityResult result) {
+      if (!mounted) return;
+      setState(() {
+        _connectivityResult = result;
+      });
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return WidgetWithWaiter(
-      child: Scaffold /*  */ (
-        appBar: appBar,
-        body: body,
+    bool isConnected = [
+      ConnectivityResult.mobile,
+      ConnectivityResult.wifi,
+      ConnectivityResult.bluetooth,
+      ConnectivityResult.vpn,
+    ].contains(_connectivityResult);
+    return isConnected
+        ? WidgetWithWaiter(
+            child: Scaffold /*  */ (
+              appBar: widget.appBar,
+              body: widget.body,
+            ),
+          )
+        : BotolaOffline();
+  }
+}
+
+class BotolaWebsite extends StatelessWidget {
+  const BotolaWebsite({super.key, required this.website});
+
+  final String website;
+
+  @override
+  Widget build(BuildContext context) {
+    return BootolaLinq(
+      onTap: () async {
+        !await launchUrl(Uri.parse(website), mode: LaunchMode.inAppBrowserView);
+      },
+      text: website,
+    );
+  }
+}
+
+class CompetitionEntry extends StatelessWidget {
+  const CompetitionEntry({
+    super.key,
+    this.code,
+    required this.type,
+    required this.child,
+  });
+
+  final String? code;
+  final String type;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () async {
+        String? codeCompitition = code;
+        if (codeCompitition == null) return;
+        RefreshCompetiton? competition = await SharedPrefsDatabase.refreshCompetition(
+          context: context,
+          code: codeCompitition,
+          type: type,
+          getLocal: true,
+        );
+        if (competition == null) return;
+        if (!context.mounted) return;
+        // await Get.to(() => AppLeague(competition: competition));
+        await competition.dataCompetition.theCompetition.toTheCompetition().gotoParticularCompetition(context);
+      },
+      child: child,
+    );
+  }
+}
+
+class InteractiveCrest extends StatelessWidget {
+  const InteractiveCrest({
+    super.key,
+    required this.crest,
+    required this.tag,
+  });
+
+  final String crest;
+  final String tag;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: Get.width,
+      height: Get.height,
+      child: InteractiveViewer(
+        maxScale: crest.endsWith('.svg') ? 2000 : 16,
+        child: Center(
+          child: Hero(
+            tag: tag,
+            child: AppFileImageViewer(
+              url: crest,
+              width: Get.width,
+            ),
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class PlayerPosition extends StatelessWidget {
+  const PlayerPosition({
+    super.key,
+    required this.position,
+  });
+
+  final String? position;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personChalkboard)),
+        Expanded(child: Text.rich(TextSpan(text: position))),
+      ],
+    );
+  }
+}
+
+class BotolaContract extends StatelessWidget {
+  const BotolaContract({
+    super.key,
+    required this.contractStart,
+    required this.contractEnd,
+  });
+
+  final DateTime contractStart;
+  final DateTime? contractEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    var ce = contractEnd;
+    return Row(
+      children: [
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.fileContract)),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              text: DateFormat.yMMMM().format(contractStart),
+              children: [
+                TextSpan(text: ' - '),
+                if (ce != null) TextSpan(text: DateFormat.yMMMM().format(ce)),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BotolaPersonAge extends StatelessWidget {
+  const BotolaPersonAge({
+    super.key,
+    required this.birth,
+  });
+
+  final DateTime birth;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing)),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              text: (DateTime.now().difference(birth).inDays / 365).round().toString() + ' Y.O',
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class BotolaNationality extends StatelessWidget {
+  const BotolaNationality({
+    super.key,
+    required this.nationality,
+  });
+
+  final String? nationality;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
+        Expanded(child: Text.rich(TextSpan(text: nationality))),
+      ],
     );
   }
 }

@@ -232,14 +232,6 @@ class MatchHead2HeadModel extends IGenericAppModel {
     );
   }
 
-  factory MatchHead2HeadModel.fromMap(Map<String, Object?> json, {String? id}) {
-    return MatchHead2HeadModel(
-      resultSet: json[MatchHead2HeadModelEnum.resultSet.name] as H2HResultSet,
-      aggregates: json[MatchHead2HeadModelEnum.aggregates.name] as Aggregates,
-      matches: json[MatchHead2HeadModelEnum.matches.name] as List<Matche>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
@@ -328,23 +320,9 @@ class Season {
     );
   }
 
-  factory Season.fromMap(Map<String, Object?> json, {String? id}) {
-    return Season(
-      id: json[SeasonEnum.id.name] as int,
-      startDate: json[SeasonEnum.startDate.name] as DateTime,
-      endDate: json[SeasonEnum.endDate.name] as DateTime,
-      currentMatchday: json[SeasonEnum.currentMatchday.name] as int,
-      winner: json[SeasonEnum.winner.name] as Winner,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Season(id:$id, startDate:$startDate, endDate:$endDate, currentMatchday:$currentMatchday, winner:${winner.toString()})';
   }
 
   @override
@@ -397,7 +375,7 @@ class Winner {
 
   final int founded;
 
-  final String clubColors;
+  final String? clubColors;
 
   final String? venue;
 
@@ -470,25 +448,9 @@ class Winner {
       address: json[WinnerEnum.address.name] as String,
       website: json[WinnerEnum.website.name] as String,
       founded: int.parse('${json[WinnerEnum.founded.name]}'),
-      clubColors: json[WinnerEnum.clubColors.name] as String,
+      clubColors: json[WinnerEnum.clubColors.name] as String?,
       venue: json[WinnerEnum.venue.name] as String?,
       lastUpdated: DateTime.parse('${json[WinnerEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
-    );
-  }
-
-  factory Winner.fromMap(Map<String, Object?> json, {String? id}) {
-    return Winner(
-      id: json[WinnerEnum.id.name] as int,
-      name: json[WinnerEnum.name.name] as String,
-      shortName: json[WinnerEnum.shortName.name] as String,
-      tla: json[WinnerEnum.tla.name] as String,
-      crest: json[WinnerEnum.crest.name] as String,
-      address: json[WinnerEnum.address.name] as String,
-      website: json[WinnerEnum.website.name] as String,
-      founded: json[WinnerEnum.founded.name] as int,
-      clubColors: json[WinnerEnum.clubColors.name] as String,
-      venue: json[WinnerEnum.venue.name] as String,
-      lastUpdated: json[WinnerEnum.lastUpdated.name] as DateTime,
     );
   }
 
@@ -595,22 +557,9 @@ class Aggregates {
     );
   }
 
-  factory Aggregates.fromMap(Map<String, Object?> json, {String? id}) {
-    return Aggregates(
-      numberOfMatches: json[AggregatesEnum.numberOfMatches.name] as int,
-      totalGoals: json[AggregatesEnum.totalGoals.name] as int,
-      homeTeam: json[AggregatesEnum.homeTeam.name] as Team,
-      awayTeam: json[AggregatesEnum.awayTeam.name] as Team,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'Aggregates(numberOfMatches:$numberOfMatches, totalGoals:$totalGoals, homeTeam:${homeTeam.toString()}, awayTeam:${awayTeam.toString()})';
   }
 
   @override
@@ -690,22 +639,9 @@ class H2HResultSet {
     );
   }
 
-  factory H2HResultSet.fromMap(Map<String, Object?> json, {String? id}) {
-    return H2HResultSet(
-      count: json[ResultSetEnum.count.name] as int,
-      competitions: json[ResultSetEnum.competitions.name] as String,
-      first: json[ResultSetEnum.first.name] as DateTime,
-      last: json[ResultSetEnum.last.name] as DateTime,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'H2HResultSet(count:$count, competitions:$competitions, first:$first, last:$last)';
   }
 
   @override

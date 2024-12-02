@@ -12,10 +12,8 @@ class AppLeague extends StatefulWidget {
   const AppLeague({
     super.key,
     required this.competition,
-    required this.refreshCompetition,
   });
-  final RefreshCompetiton refreshCompetition;
-  final TheCompetition competition;
+  final RefreshCompetiton competition;
   @override
   State<AppLeague> createState() => _AppLeagueState();
 }
@@ -29,8 +27,8 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
 
   @override
   void initState() {
-    String competitionCode = widget.competition.code;
-    String anthem = widget.competition.anthem;
+    String competitionCode = widget.competition.dataCompetition.theCompetition.code;
+    String anthem = widget.competition.dataCompetition.theCompetition.anthem;
     if (competitionCode.isNotEmpty && anthem.isNotEmpty) {
       unawaited(startAudio(anthem));
     }
@@ -50,14 +48,18 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    DataCompetition snapData = widget.refreshCompetition.dataMatches;
-    String anthem = widget.competition.anthem;
-    return ScaffoldWidget(
+    DataCompetition snapData = widget.competition.dataCompetition;
+    String anthem = widget.competition.dataCompetition.theCompetition.anthem;
+    return ScaffoldBuilder(
       appBar: AppBar(
-        title: _animated(Text(widget.competition.name)),
+        title: _animated(
+          Text(
+            widget.competition.dataCompetition.theCompetition.name,
+          ),
+        ),
         leading: _animated(
           AppFileImageViewer(
-            url: (widget.competition.emblem),
+            url: widget.competition.dataCompetition.theCompetition.emblem,
             width: 40,
             color: elbrem.contains(anthem)
                 ? Theme.of(context).colorScheme.background.invers(
@@ -97,7 +99,10 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             child: InkWell(
               onTap: () async {
                 await Get.to<void>(
-                  () => LeagueStandings(model: widget.competition, standings: widget.refreshCompetition.dataMatches),
+                  () => LeagueStandings(
+                    model: widget.competition.dataCompetition.theCompetition,
+                    standings: widget.competition.dataCompetition,
+                  ),
                 );
               },
               child: Card(
@@ -117,7 +122,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
               onTap: () async {
                 await Get.to<void>(
                   () => CompetitionScorersPage(
-                    scorers: widget.refreshCompetition.dataMatches.scorers,
+                    scorers: widget.competition.dataCompetition.scorers,
                   ),
                 );
               },
@@ -133,38 +138,36 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             ),
           ),
         ],
-        flexibleSpace: Container(decoration: const BoxDecoration()),
         elevation: 0,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
           RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(
             context: context,
-            theCompetition: widget.competition,
-            getLocal: true,
+            code: widget.competition.dataCompetition.theCompetition.code,
+            type: widget.competition.dataCompetition.theCompetition.type,
+            getLocal: false,
           );
           if (!mounted) return;
           if (refreshCompetition == null) return;
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => AppLeague(
-                competition: widget.competition,
-                refreshCompetition: refreshCompetition,
+                competition: refreshCompetition,
               ),
             ),
           );
         },
         child: ListView(
           children: <Widget>[
-            _brand(context),
-            ...widget.refreshCompetition.stagePhaseData.map(
-              (e) => e.view(
+            _brand(),
+            for (var match in widget.competition.stagePhaseData)
+              match.view(
                 context,
                 //   splashedSize:getRenderBox(),
-                splashedId: widget.refreshCompetition.expanded?.uuid,
+                splashedId: widget.competition.expanded?.uuid,
                 splashing: _splashing,
               ),
-            ),
             _rank(snapData),
           ],
         ),
@@ -179,46 +182,52 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
     );
   }
 
-  ClipPath _brand(BuildContext context) {
-    return ClipPath(
-      clipper: Customshape(),
-      child: Stack(
-        children: [
-          Container(
-            height: 200,
-            width: MediaQuery.of(context).size.width,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              VisibilityDetector(
-                key: keyTextSlogan,
-                onVisibilityChanged: (visibilityInfo) {
-                  double visiblePercentage = visibilityInfo.visibleFraction * 100;
-                  _visiblePercentage = visiblePercentage;
-                  if (mounted) {
-                    setState(() {});
-                  }
-                },
-                child: _logoCompetition(),
-              ),
-              Expanded(
-                //   width: Get.width * .75,
-                child: Text(
-                  widget.competition.name,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+  Builder _brand() {
+    return Builder(builder: (context) {
+      return ClipPath(
+        clipper: Customshape(),
+        child: Stack(
+          children: [
+            Container(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                _logoCompetition(),
+                Expanded(
+                  //   width: Get.width * .75,
+                  child: Text(
+                    widget.competition.dataCompetition.theCompetition.name,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  VisibilityDetector lovoVD() {
+    return VisibilityDetector(
+      key: keyTextSlogan,
+      onVisibilityChanged: (visibilityInfo) {
+        double visiblePercentage = visibilityInfo.visibleFraction * 100;
+        _visiblePercentage = visiblePercentage;
+        if (mounted) {
+          setState(() {});
+        }
+      },
+      child: _logoCompetition(),
     );
   }
 
@@ -238,7 +247,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: AppFileImageViewer(
-                url: widget.competition.emblem,
+                url: widget.competition.dataCompetition.theCompetition.emblem,
               ),
             ),
           ),
@@ -259,7 +268,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   }
 
   Size? getRenderBox() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.refreshCompetition.expanded?.globalKey;
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.competition.expanded?.globalKey;
     if (globalKey == null) return null;
     BuildContext? currentContext = _getContext(globalKey);
     if (currentContext == null) return null;
@@ -268,7 +277,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   }
 
   void scrollToTile() {
-    GlobalKey<State<StatefulWidget>>? globalKey = widget.refreshCompetition.expanded?.globalKey;
+    GlobalKey<State<StatefulWidget>>? globalKey = widget.competition.expanded?.globalKey;
     if (globalKey == null) return;
     BuildContext? currentContext = _getContext(globalKey);
     if (currentContext == null) return;
@@ -326,12 +335,12 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
 class LeagueStandings extends StatelessWidget {
   const LeagueStandings({super.key, required this.model, required this.standings});
 
-  final TheCompetition model;
+  final BotolaCompetition model;
   final DataCompetition standings;
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldWidget(
+    return ScaffoldBuilder(
       appBar: AppBar(
         leading: Padding(
           padding: const EdgeInsets.all(8.0),

@@ -64,16 +64,6 @@ class BotolaScorers {
     );
   }
 
-  factory BotolaScorers.fromMap(Map<String, Object?> json) {
-    return BotolaScorers(
-      count: json[BotolaScorersEnum.count.name] as int,
-      filters: json[BotolaScorersEnum.filters.name] as Filters,
-      competition: json[BotolaScorersEnum.competition.name] as Competition,
-      season: json[BotolaScorersEnum.season.name] as Season,
-      scorers: json[BotolaScorersEnum.scorers.name] as List<Scorers>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
@@ -207,17 +197,6 @@ class Scorers {
       goals: int.parse('${json[ScorersEnum.goals.name]}'),
       assists: json[ScorersEnum.assists.name] as int?,
       penalties: int.tryParse('${json[ScorersEnum.penalties.name]}'),
-    );
-  }
-
-  factory Scorers.fromMap(Map<String, Object?> json) {
-    return Scorers(
-      player: json[ScorersEnum.player.name] as Player,
-      team: json[ScorersEnum.team.name] as Team,
-      playedMatches: json[ScorersEnum.playedMatches.name] as int,
-      goals: json[ScorersEnum.goals.name] as int,
-      assists: json[ScorersEnum.assists.name] as int?,
-      penalties: json[ScorersEnum.penalties.name] as int,
     );
   }
 
@@ -404,21 +383,6 @@ class Player {
       position: json[PlayerEnum.position.name],
       shirtNumber: json[PlayerEnum.shirtNumber.name] as int?,
       lastUpdated: DateTime.parse('${json[PlayerEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
-    );
-  }
-
-  factory Player.fromMap(Map<String, Object?> json) {
-    return Player(
-      id: json[PlayerEnum.id.name] as int,
-      name: json[PlayerEnum.name.name] as String,
-      firstName: json[PlayerEnum.firstName.name] as String,
-      lastName: json[PlayerEnum.lastName.name] as String,
-      dateOfBirth: json[PlayerEnum.dateOfBirth.name] as DateTime,
-      nationality: json[PlayerEnum.nationality.name] as String,
-      section: json[PlayerEnum.section.name] as String,
-      position: json[PlayerEnum.position.name] as dynamic,
-      shirtNumber: json[PlayerEnum.shirtNumber.name] as int?,
-      lastUpdated: json[PlayerEnum.lastUpdated.name] as DateTime,
     );
   }
 

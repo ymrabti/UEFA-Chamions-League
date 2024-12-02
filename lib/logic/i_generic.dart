@@ -15,7 +15,7 @@ class IGenericAppMap<T extends IGenericAppModel> {
     required this.dateTime,
     this.value,
   });
-  static IGenericAppMap<T> fromMap<T extends IGenericAppModel>(Map<String, Object?> map) {
+  static IGenericAppMap<T> fromJson<T extends IGenericAppModel>(Map<String, Object?> map) {
     var iGenericAppMap = IGenericAppMap(
       dateTime: DateTime.fromMillisecondsSinceEpoch(
         map[IGenricEnry.datetime.name] as int,
@@ -53,6 +53,7 @@ abstract class IGenericAppModel {
     if (T == BotolaHappening) return BotolaHappening.fromJson(json);
     if (T == Settings) return Settings.fromJson(json);
     if (T == Teams) return Teams.fromJson(json);
+    if (T == BotolaXPerson) return BotolaXPerson.fromJson(json);
     return null;
   }
 
@@ -61,7 +62,7 @@ abstract class IGenericAppModel {
     String? string = prefs.getString(name);
     if (string == null) return null;
     Map<String, Object?> json = jsonDecode(string);
-    return IGenericAppMap.fromMap<T>(json);
+    return IGenericAppMap.fromJson<T>(json);
   }
 
   static Future<void> clear<T extends IGenericAppModel>(String name) async {

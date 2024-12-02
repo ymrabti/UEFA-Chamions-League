@@ -9,3 +9,5 @@ export 'business_classes.dart';
 export 'm_match_detail.dart';
 export 'package:power_geojson/power_geojson.dart' hide ListABC;
 export 'm_head2head.dart';
+export 'm_person.dart';
+export 'm_competition.dart';

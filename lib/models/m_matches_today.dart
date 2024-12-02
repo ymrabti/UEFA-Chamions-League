@@ -47,13 +47,6 @@ class BotolaHappening extends IGenericAppModel {
     );
   }
 
-  factory BotolaHappening.fromMap(Map<String, Object?> json) {
-    return BotolaHappening(
-      HappeningresultSet: json[BotolaHappeningEnum.resultSet.name] as HappeningResultSet,
-      matches: json[BotolaHappeningEnum.matches.name] as List<Matche>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
@@ -130,20 +123,9 @@ class MatchScoreResult {
     );
   }
 
-  factory MatchScoreResult.fromMap(Map<String, Object?> json) {
-    return MatchScoreResult(
-      home: json[FullTimeEnum.home.name] as int,
-      away: json[FullTimeEnum.away.name] as int,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'FullTime(home:$home, away:$away)';
   }
 
   @override
@@ -262,23 +244,9 @@ class HappeningResultSet {
     );
   }
 
-  factory HappeningResultSet.fromMap(Map<String, Object?> json) {
-    return HappeningResultSet(
-      count: json[HappeningResultSetEnum.count.name] as int,
-      competitions: json[HappeningResultSetEnum.competitions.name] as String?,
-      first: json[HappeningResultSetEnum.first.name] as DateTime,
-      last: json[HappeningResultSetEnum.last.name] as DateTime,
-      played: json[HappeningResultSetEnum.played.name] as int,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
-  }
-
-  String stringify() {
-    return 'HappeningResultSet(count:$count, competitions:$competitions, first:$first, last:$last, played:$played)';
   }
 
   @override

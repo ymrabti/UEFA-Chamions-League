@@ -71,8 +71,9 @@ class MatchView extends StatelessWidget {
               child: InkWell(
                 onTap: () async {
                   context.read<AppState>().setLoading(true);
-                  MatchDetailsModel matchDetail = await AppLogic.getMatchDetails(match.id);
-                  MatchHead2HeadModel head2head = await AppLogic.head2head(match.id);
+                  MatchDetailsModel? matchDetail = await AppLogic.getMatchDetails(match.id);
+                  MatchHead2HeadModel? head2head = await AppLogic.head2head(match.id);
+                  if (matchDetail == null || head2head == null) return;
                   MatchDetailSupperClass matchDetails = MatchDetailSupperClass(
                     matchDetails: matchDetail,
                     head2head: head2head,

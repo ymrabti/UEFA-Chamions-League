@@ -53,13 +53,6 @@ class ElBotolaChampionsList extends IGenericAppModel {
     );
   }
 
-  factory ElBotolaChampionsList.fromMap(Map<String, Object?> json) {
-    return ElBotolaChampionsList(
-      count: json[ElBotolaChampionsListEnum.count.name] as int,
-      competitions: json[ElBotolaChampionsListEnum.competitions.name] as List<TheCompetition>,
-    );
-  }
-
   @override
   String toString() {
     return PowerJSON(toJson()).toText();
@@ -145,17 +138,6 @@ class TheCompetition {
     required this.lastUpdated,
   });
 
-  String get anthem {
-    switch (code) {
-      case 'CL':
-        return 'assets/bg_audio.mp3';
-      case 'WC':
-        return 'assets/wc_qatar.mp3';
-      default:
-        return '';
-    }
-  }
-
   TheCompetition copyWith({
     int? id,
     Area? area,
@@ -182,17 +164,20 @@ class TheCompetition {
     );
   }
 
-  Future<void> gotoParticularCompetition(BuildContext context, TheCompetition competition) async {
+  Future<void> gotoParticularCompetition(BuildContext context) async {
     RefreshCompetiton? refreshCompetition = await SharedPrefsDatabase.refreshCompetition(
       context: context,
-      theCompetition: competition,
+      code: code,
+      type: type,
     );
     if (!context.mounted) return;
     if (refreshCompetition == null) return;
     context.read<AppState>().setExpansionAll(refreshCompetition.stagedData);
     await Get.to<void>(
-      () => AppLeague(refreshCompetition: refreshCompetition, competition: competition),
-      arguments: {'competition-id': competition.code},
+      () => AppLeague(
+        competition: refreshCompetition,
+      ),
+      arguments: {'competition-id': code},
     );
   }
 
@@ -204,7 +189,7 @@ class TheCompetition {
       return Card(
         margin: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: InkWell(
-          onTap: () => gotoParticularCompetition(context, theCompitition),
+          onTap: () => gotoParticularCompetition(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
             child: Row(
@@ -285,21 +270,6 @@ class TheCompetition {
       currentSeason: CurrentSeason.fromJson(json[CompetitionsEnum.currentSeason.name] as Map<String, Object?>),
       numberOfAvailableSeasons: int.parse('${json[CompetitionsEnum.numberOfAvailableSeasons.name]}'),
       lastUpdated: DateTime.parse('${json[CompetitionsEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
-    );
-  }
-
-  factory TheCompetition.fromMap(Map<String, Object?> json) {
-    return TheCompetition(
-      id: json[CompetitionsEnum.id.name] as int,
-      area: json[CompetitionsEnum.area.name] as Area,
-      name: json[CompetitionsEnum.name.name] as String,
-      code: json[CompetitionsEnum.code.name] as String,
-      type: json[CompetitionsEnum.type.name] as String,
-      emblem: json[CompetitionsEnum.emblem.name] as String,
-      plan: json[CompetitionsEnum.plan.name] as String,
-      currentSeason: json[CompetitionsEnum.currentSeason.name] as CurrentSeason,
-      numberOfAvailableSeasons: json[CompetitionsEnum.numberOfAvailableSeasons.name] as int,
-      lastUpdated: json[CompetitionsEnum.lastUpdated.name] as DateTime,
     );
   }
 
@@ -439,159 +409,6 @@ extension CompetitionsSort on List<TheCompetition> {
             
 case CompetitionsEnum.currentSeason: */
         // unsortable
-
-        return 0;
-      });
-  }
-}
-
-class CurrentSeason {
-  final int id;
-
-  final DateTime startDate;
-
-  final DateTime endDate;
-
-  final int currentMatchday;
-
-  final dynamic winner;
-  CurrentSeason({
-    required this.id,
-    required this.startDate,
-    required this.endDate,
-    required this.currentMatchday,
-    required this.winner,
-  });
-
-  CurrentSeason copyWith({
-    int? id,
-    DateTime? startDate,
-    DateTime? endDate,
-    int? currentMatchday,
-    String? winner,
-  }) {
-    return CurrentSeason(
-      id: id ?? this.id,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      currentMatchday: currentMatchday ?? this.currentMatchday,
-      winner: winner ?? this.winner,
-    );
-  }
-
-  Map<String, Object?> toJson() {
-    return {
-      CurrentSeasonEnum.id.name: id,
-      CurrentSeasonEnum.startDate.name: startDate,
-      CurrentSeasonEnum.endDate.name: endDate,
-      CurrentSeasonEnum.currentMatchday.name: currentMatchday,
-      CurrentSeasonEnum.winner.name: winner,
-    };
-  }
-
-  factory CurrentSeason.fromJson(Map<String, Object?> json) {
-    return CurrentSeason(
-      id: int.parse('${json[CurrentSeasonEnum.id.name]}'),
-      startDate: DateTime.parse('${json[CurrentSeasonEnum.startDate.name]}').add(DateTime.now().timeZoneOffset),
-      endDate: DateTime.parse('${json[CurrentSeasonEnum.endDate.name]}').add(DateTime.now().timeZoneOffset),
-      currentMatchday: int.parse('${json[CurrentSeasonEnum.currentMatchday.name]}'),
-      winner: json[CurrentSeasonEnum.winner.name],
-    );
-  }
-
-  factory CurrentSeason.fromMap(Map<String, Object?> json) {
-    return CurrentSeason(
-      id: json[CurrentSeasonEnum.id.name] as int,
-      startDate: json[CurrentSeasonEnum.startDate.name] as DateTime,
-      endDate: json[CurrentSeasonEnum.endDate.name] as DateTime,
-      currentMatchday: json[CurrentSeasonEnum.currentMatchday.name] as int,
-      winner: json[CurrentSeasonEnum.winner.name],
-    );
-  }
-
-  @override
-  String toString() {
-    return PowerJSON(toJson()).toText();
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is CurrentSeason &&
-        other.runtimeType == runtimeType &&
-        other.id == id && //
-        other.startDate == startDate && //
-        other.endDate == endDate && //
-        other.currentMatchday == currentMatchday && //
-        other.winner == winner;
-  }
-
-  @override
-  int get hashCode {
-    return Object.hash(
-      runtimeType,
-      id,
-      startDate,
-      endDate,
-      currentMatchday,
-      winner,
-    );
-  }
-}
-
-enum CurrentSeasonEnum {
-  id,
-  startDate,
-  endDate,
-  currentMatchday,
-  winner,
-  none,
-}
-
-extension CurrentSeasonSort on List<CurrentSeason> {
-  List<CurrentSeason> sorty(String caseField, {bool desc = false}) {
-    return this
-      ..sort((a, b) {
-        int fact = (desc ? -1 : 1);
-
-        if (caseField == CurrentSeasonEnum.id.name) {
-          // unsortable
-
-          int akey = a.id;
-          int bkey = b.id;
-
-          return fact * (bkey - akey);
-        }
-
-        if (caseField == CurrentSeasonEnum.startDate.name) {
-          // unsortable
-
-          DateTime akey = a.startDate;
-          DateTime bkey = b.startDate;
-
-          return fact * bkey.compareTo(akey);
-        }
-
-        if (caseField == CurrentSeasonEnum.endDate.name) {
-          // unsortable
-
-          DateTime akey = a.endDate;
-          DateTime bkey = b.endDate;
-
-          return fact * bkey.compareTo(akey);
-        }
-
-        if (caseField == CurrentSeasonEnum.currentMatchday.name) {
-          // unsortable
-
-          int akey = a.currentMatchday;
-          int bkey = b.currentMatchday;
-
-          return fact * (bkey - akey);
-        }
-
-        if (caseField == CurrentSeasonEnum.winner.name) {
-          // unsortable
-        }
 
         return 0;
       });

@@ -15,17 +15,18 @@ class GoalRankk extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // var matchTimeLocal = DateFormat.MMMMd(Get.locale).format(matchTime);
-    List<GoalRankingPerTeam> sortDownToUpReceived = goals.map((e) => e).toList()..sort((a, b) => a.allReceived - b.allReceived);
+    var goalsPure = goals.where((e) => e.team.crest.isNotEmpty);
+    List<GoalRankingPerTeam> sortDownToUpReceived = goalsPure.map((e) => e).toList()..sort((a, b) => a.allReceived - b.allReceived);
     List<GoalRankingPerTeam> sortUpToDownReceived = sortDownToUpReceived.reversed.toList();
     GoalRankingPerTeam leastReceived = sortDownToUpReceived.first;
     GoalRankingPerTeam mostReceived = sortUpToDownReceived.first;
     // // //
-    List<GoalRankingPerTeam> sortUpToDownScored = goals.map((e) => e).toList()..sort((a, b) => a.allScooreed - b.allScooreed);
+    List<GoalRankingPerTeam> sortUpToDownScored = goalsPure.map((e) => e).toList()..sort((a, b) => a.allScooreed - b.allScooreed);
     List<GoalRankingPerTeam> sortDownToUpScored = sortUpToDownScored.reversed.toList();
     GoalRankingPerTeam leastScored = sortUpToDownScored.first;
     GoalRankingPerTeam mostScored = sortDownToUpScored.first;
     // // //
-    List<GoalRankingPerTeam> sortDownToUpScoreDifference = goals.map((e) => e).toList()..sort((a, b) => a.difference - b.difference);
+    List<GoalRankingPerTeam> sortDownToUpScoreDifference = goalsPure.map((e) => e).toList()..sort((a, b) => a.difference - b.difference);
     List<GoalRankingPerTeam> sortUpToDownScoreDifference = sortDownToUpScoreDifference.reversed.toList();
     GoalRankingPerTeam leastDifference = sortDownToUpScoreDifference.first;
     GoalRankingPerTeam mostDifference = sortUpToDownScoreDifference.first;
@@ -339,55 +340,6 @@ class CenterContent extends StatelessWidget {
                     Text('$valueRight', textAlign: TextAlign.left),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class RoundedTeam extends StatelessWidget {
-  const RoundedTeam({
-    Key? key,
-    required this.team,
-    required this.tag,
-    this.left = true,
-  }) : super(key: key);
-
-  final GoalRankingPerTeam team;
-  final String tag;
-  final bool left;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          borderRadius: BorderRadius.only(
-            topRight: left ? const Radius.circular(36) : Radius.zero,
-            bottomRight: left ? const Radius.circular(36) : Radius.zero,
-            topLeft: !left ? const Radius.circular(36) : Radius.zero,
-            bottomLeft: !left ? const Radius.circular(36) : Radius.zero,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: FittedBox(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              TeamAvatar(
-                team: team.team,
-                tag: '${left ? 'LEFT' : 'RIGHT'}${team.team.name}$tag',
-              ),
-              const Gap(5),
-              Text(
-                team.team.tla,
-                style: const TextStyle(color: Colors.white),
               ),
             ],
           ),

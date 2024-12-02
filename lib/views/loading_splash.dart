@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:botola_max/lib.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,25 +43,28 @@ class _SplashScreenState extends State<SplashScreen> {
 // //
 
   Future<void> callApi() async {
-    ElBotolaChampionsList competitions = await AppLogic.getCompetitions();
-    _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    BotolaHappening? today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
-    if (today == null) return;
-    _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    List<String> mapEmblems = competitions.competitions.map((e) => e.emblem).toList();
-    Iterable<String> todayCrests = today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _);
-    FallBackAndMap fallBackAndMap = await SharedPrefsDatabase.downloadCrests([...mapEmblems, ...todayCrests]);
-    _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    Map<String, String> allFileCrests = fallBackAndMap.map;
-    Map<String, DataCompetition> availableCompetitionsData = await SharedPrefsDatabase.getAvailableCompetitions(fallBackAndMap.availableIds);
-    _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    await forEachList(List.generate(10, (i) => i), (e) async => await _delayed(e), kDebugMode ? 80 : 0);
-
-    logg('✔ ✔ ✔ ✔');
-    if (!mounted) return;
-    context.read<AppState>().setData = availableCompetitionsData;
-    context.read<AppState>().setMapCrests = allFileCrests;
-    Future.delayed(d, () => Get.offAll(() => HomeScreen(competitions, today)));
+    ElBotolaChampionsList? competitions = await AppLogic.getCompetitions();
+    if (competitions != null) {
+      _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
+      BotolaHappening? today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
+      if (today == null) return;
+      _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
+      List<String> emblems = competitions.competitions.map((e) => e.emblem).toList();
+      List<String> areas = competitions.competitions.map((e) => e.area.flag).whereNotNull().toList();
+      Iterable<String> tcrests = today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _);
+      List<String> imageUrls = [...emblems, ...tcrests, ...areas];
+      FallBackAndMap fallBackAndMap = await SharedPrefsDatabase.downloadCrests(imageUrls);
+      _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
+      Map<String, String> allFileCrests = fallBackAndMap.map;
+      Map<String, DataCompetition> availableCompetitionsData = await SharedPrefsDatabase.getAvailableCompetitions(fallBackAndMap.availableIds);
+      _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
+      await forEachList(List.generate(10, (i) => i), (e) async => await _delayed(e), kDebugMode ? 80 : 0);
+      logg('✔ ✔ ✔ ✔');
+      if (!mounted) return;
+      context.read<AppState>().setData = availableCompetitionsData;
+      context.read<AppState>().setMapCrests = allFileCrests;
+      Future.delayed(d, () => Get.offAll(() => HomeScreen(competitions, today)));
+    }
   }
 
   void _progressPlus({required int totale, required int percent}) {
@@ -81,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return SafeArea(
       child: WillPopScope(
         onWillPop: () async => false,
-        child: ScaffoldWidget(
+        child: ScaffoldBuilder(
           backgroundColor: Color(0xff18282f),
           body: Stack(
             children: [

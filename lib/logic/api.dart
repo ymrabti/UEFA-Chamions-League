@@ -16,21 +16,29 @@ abstract class AppLogic {
   static const String _CL_API = 'https://api.football-data.org/v4';
   static final Map<String, String> _headers = {'X-Auth-Token': token};
 
-  static Future<DataCompetition> _getCompetition(String competionID) async {
-    BotolaStandings standings = await _getStandings(competionID);
-    BotolaMatches matches = await _getMatches(competionID);
-    BotolaScorers scorers = await _getScorers(competionID);
-    BotolaTeams teams = await _getTeams(competionID);
+  static Future<DataCompetition?> _getCompetition(String competionID) async {
+    BotolaCompetition? competition = await _getCompetitionId(competionID);
+    BotolaStandings? standings = await _getStandings(competionID);
+    BotolaMatches? matches = await _getMatches(competionID);
+    BotolaScorers? scorers = await _getScorers(competionID);
+    BotolaTeams? teams = await _getTeams(competionID);
+    if (standings /* *******/ == null || //
+            matches /* *****/ == null ||
+            scorers /* *****/ == null ||
+            teams /* *******/ == null ||
+            competition /* */ == null //
+        ) return null;
     return DataCompetition(
       id: competionID,
       matcheModel: matches,
       standingModel: standings,
       scorers: scorers,
       teams: teams,
+      theCompetition: competition,
     );
   }
 
-  static Future<DataCompetition> getCompetitionByID(
+  static Future<DataCompetition?> getCompetitionByID(
     String competionID, [
     bool getLocal = true,
   ]) async {
@@ -39,11 +47,11 @@ abstract class AppLogic {
     IGenericAppModel? value = localAppCompetitions?.value;
     if (dateTime == null || value == null || DateTime.now().isAfter(dateTime.add(getLocal ? Duration(days: 1) : Duration(minutes: 10)))) {
       IGenericAppModel? fromJson = await _getCompetition(competionID);
-      await fromJson.save(competionID);
-      return fromJson as DataCompetition;
+      await fromJson?.save(competionID);
+      return fromJson as DataCompetition?;
     } else {
       logg(DateTime.now().difference(dateTime).inHours, name: 'LOCAL_DATA_DIFFERENCE');
-      return value as DataCompetition;
+      return value as DataCompetition?;
     }
   }
 
@@ -69,14 +77,14 @@ abstract class AppLogic {
     return null;
   }
 
-  static Future<MatchDetailsModel> getMatchDetails(int matchId) async {
+  static Future<MatchDetailsModel?> getMatchDetails(int matchId) async {
     MatchDetailsModel? dataGeneric = await _iGetIt<MatchDetailsModel>(
       'matches/$matchId',
       'match_details_of_$matchId',
       Duration(minutes: 5),
     );
     if (dataGeneric != null) return dataGeneric;
-    return MatchDetailsModel.fromJson(testAllCompetitions);
+    return null;
   }
 
   static Future<Teams?> getTeam(int teamId) async {
@@ -88,14 +96,24 @@ abstract class AppLogic {
     return dataGeneric;
   }
 
-  static Future<MatchHead2HeadModel> head2head(int matchId) async {
+  static Future<BotolaXPerson?> person(int personId) async {
+    BotolaXPerson? dataGeneric = await _iGetIt<BotolaXPerson>(
+      'persons/$personId',
+      'match_head2head_of_$personId',
+      Duration(hours: 12),
+    );
+    if (dataGeneric != null) return dataGeneric;
+    return null;
+  }
+
+  static Future<MatchHead2HeadModel?> head2head(int matchId) async {
     MatchHead2HeadModel? dataGeneric = await _iGetIt<MatchHead2HeadModel>(
       'matches/$matchId/head2head?limit=6',
       'match_head2head_of_$matchId',
       Duration(hours: 12),
     );
     if (dataGeneric != null) return dataGeneric;
-    return MatchHead2HeadModel.fromJson(testAllCompetitions);
+    return null;
   }
 
   static Future<BotolaHappening?> getTodayMatches(Iterable<int> ids) async {
@@ -109,51 +127,62 @@ abstract class AppLogic {
     return dataGeneric;
   }
 
-  static Future<ElBotolaChampionsList> getCompetitions() async {
+  static Future<ElBotolaChampionsList?> getCompetitions() async {
     ElBotolaChampionsList? dataGeneric = await _iGetIt<ElBotolaChampionsList>(
       'competitions',
       AppSaveNames.all_competitions.name,
       Duration(days: 31),
     );
     if (dataGeneric != null) return dataGeneric;
-    return ElBotolaChampionsList.fromJson(testAllCompetitions);
+    return null;
   }
 
-  static Future<BotolaStandings> _getStandings(String competionID) async {
+  static Future<BotolaCompetition?> _getCompetitionId(String competionID) async {
+    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID'), headers: _headers);
+
+    if (getGet.statusCode == 200) {
+      var fromJson = BotolaCompetition.fromJson(jsonDecode(getGet.body));
+      return fromJson;
+    }
+    logg(getGet.body);
+    return null;
+  }
+
+  static Future<BotolaStandings?> _getStandings(String competionID) async {
     var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/standings'), headers: _headers);
 
     if (getGet.statusCode == 200) {
       var fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
-    return BotolaStandings.fromJson(testStandings);
+    return null;
   }
 
-  static Future<BotolaMatches> _getMatches(String competionID) async {
+  static Future<BotolaMatches?> _getMatches(String competionID) async {
     var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/matches'), headers: _headers);
     if (getGet.statusCode == 200) {
       var fromJson = BotolaMatches.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
-    return BotolaMatches.fromJson(testChampionsLeagueMatches);
+    return null;
   }
 
-  static Future<BotolaScorers> _getScorers(String competionID) async {
+  static Future<BotolaScorers?> _getScorers(String competionID) async {
     var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/scorers'), headers: _headers);
     if (getGet.statusCode == 200) {
       var fromJson = BotolaScorers.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
-    return BotolaScorers.fromJson(testChampionsLeagueMatches);
+    return null;
   }
 
-  static Future<BotolaTeams> _getTeams(String competionID) async {
+  static Future<BotolaTeams?> _getTeams(String competionID) async {
     var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/teams'), headers: _headers);
     if (getGet.statusCode == 200) {
       var fromJson = BotolaTeams.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
-    return BotolaTeams.fromJson(testTeams);
+    return null;
   }
 }
 
@@ -163,18 +192,21 @@ enum DataCompetitionEnum {
   scorers,
   teams,
   id,
+  theCompetition,
 }
 
 class DataCompetition extends IGenericAppModel {
   String id;
+  BotolaCompetition theCompetition;
   BotolaMatches matcheModel;
   BotolaStandings standingModel;
   BotolaScorers scorers;
   BotolaTeams teams;
 
   DataCompetition({
-    required this.matcheModel,
+    required this.theCompetition,
     required this.standingModel,
+    required this.matcheModel,
     required this.scorers,
     required this.teams,
     required this.id,
@@ -193,6 +225,7 @@ class DataCompetition extends IGenericAppModel {
       DataCompetitionEnum.standings.name: standingModel.toJson(),
       DataCompetitionEnum.scorers.name: scorers.toJson(),
       DataCompetitionEnum.teams.name: teams.toJson(),
+      DataCompetitionEnum.theCompetition.name: theCompetition.toJson(),
     };
   }
 
@@ -203,6 +236,7 @@ class DataCompetition extends IGenericAppModel {
       standingModel: BotolaStandings.fromJson(data[DataCompetitionEnum.standings.name] as Map<String, Object?>),
       scorers: BotolaScorers.fromJson(data[DataCompetitionEnum.scorers.name] as Map<String, Object?>),
       teams: BotolaTeams.fromJson(data[DataCompetitionEnum.teams.name] as Map<String, Object?>),
+      theCompetition: BotolaCompetition.fromJson(data[DataCompetitionEnum.theCompetition.name] as Map<String, Object?>),
     );
   }
 }

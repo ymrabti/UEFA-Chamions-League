@@ -178,7 +178,7 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<GoalRankingPerTeam> get goalStatsTeam {
-    List<GoalRankingPerTeam> teams = fold(
+    List<GoalRankingPerTeam> teams = fold<List<GoalRankingPerTeam>>(
       <GoalRankingPerTeam>[],
       (List<GoalRankingPerTeam> pmm, Matche cmm) {
         List<int> mapIDs = pmm.map((e) => e.team.id).toList();
@@ -221,76 +221,55 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> get _modelCL {
-    List<StageWithMatches> foldingStage = fold<List<StageWithMatches>>(
-      [],
-      (previousValue, element) {
-        var wheras = previousValue.where((e) => e.stage == element.stage);
-        if (wheras.isEmpty) {
-          previousValue.add(StageWithMatches(stage: element.stage, matches: [element]));
-        } else {
-          wheras.first.matches.add(element);
-        }
-        return previousValue;
-      },
-    );
+    var stages = GeneralStageWithMatches<String>(
+      getTitle: (data) => data.stage,
+      matches: this,
+      test: (prev, last) => prev == last,
+    ).subphases;
 
-    List<StagePhaseMatches> expandStagePhase = foldingStage.mapIndexed(
+    List<StagePhaseMatches> expandStagePhase = stages.mapIndexed(
       (index, elm) {
         bool thisFinished = elm.allFinished;
-        bool initilExpand = index == 0 ? !thisFinished : foldingStage.elementAt(index - 1).allFinished && !thisFinished;
-        List<MonthMatches> foldedMonths = elm.matches.fold(
-          <MonthMatches>[],
-          (value, element) {
-            if (value.isEmpty) return value..add(MonthMatches(month: element.utcDate, matches: [element]));
-            bool sameMonth = value.last.month.sameMonth(element.utcDate);
-            if (sameMonth) {
-              value.last.matches.add(element);
-            } else {
-              value.add(MonthMatches(month: element.utcDate, matches: [element]));
-            }
-            return value;
-          },
-        )..sort((a, b) => a.month.compareTo(b.month));
+        bool initilExpand = index == 0 ? !thisFinished : stages.elementAt(index - 1).allFinished && !thisFinished;
+
+        var gg = GeneralStageWithMatches<DateTime>(
+          getTitle: (data) => data.utcDate,
+          matches: elm.matches,
+          test: (prev, last) => prev.sameMonth(last),
+        ).subphases
+          ..sort((a, b) => a.title.compareTo(b.title));
         return StagePhaseMatches(
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
           globalKey: GlobalKey(debugLabel: Uuid().v6()),
           isSubPhase: false,
-          title: BotolaServices.stageName(elm.stage),
-          subPhase: (elm.stage == AppConstants.LEAGUESTAGE)
-              ? foldedMonths.mapIndexed(
+          title: BotolaServices.stageName(elm.title),
+          subPhase: (elm.title == AppConstants.LEAGUESTAGE)
+              ? gg.mapIndexed(
                   (iiii, ffff) {
                     bool thisFinished = ffff.allFinished;
-                    bool initilExpand = iiii == 0 ? !thisFinished : foldedMonths.elementAt(iiii - 1).allFinished && !thisFinished;
-                    List<PhaseMatches> foldedMatchdays = ffff.matches.fold(
-                      <PhaseMatches>[],
-                      (value, element) {
-                        if (value.isEmpty) return value..add(PhaseMatches(matchday: element.matchday, matches: [element]));
-                        bool sameMonth = value.last.matchday == element.matchday;
-                        if (sameMonth) {
-                          value.last.matches.add(element);
-                        } else {
-                          value.add(PhaseMatches(matchday: element.matchday, matches: [element]));
-                        }
-                        return value;
-                      },
-                    )..sort((a, b) => a.matchday.compareTo(b.matchday));
-                    List<GeneralStageWithMatchesData<Matche>> g = GeneralStageWithMatches<Matche>(
-                      getTitle: (data) => data,
+                    bool initilExpand = iiii == 0 ? !thisFinished : gg.elementAt(iiii - 1).allFinished && !thisFinished;
+                    List<GeneralStageWithMatchesData<int>> g = GeneralStageWithMatches<int>(
+                      getTitle: (data) => data.matchday,
                       matches: ffff.matches,
-                      test: (prev, last) => last.matchday == prev.matchday,
-                    ).subphases;
+                      test: (prev, last) => last == prev,
+                    ).subphases
+                      ..sort((a, b) {
+                        var titleA = a.title;
+                        var titleB = b.title;
+                        return Comparable.compare(titleA, titleB);
+                      });
                     return StagePhaseMatches(
                       globalKey: GlobalKey(debugLabel: Uuid().v6()),
                       uuid: Uuid().v4(),
                       initiallyExpanded: initilExpand,
-                      title: DateFormat.yMMMM().format(ffff.month),
+                      title: DateFormat.yMMMM().format(ffff.title),
                       matches: [],
-                      subPhase: foldedMatchdays.mapIndexed((jjjj, gggg) {
+                      subPhase: g.mapIndexed((jjjj, gggg) {
                         bool thisFinished = gggg.allFinished;
-                        bool initilExpand = jjjj == 0 ? !thisFinished : foldedMonths.elementAt(jjjj - 1).allFinished && !thisFinished;
+                        bool initilExpand = jjjj == 0 ? !thisFinished : gg.elementAt(jjjj - 1).allFinished && !thisFinished;
                         return StagePhaseMatches(
-                          title: 'Matchday ${gggg.matchday}',
+                          title: 'Matchday ${gggg.title}',
                           uuid: Uuid().v4(),
                           initiallyExpanded: initilExpand,
                           globalKey: GlobalKey(debugLabel: Uuid().v6()),
@@ -301,7 +280,7 @@ extension ListMatchesX on List<Matche> {
                   },
                 ).toList()
               : [],
-          matches: (elm.stage == AppConstants.LEAGUESTAGE) ? [] : elm.matches,
+          matches: (elm.title == AppConstants.LEAGUESTAGE) ? [] : elm.matches,
         );
       },
     ).toList();
@@ -310,47 +289,32 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> _modelCup(List<Standing> standings) {
-    List<StageWithMatches> reducing = fold<List<StageWithMatches>>(
-      [],
-      (previousValue, element) {
-        var wheras = previousValue.where((e) => e.stage == element.stage);
-        if (wheras.isEmpty) {
-          previousValue.add(StageWithMatches(stage: element.stage, matches: [element]));
-        } else {
-          wheras.first.matches.add(element);
-        }
-        return previousValue;
-      },
-    );
-
-    List<StagePhaseMatches> expandPhaseStage = reducing.mapIndexed(
+    var g = GeneralStageWithMatches<String>(
+      getTitle: (data) => data.stage,
+      matches: this,
+      test: (prev, last) => prev == last,
+    ).subphases;
+    List<StagePhaseMatches> expandPhaseStage = g.mapIndexed(
       (index, e) {
         bool thisFinished = e.allFinished;
-        bool initilExpand = index == 0 ? !thisFinished : reducing.elementAt(index - 1).allFinished && !thisFinished;
+        bool initilExpand = index == 0 ? !thisFinished : g.elementAt(index - 1).allFinished && !thisFinished;
         List<StagePhaseMatches> Function() list = () {
-          var foldGroups = e.matches.fold(
-            <StageWithMatches>[],
-            (value, element) {
-              if (value.isEmpty) return value..add(StageWithMatches(stage: element.group ?? '', matches: [element]));
-              bool foldCondition = value.map((e) => e.stage).contains(element.group);
-              if (foldCondition) {
-                value.firstWhere((ve) => ve.stage == element.group).matches.add(element);
-              } else {
-                value.add(StageWithMatches(stage: element.group ?? '', matches: [element]));
-              }
-              return value;
-            },
-          )..sort((a, b) => a.stage.compareTo(b.stage));
-          return foldGroups.mapIndexed(
+          var gg = GeneralStageWithMatches<String?>(
+            getTitle: (data) => data.group,
+            matches: e.matches,
+            test: (prev, last) => prev == last,
+          ).subphases
+            ..sort((a, b) => a.title?.compareTo(b.title ?? '') ?? 0);
+          return gg.mapIndexed(
             (i, f) {
               bool thisFinished = f.allFinished;
-              bool initilExpand = i == 0 ? !thisFinished : foldGroups.elementAt(i - 1).allFinished && !thisFinished;
-              Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.stage.replaceAll('GROUP_', 'Group '));
+              bool initilExpand = i == 0 ? !thisFinished : gg.elementAt(i - 1).allFinished && !thisFinished;
+              Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.title?.replaceAll('GROUP_', 'Group '));
               return StagePhaseMatches(
                 globalKey: GlobalKey(debugLabel: Uuid().v6()),
                 initiallyExpanded: initilExpand,
                 uuid: Uuid().v4(),
-                title: f.stage.replaceAll('GROUP_', 'Group '),
+                title: f.title?.replaceAll('GROUP_', 'Group ') ?? '',
                 groupStanding: groupStanding,
                 matches: f.matches,
               );
@@ -361,10 +325,10 @@ extension ListMatchesX on List<Matche> {
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
           globalKey: GlobalKey(debugLabel: Uuid().v6()),
-          title: BotolaServices.stageName(e.stage),
+          title: BotolaServices.stageName(e.title),
           isSubPhase: false,
-          matches: (e.stage != AppConstants.GROUPSTAGE) ? e.matches : <Matche>[],
-          subPhase: (e.stage == AppConstants.GROUPSTAGE) ? list() : <StagePhaseMatches>[],
+          matches: (e.title != AppConstants.GROUPSTAGE) ? e.matches : <Matche>[],
+          subPhase: (e.title == AppConstants.GROUPSTAGE) ? list() : <StagePhaseMatches>[],
         );
       },
     ).toList();
@@ -373,35 +337,27 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> get _modelLeague {
-    var reducingMatchdays = fold<List<PhaseMatches>>(
-      [],
-      (previousValue, element) {
-        var wheras = previousValue.where((e) => e.matchday == element.matchday);
-        if (wheras.isEmpty) {
-          previousValue.add(PhaseMatches(matchday: element.matchday, matches: [element]));
-        } else {
-          wheras.first.matches.add(element);
-        }
-        return previousValue;
-      },
-    )..sort((a, b) => a.matchday - b.matchday);
+    List<GeneralStageWithMatchesData<int>> gg = GeneralStageWithMatches<int>(
+      getTitle: (data) => data.matchday,
+      matches: this,
+      test: (prev, last) => prev == last,
+    ).subphases
+      ..sort((a, b) => a.title.compareTo(b.title));
 
-    var foldExpandMatchdays = reducingMatchdays.mapIndexed(
+    return gg.mapIndexed(
       (i, e) {
         bool thisFinished = e.allFinished;
-        bool initilExpand = i == 0 ? !thisFinished : reducingMatchdays.elementAt(i - 1).allFinished && !thisFinished;
+        bool initilExpand = i == 0 ? !thisFinished : gg.elementAt(i - 1).allFinished && !thisFinished;
         return StagePhaseMatches(
           uuid: Uuid().v4(),
           globalKey: GlobalKey(debugLabel: Uuid().v6()),
           initiallyExpanded: initilExpand,
-          title: BotolaServices.stageName('Matchday ${e.matchday}'),
+          title: BotolaServices.stageName('Matchday ${e.title}'),
           isSubPhase: false,
           matches: e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate)),
         );
       },
     ).toList();
-
-    return foldExpandMatchdays;
   }
 
   List<StagePhaseMatches> stagePhaseData({
@@ -450,5 +406,18 @@ extension ListX<T> on List<T> {
   List<T> joinByBuilder(T Function(int index) builder, {bool outline = true}) {
     var inline = mapIndexed((i, e) => [if (i != 0) builder(i), e]).toList().expand((e) => e).toList();
     return [if (outline) builder(0), ...inline, if (outline) builder(length)];
+  }
+}
+
+extension CardIconX on Widget {
+  Widget toCard({Color? color, double pad = 6}) {
+    return Card(
+      elevation: 1,
+      color: color ?? Get.theme.colorScheme.surface,
+      child: Padding(
+        padding: EdgeInsets.all(pad),
+        child: this,
+      ),
+    );
   }
 }

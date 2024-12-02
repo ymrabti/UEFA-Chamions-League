@@ -24,7 +24,7 @@ class HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
-      child: ScaffoldWidget(
+      child: ScaffoldBuilder(
         appBar: AppBar(
           title: Text('Botola Max'),
           leading: InkWell(

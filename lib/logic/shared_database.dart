@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+
 import 'package:botola_max/lib.dart';
-// import 'package:flutter/services.dart';
 import 'package:path/path.dart' show basename;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -133,31 +133,39 @@ abstract class SharedPrefsDatabase {
 
   static Future<RefreshCompetiton?> refreshCompetition({
     required BuildContext context,
-    required TheCompetition theCompetition,
+    required String code,
+    required String type,
     bool getLocal = true,
   }) async {
     context.read<AppState>().setLoading(true);
     late DataCompetition dataMatches;
-    bool exist = context.read<AppState>().isCompExist(theCompetition.code);
+    bool exist = context.read<AppState>().isCompExist(code);
     if (exist && getLocal) {
-      dataMatches = context.read<AppState>().getCompetition(theCompetition.code);
+      dataMatches = context.read<AppState>().getCompetition(code);
     } else {
-      dataMatches = await AppLogic.getCompetitionByID(theCompetition.code, false);
+      DataCompetition? dataCompetition = await AppLogic.getCompetitionByID(code, false);
+      if (dataCompetition == null) return null;
+      dataMatches = dataCompetition;
       if (!context.mounted) return null;
-      await context.read<AppState>().addCompetition(theCompetition.code, dataMatches);
+      await context.read<AppState>().addCompetition(code, dataMatches);
     }
     if (!context.mounted) return null;
     context.read<AppState>().cleanExpansion();
     List<Matche> list = dataMatches.matcheModel.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
     var standings = dataMatches.standingModel.standings;
-    var stagePhaseData = list.stagePhaseData(code: theCompetition.code, standings: standings, type: theCompetition.type);
+    var stagePhaseData = list.stagePhaseData(code: code, standings: standings, type: type);
     List<StagePhase> expd = stagePhaseData.extractStagePhasesWithFold();
     var stagedData = expd.map((e) => MapEntry(e.uuid, e.initiallyExpanded));
     var first1 = expd.firstWhereOrNull((e) => e.initiallyExpanded && e.isSubPhase);
     var first2 = expd.firstWhereOrNull((e) => e.initiallyExpanded);
     StagePhase? expanded = first1 ?? first2;
     context.read<AppState>().setLoading(false);
-    return (expanded: expanded, stagePhaseData: stagePhaseData, stagedData: stagedData, dataMatches: dataMatches);
+    return RefreshCompetiton(
+      expanded: expanded,
+      stagePhaseData: stagePhaseData,
+      stagedData: stagedData,
+      dataCompetition: dataMatches,
+    );
   }
 }
 
@@ -300,9 +308,15 @@ abstract class BotolaServices {
   }
 }
 
-typedef RefreshCompetiton = ({
-  DataCompetition dataMatches,
-  StagePhase? expanded,
-  List<StagePhaseMatches> stagePhaseData,
-  Iterable<MapEntry<String, bool>> stagedData,
-});
+class RefreshCompetiton {
+  DataCompetition dataCompetition;
+  StagePhase? expanded;
+  List<StagePhaseMatches> stagePhaseData;
+  Iterable<MapEntry<String, bool>> stagedData;
+  RefreshCompetiton({
+    required this.dataCompetition,
+    this.expanded,
+    required this.stagePhaseData,
+    required this.stagedData,
+  });
+}

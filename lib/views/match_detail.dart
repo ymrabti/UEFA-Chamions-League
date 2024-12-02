@@ -14,7 +14,7 @@ class MatchDetails extends StatelessWidget {
     String? group = matchDetails.matchDetails.group;
     String stage = matchDetails.matchDetails.stage;
     Winner? winnerSeason = matchDetails.matchDetails.season.winner;
-    return ScaffoldWidget(
+    return ScaffoldBuilder(
       appBar: AppBar(
         title: Text('${matchDetails.matchDetails.homeTeam.name} vs. ${matchDetails.matchDetails.awayTeam.name}'),
       ),
