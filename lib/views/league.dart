@@ -158,18 +158,29 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             ),
           );
         },
-        child: ListView(
-          children: <Widget>[
-            _brand(),
-            for (var match in widget.competition.stagePhaseData)
-              match.view(
-                context,
-                //   splashedSize:getRenderBox(),
-                splashedId: widget.competition.expanded?.uuid,
-                splashing: _splashing,
-              ),
-            _rank(snapData),
-          ],
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (notification) {
+            if (notification is ScrollStartNotification) {
+            } else if (notification is ScrollUpdateNotification) {
+            } else if (notification is ScrollEndNotification) {
+              setState(() {});
+            }
+
+            return notification is ScrollEndNotification;
+          },
+          child: ListView(
+            children: <Widget>[
+              _brand(),
+              for (var match in widget.competition.stagePhaseData)
+                match.view(
+                  context,
+                  //   splashedSize:getRenderBox(),
+                  splashedId: widget.competition.expanded?.uuid,
+                  splashing: _splashing,
+                ),
+              _rank(snapData),
+            ],
+          ),
         ),
       ),
     );
@@ -196,7 +207,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _logoCompetition(),
+                lovoVD(),
                 Expanded(
                   //   width: Get.width * .75,
                   child: Text(
@@ -223,9 +234,6 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
       onVisibilityChanged: (visibilityInfo) {
         double visiblePercentage = visibilityInfo.visibleFraction * 100;
         _visiblePercentage = visiblePercentage;
-        if (mounted) {
-          setState(() {});
-        }
       },
       child: _logoCompetition(),
     );

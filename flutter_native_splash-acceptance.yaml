@@ -1,0 +1,12 @@
+# dart run flutter_native_splash:create --flavors development,acceptance,production
+flutter_native_splash:
+    image: src/logo-profile.png
+    image_dark: src/logo-profile.png
+    color: "#00b6a8"
+    color_dark: "#182a2d"
+
+    android_12:
+        image: src/logo-profile.png
+        image_dark: src/logo-profile.png
+        color: "#00b6a8"
+        color_dark: "#182a2d"
