@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:botola_max/views/loading_splash.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -18,7 +17,7 @@ final GlobalKey keyTextSlogan = GlobalKey();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb && (Platform.isAndroid || Platform.isIOS) && kDebugMode) {
+  if ((BotolaPlatform.isAndroid || BotolaPlatform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
   }
   final SettingsController settingsController = SettingsController();

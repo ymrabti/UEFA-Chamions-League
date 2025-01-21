@@ -165,6 +165,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
     return isConnected
         ? WidgetWithWaiter(
             child: Scaffold /*  */ (
+              backgroundColor: widget.backgroundColor,
               appBar: widget.appBar,
               body: widget.body,
             ),

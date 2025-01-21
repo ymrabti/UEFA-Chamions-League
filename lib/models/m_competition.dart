@@ -748,9 +748,9 @@ class BotolaCompetition {
   String get anthem {
     switch (code) {
       case 'CL':
-        return 'assets/bg_audio.mp3';
+        return 'bg_audio.mp3';
       case 'WC':
-        return 'assets/wc_qatar.mp3';
+        return 'wc_qatar.mp3';
       default:
         return '';
     }
@@ -1061,7 +1061,7 @@ class CurrentSeason {
       id: int.parse('${json[CurrentSeasonEnum.id.name]}'),
       startDate: DateTime.parse('${json[CurrentSeasonEnum.startDate.name]}'),
       endDate: DateTime.parse('${json[CurrentSeasonEnum.endDate.name]}'),
-      currentMatchday: int.parse('${json[CurrentSeasonEnum.currentMatchday.name]}'),
+      currentMatchday: int.tryParse('${json[CurrentSeasonEnum.currentMatchday.name]}') ?? 0,
       winner: jsonWinner == null
           ? null
           : jsonWinner is Map<String, Object?>

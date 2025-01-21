@@ -91,9 +91,10 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               Center(
                 child: Container(
+                  width: 250,
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/logo-max-botola.png'),
+                      image: AssetImage('assets/logo-animated.gif'),
                     ),
                   ),
                 ),

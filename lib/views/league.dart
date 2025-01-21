@@ -3,7 +3,8 @@ import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:just_audio/just_audio.dart';
+// import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 final List<String> elbrem = ['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
@@ -24,6 +25,24 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   final AudioPlayer player = AudioPlayer();
   bool zoomed = false;
   bool _splashing = false;
+
+  Future<void> startAudio(String anthem) async {
+    // await player.setAudioSource(AudioSource.asset(anthem));
+    await player.setVolume(0.15);
+    // await player.setLoopMode(LoopMode.all);
+    await player.play(AssetSource(anthem));
+    player.onPlayerStateChanged.listen((event) {
+      if (event == PlayerState.completed) {
+        player.seek(Duration.zero);
+        player.resume();
+        // player.play(AssetSource(anthem));
+      }
+    });
+    // await player.pause();
+    // await player.seek(const Duration(seconds: 10));
+    // await player.setSpeed(2.0);
+    // await player.stop();
+  }
 
   @override
   void initState() {
@@ -77,10 +96,10 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
                 } else {
                   _controller.forward();
                 }
-                if (player.playing) {
+                if (player.state == PlayerState.playing) {
                   await player.pause();
                 } else {
-                  await player.play();
+                  await player.resume();
                 }
               },
               child: Card(
@@ -159,13 +178,12 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
           );
         },
         child: NotificationListener<ScrollNotification>(
-          onNotification: (notification) {
+          onNotification: (ScrollNotification notification) {
             if (notification is ScrollStartNotification) {
             } else if (notification is ScrollUpdateNotification) {
             } else if (notification is ScrollEndNotification) {
               setState(() {});
             }
-
             return notification is ScrollEndNotification;
           },
           child: ListView(
@@ -231,7 +249,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   VisibilityDetector lovoVD() {
     return VisibilityDetector(
       key: keyTextSlogan,
-      onVisibilityChanged: (visibilityInfo) {
+      onVisibilityChanged: (VisibilityInfo visibilityInfo) {
         double visiblePercentage = visibilityInfo.visibleFraction * 100;
         _visiblePercentage = visiblePercentage;
       },
@@ -317,19 +335,9 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
     return currentContext;
   }
 
-  Future<void> startAudio(String anthem) async {
-    await player.setAudioSource(AudioSource.asset(anthem));
-    await player.setVolume(0.5);
-    await player.setLoopMode(LoopMode.all);
-    await player.play();
-    // await player.pause();
-    // await player.seek(const Duration(seconds: 10));
-    // await player.setSpeed(2.0);
-    // await player.stop();
-  }
-
   Future<void> pauseAudio() async {
-    await player.pause();
+    await player.stop();
+    await player.dispose();
   }
 
   @override

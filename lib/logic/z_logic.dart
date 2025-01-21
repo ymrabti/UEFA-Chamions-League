@@ -1,3 +1,4 @@
+export 'platform/platform.dart';
 export 'api.dart';
 export 'extensions.dart';
 export 'i_generic.dart';
