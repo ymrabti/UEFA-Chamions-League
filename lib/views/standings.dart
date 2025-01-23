@@ -79,33 +79,31 @@ class TableStanding extends StatelessWidget {
                             Expanded(flex: 1, child: Text('${index + 1}', textAlign: TextAlign.center)),
                             Expanded(
                               flex: 2,
-                              child: FittedBox(
-                                child: Row(
-                                  children: [
-                                    Stack(
-                                      children: [
-                                        TeamAvatar(
-                                          team: e.team,
-                                          tag: e.team.crest,
-                                        ),
-                                        if (index < 2)
-                                          Align(
-                                            alignment: Alignment.bottomRight,
-                                            child: Icon(
-                                              Icons.verified,
-                                              color: Theme.of(context).primaryColor,
-                                              size: 15,
-                                              shadows: [Shadow(blurRadius: 5, color: Colors.white)],
-                                            ),
+                              child: Row(
+                                children: [
+                                  Stack(
+                                    children: [
+                                      TeamAvatar(
+                                        team: e.team,
+                                        tag: e.team.crest,
+                                      ),
+                                      if (index < 2)
+                                        Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Icon(
+                                            Icons.verified,
+                                            color: Theme.of(context).primaryColor,
+                                            size: 15,
+                                            shadows: [Shadow(blurRadius: 5, color: Colors.white)],
                                           ),
-                                      ],
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: Text(e.team.tla, textAlign: TextAlign.center),
-                                    ),
-                                  ],
-                                ),
+                                        ),
+                                    ],
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(e.team.tla, textAlign: TextAlign.center),
+                                  ),
+                                ],
                               ),
                             ),
                             Expanded(flex: 1, child: Text('${e.playedGames}', textAlign: TextAlign.center)),

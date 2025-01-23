@@ -18,6 +18,7 @@ class CompetitionScorersPage extends StatelessWidget {
     }
     return ScaffoldBuilder(
       appBar: AppBar(
+        bottom: BotolaPlatform.isDesktop || BotolaPlatform.isWeb ? AppBar() : null,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: AppFileImageViewer(

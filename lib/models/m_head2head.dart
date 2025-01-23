@@ -194,12 +194,12 @@ import "package:botola_max/lib.dart";
 class MatchHead2HeadModel extends IGenericAppModel {
   final H2HResultSet resultSet;
 
-  final Aggregates aggregates;
+  final Aggregates? aggregates;
 
   final List<Matche> matches;
   MatchHead2HeadModel({
     required this.resultSet,
-    required this.aggregates,
+    this.aggregates,
     required this.matches,
   });
 
@@ -219,15 +219,16 @@ class MatchHead2HeadModel extends IGenericAppModel {
   Map<String, Object?> toJson() {
     return {
       MatchHead2HeadModelEnum.resultSet.name: resultSet.toJson(),
-      MatchHead2HeadModelEnum.aggregates.name: aggregates.toJson(),
+      MatchHead2HeadModelEnum.aggregates.name: aggregates?.toJson(),
       MatchHead2HeadModelEnum.matches.name: matches.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
     };
   }
 
   factory MatchHead2HeadModel.fromJson(Map<String, Object?> json) {
+    var jsonAggregates = json[MatchHead2HeadModelEnum.aggregates.name] as Map<String, Object?>?;
     return MatchHead2HeadModel(
       resultSet: H2HResultSet.fromJson(json[MatchHead2HeadModelEnum.resultSet.name] as Map<String, Object?>),
-      aggregates: Aggregates.fromJson(json[MatchHead2HeadModelEnum.aggregates.name] as Map<String, Object?>),
+      aggregates: jsonAggregates == null ? null : Aggregates.fromJson(jsonAggregates),
       matches: (json[MatchHead2HeadModelEnum.matches.name] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
@@ -595,16 +596,16 @@ enum AggregatesEnum {
 class H2HResultSet {
   final int count;
 
-  final String competitions;
+  final String? competitions;
 
-  final DateTime first;
+  final DateTime? first;
 
-  final DateTime last;
+  final DateTime? last;
   H2HResultSet({
     required this.count,
-    required this.competitions,
-    required this.first,
-    required this.last,
+    this.competitions,
+    this.first,
+    this.last,
   });
 
   H2HResultSet copyWith({
@@ -633,9 +634,9 @@ class H2HResultSet {
   factory H2HResultSet.fromJson(Map<String, Object?> json) {
     return H2HResultSet(
       count: int.parse('${json[ResultSetEnum.count.name]}'),
-      competitions: json[ResultSetEnum.competitions.name] as String,
-      first: DateTime.parse('${json[ResultSetEnum.first.name]}').add(DateTime.now().timeZoneOffset),
-      last: DateTime.parse('${json[ResultSetEnum.last.name]}').add(DateTime.now().timeZoneOffset),
+      competitions: json[ResultSetEnum.competitions.name] as String?,
+      first: DateTime.tryParse('${json[ResultSetEnum.first.name]}')?.add(DateTime.now().timeZoneOffset),
+      last: DateTime.tryParse('${json[ResultSetEnum.last.name]}')?.add(DateTime.now().timeZoneOffset),
     );
   }
 

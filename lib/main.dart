@@ -97,8 +97,10 @@ class BotolaOffline extends StatelessWidget {
             const Icon(Icons.signal_cellular_connected_no_internet_4_bar_rounded).toCard(),
             const Gap(20),
             const Icon(Icons.airplanemode_active_rounded).toCard(),
-            /* const Gap(20),
-                const Icon(Icons.bluetooth_disabled).toCard(), */
+            /* 
+            const Gap(20),
+            const Icon(Icons.bluetooth_disabled).toCard(), 
+            */
           ],
         ),
       ],

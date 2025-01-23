@@ -135,52 +135,56 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Builder _matchToday(GeneralStageWithMatchesData<Competition> e) {
-    return Builder(builder: (context) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Stack(
-          children: [
-            ExpansionTile(
-              key: e.title.globalKey,
-              maintainState: true,
-              title: Text(e.title.name),
-              initiallyExpanded: !e.allFinished,
-              children: e.matches.map((f) => f.view).toList(),
-            ),
-            if (_competition?.code == e.title.code && _splashing)
-              Positioned.fill(
-                child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).primaryColor.withOpacity(0.7),
-                    Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
-                  ),
-                  child: Container(
-                    color: Colors.transparent,
+    return Builder(
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Stack(
+            children: [
+              ExpansionTile(
+                key: e.title.globalKey,
+                maintainState: true,
+                title: Text(e.title.name),
+                initiallyExpanded: !e.allFinished,
+                children: e.matches.map((f) => f.view).toList(),
+              ),
+              if (_competition?.code == e.title.code && _splashing)
+                Positioned.fill(
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
+                    ),
+                    child: Container(
+                      color: Colors.transparent,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        ),
-      );
-    });
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Builder bottom() {
-    return Builder(builder: (context) {
-      return Stack(
-        children: [
-          ClipPath(
-            clipper: Customshape(),
-            child: Container(
-              height: 130,
-              width: MediaQuery.of(context).size.width,
-              color: Theme.of(context).colorScheme.primary,
+    return Builder(
+      builder: (context) {
+        return Stack(
+          children: [
+            ClipPath(
+              clipper: Customshape(),
+              child: Container(
+                height: 130,
+                width: MediaQuery.of(context).size.width,
+                color: Theme.of(context).colorScheme.primary,
+              ),
             ),
-          ),
-          dropDown(),
-        ],
-      );
-    });
+            dropDown(),
+          ],
+        );
+      },
+    );
   }
 
   Builder dropDown() {

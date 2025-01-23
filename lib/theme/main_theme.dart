@@ -223,7 +223,18 @@ ThemeData mainTheme({required bool dark}) {
     textSelectionTheme: null,
     timePickerTheme: TimePickerThemeData(),
     toggleButtonsTheme: null,
-    tooltipTheme: TooltipThemeData(decoration: BoxDecoration()),
+    tooltipTheme: TooltipThemeData(
+      textStyle: TextStyle(
+        color: fgColor,
+        fontSize: 16,
+      ),
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: bgColor.inputFillColor(30, dark),
+        border: Border.all(color: fgColor.inputFillColor(30, dark), width: 2),
+        borderRadius: BorderRadius.circular(12),
+      ),
+    ),
     // typography: null,
     //
   );

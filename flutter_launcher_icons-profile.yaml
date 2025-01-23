@@ -6,3 +6,12 @@ flutter_launcher_icons:
     remove_alpha_ios: true
     # adaptive_icon_background: "#671bbd"
     adaptive_icon_foreground: "src/logo-profile.png"
+    web:
+        generate: true
+        image_path: "src/logo-profile.png"
+        # background_color: "#hexcode"
+        # theme_color: "#hexcode"
+    windows:
+        generate: true
+        image_path: "src/logo-profile.png"
+        icon_size: 150

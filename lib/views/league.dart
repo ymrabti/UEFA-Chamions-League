@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 // import 'package:just_audio/just_audio.dart';
 import 'package:audioplayers/audioplayers.dart';
@@ -69,22 +70,25 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     DataCompetition snapData = widget.competition.dataCompetition;
     String anthem = widget.competition.dataCompetition.theCompetition.anthem;
+    String competitionCode = widget.competition.dataCompetition.theCompetition.code;
     return ScaffoldBuilder(
       appBar: AppBar(
-        title: _animated(
-          Text(
-            widget.competition.dataCompetition.theCompetition.name,
-          ),
-        ),
+        bottom: BotolaPlatform.isDesktop || BotolaPlatform.isWeb ? AppBar() : null,
         leading: _animated(
           AppFileImageViewer(
             url: widget.competition.dataCompetition.theCompetition.emblem,
             width: 40,
-            color: elbrem.contains(anthem)
+            color: elbrem.contains(competitionCode)
                 ? Theme.of(context).colorScheme.background.invers(
                       true,
                     )
                 : null,
+          ),
+        ),
+        title: _animated(
+          Text(
+            widget.competition.dataCompetition.theCompetition.name,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
         actions: [
@@ -181,9 +185,8 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollStartNotification) {
             } else if (notification is ScrollUpdateNotification) {
-            } else if (notification is ScrollEndNotification) {
-              setState(() {});
-            }
+            } else if (notification is ScrollEndNotification) {}
+            setState(() {});
             return notification is ScrollEndNotification;
           },
           child: ListView(
@@ -358,8 +361,9 @@ class LeagueStandings extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaffoldBuilder(
       appBar: AppBar(
+        bottom: BotolaPlatform.isDesktop || BotolaPlatform.isWeb ? AppBar() : null,
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8.0.r),
           child: AppFileImageViewer(
             url: (model.emblem),
             width: 40,
@@ -374,7 +378,7 @@ class LeagueStandings extends StatelessWidget {
       body: ListView(
         children: standings.standingModel.standings
             .map(
-              (e) => e.view(),
+              (Standing e) => e.view(),
             )
             .toList(),
       ),
