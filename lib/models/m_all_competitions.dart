@@ -196,6 +196,7 @@ class TheCompetition {
               children: [
                 AppFileImageViewer(
                   width: 40,
+                  height: 40,
                   url: (theCompitition.emblem),
                   color: elbrem.contains(theCompitition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
                 ),

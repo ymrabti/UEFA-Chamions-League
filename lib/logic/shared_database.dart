@@ -69,7 +69,7 @@ abstract class SharedPrefsDatabase {
     Uint8List imageBytes = byteData.buffer.asUint8List();
 
     String fileName = 'max-botola-logo.png';
-    String filePath = '${appDirectory.path}/$fileName';
+    String filePath = '${appDirectory.path}/Botola-Max/$fileName';
 
     File file = File(filePath);
     await file.writeAsBytes(imageBytes);
@@ -115,7 +115,7 @@ abstract class SharedPrefsDatabase {
       String fileName /***/ = basename(imageUrl);
 
       // Create a file path in the app's private directory
-      String savePath = '${appDirectory.path}/$fileName' /* .replaceAll('.svg', '.png') */;
+      String savePath = '${appDirectory.path}/Botola-Max/$fileName' /* .replaceAll('.svg', '.png') */;
 
       // if (exte == '.svg') {
       // String exte /******/ = extension(imageUrl);

@@ -23,6 +23,7 @@ class SettingsController with ChangeNotifier {
 
   Future<void> loadSettings() async {
     Directory appDirectory = await getApplicationDocumentsDirectory();
+    Directory('${appDirectory.path}/Botola-Max').createSync();
     String fallbackUrl = await SharedPrefsDatabase.saveAssetImage(appDirectory);
     _settings = await _settingsService._getSettings();
     _themeMode = _settings.brightness;

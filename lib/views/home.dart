@@ -53,29 +53,28 @@ class HomeScreenState extends State<HomeScreen> {
               )
           ],
         ),
-        body: _bodyCSV(),
+        body: bodyLV(),
       ),
     );
   }
 
-  Stack bodyLV(BuildContext context) {
-    return Stack(
+  Widget bodyLV() {
+    return Column(
       children: [
-        ListView(
-          physics: BouncingScrollPhysics(),
-          children: [
-            SizedBox(
-              height: 130,
+        Container(color: Theme.of(context).colorScheme.primary, child: bottom()),
+        Expanded(
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              children: children(),
             ),
-            ...children()
-          ],
+          ),
         ),
-        bottom(),
       ],
     );
   }
 
-  Builder _bodyCSV() {
+  Builder bodyCSV() {
     return Builder(builder: (context) {
       List<Widget> chuldren = children();
       return CustomScrollView(
@@ -172,14 +171,14 @@ class HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return Stack(
           children: [
-            ClipPath(
+            /* ClipPath(
               clipper: Customshape(),
               child: Container(
                 height: 130,
                 width: MediaQuery.of(context).size.width,
                 color: Theme.of(context).colorScheme.primary,
               ),
-            ),
+            ), */
             dropDown(),
           ],
         );

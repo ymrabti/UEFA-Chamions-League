@@ -52,9 +52,10 @@ class AppFileImageViewer extends StatelessWidget {
   Image _image(String url) {
     return Image(
       image: _imageSource(url),
-      width: width, color: color,
-      height: height, fit: boxFit,
-
+      width: width,
+      color: color,
+      height: height,
+      fit: boxFit,
       loadingBuilder: (context, child, loadingProgress) {
         var loading = loadingProgress;
         if (loading == null) return child;
@@ -78,7 +79,11 @@ class AppFileImageViewer extends StatelessWidget {
 
   ImageProvider<Object> _imageSource(String? e) {
     var img = e;
-    if (img == null) return AssetImage('assets/logo-light.png');
+    if (img == null) {
+      return AssetImage(
+        'assets/logo-light.png',
+      );
+    }
     return FileImage(File(img));
   }
 }

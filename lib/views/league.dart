@@ -189,18 +189,20 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             setState(() {});
             return notification is ScrollEndNotification;
           },
-          child: ListView(
-            children: <Widget>[
-              _brand(),
-              for (var match in widget.competition.stagePhaseData)
-                match.view(
-                  context,
-                  //   splashedSize:getRenderBox(),
-                  splashedId: widget.competition.expanded?.uuid,
-                  splashing: _splashing,
-                ),
-              _rank(snapData),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _brand(),
+                for (var match in widget.competition.stagePhaseData)
+                  match.view(
+                    context,
+                    //   splashedSize:getRenderBox(),
+                    splashedId: widget.competition.expanded?.uuid,
+                    splashing: _splashing,
+                  ),
+                _rank(snapData),
+              ],
+            ),
           ),
         ),
       ),
@@ -375,12 +377,15 @@ class LeagueStandings extends StatelessWidget {
           child: Text(model.name + ' standings'),
         ),
       ),
-      body: ListView(
-        children: standings.standingModel.standings
-            .map(
-              (Standing e) => e.view(),
-            )
-            .toList(),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: standings.standingModel.standings
+              .map(
+                (Standing e) => e.view(),
+              )
+              .toList(),
+        ),
       ),
     );
   }
