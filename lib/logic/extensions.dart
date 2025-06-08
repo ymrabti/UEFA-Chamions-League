@@ -76,7 +76,7 @@ class GoalRankingPerTeam extends AbstractGoalRanking {
 
 extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
   List<StagePhase> extractStagePhases() {
-    List<StagePhase> stagePhases = [];
+    List<StagePhase> stagePhases = <StagePhase>[];
 
     // Helper function to convert StagePhaseMatches to StagePhase and flatten subphases
     void flatten(StagePhaseMatches spm) {
@@ -94,13 +94,13 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
       );
 
       // Recursively flatten subphases
-      for (var subPhase in spm.subPhase) {
+      for (StagePhaseMatches subPhase in spm.subPhase) {
         flatten(subPhase);
       }
     }
 
     // Iterate over the top-level list and flatten each item
-    for (var spm in this) {
+    for (StagePhaseMatches spm in this) {
       flatten(spm);
     }
 
@@ -110,7 +110,7 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
   List<StagePhase> extractStagePhasesWithFold() {
     // Helper function to convert StagePhaseMatches to StagePhase
     List<StagePhase> flatten(StagePhaseMatches spm) {
-      List<StagePhase> stagePhases = [];
+      List<StagePhase> stagePhases = <StagePhase>[];
 
       // Convert the StagePhaseMatches to StagePhase
       stagePhases.add(
@@ -126,13 +126,13 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
       );
 
       // Recursively flatten subphases
-      stagePhases.addAll(spm.subPhase.fold<List<StagePhase>>([], (acc, subPhase) => acc..addAll(flatten(subPhase))));
+      stagePhases.addAll(spm.subPhase.fold<List<StagePhase>>(<StagePhase>[], (List<StagePhase> acc, StagePhaseMatches subPhase) => acc..addAll(flatten(subPhase))));
 
       return stagePhases;
     }
 
     // Use Fold to accumulate the result into a flat list
-    return fold<List<StagePhase>>([], (acc, spm) => acc..addAll(flatten(spm)));
+    return fold<List<StagePhase>>(<StagePhase>[], (List<StagePhase> acc, StagePhaseMatches spm) => acc..addAll(flatten(spm)));
   }
 }
 
@@ -146,7 +146,7 @@ extension ListMatchesX on List<Matche> {
     int scorePTAway = 0;
     int scoreFTHome = 0;
     int scoreFTAway = 0;
-    for (var match in this) {
+    for (Matche match in this) {
       int _scoreRTHome = match.score.regularTime.home;
       int _scoreRTAway = match.score.regularTime.away;
       int _scoreETHome = match.score.extraTime.home;
@@ -181,7 +181,7 @@ extension ListMatchesX on List<Matche> {
     List<GoalRankingPerTeam> teams = fold<List<GoalRankingPerTeam>>(
       <GoalRankingPerTeam>[],
       (List<GoalRankingPerTeam> pmm, Matche cmm) {
-        List<int> mapIDs = pmm.map((e) => e.team.id).toList();
+        List<int> mapIDs = pmm.map((GoalRankingPerTeam e) => e.team.id).toList();
         if (!mapIDs.contains(cmm.homeTeam.id)) {
           return pmm..add(GoalRankingPerTeam(team: cmm.homeTeam));
         }
@@ -193,7 +193,7 @@ extension ListMatchesX on List<Matche> {
       teams,
       (List<GoalRankingPerTeam> pm, Matche cm) {
         // // //
-        GoalRankingPerTeam? homeTeam = pm.firstWhereOrNull((e) => e.team.id == cm.homeTeam.id);
+        GoalRankingPerTeam? homeTeam = pm.firstWhereOrNull((GoalRankingPerTeam e) => e.team.id == cm.homeTeam.id);
         homeTeam?.scoredHTHome += cm.score.halfTime.home;
         homeTeam?.scoredHTAway += cm.score.halfTime.away;
         homeTeam?.scoredRTHome += cm.score.regularTime.home;
@@ -204,7 +204,7 @@ extension ListMatchesX on List<Matche> {
         homeTeam?.scoredPTAway += cm.score.penalties.away;
         homeTeam?.scoredFTHome += cm.score.fullTime.home;
         homeTeam?.scoredFTAway += cm.score.fullTime.away;
-        GoalRankingPerTeam? awayTeam = pm.firstWhereOrNull((e) => e.team.id == cm.awayTeam.id);
+        GoalRankingPerTeam? awayTeam = pm.firstWhereOrNull((GoalRankingPerTeam e) => e.team.id == cm.awayTeam.id);
         awayTeam?.scoredHTAway += cm.score.halfTime.home;
         awayTeam?.scoredHTHome += cm.score.halfTime.away;
         awayTeam?.scoredRTAway += cm.score.regularTime.home;
@@ -221,23 +221,23 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> get _modelCL {
-    var stages = GeneralStageWithMatches<String>(
-      getTitle: (data) => data.stage,
+    List<GeneralStageWithMatchesData<String>> stages = GeneralStageWithMatches<String>(
+      getTitle: (Matche data) => data.stage,
       matches: this,
-      test: (prev, last) => prev == last,
+      test: (String prev, String last) => prev == last,
     ).subphases;
 
     List<StagePhaseMatches> expandStagePhase = stages.mapIndexed(
-      (index, elm) {
+      (int index, GeneralStageWithMatchesData<String> elm) {
         bool thisFinished = elm.allFinished;
         bool initilExpand = index == 0 ? !thisFinished : stages.elementAt(index - 1).allFinished && !thisFinished;
 
-        var gg = GeneralStageWithMatches<DateTime>(
-          getTitle: (data) => data.utcDate,
+        List<GeneralStageWithMatchesData<DateTime>> gg = GeneralStageWithMatches<DateTime>(
+          getTitle: (Matche data) => data.utcDate,
           matches: elm.matches,
-          test: (prev, last) => prev.sameMonth(last),
+          test: (DateTime prev, DateTime last) => prev.sameMonth(last),
         ).subphases
-          ..sort((a, b) => a.title.compareTo(b.title));
+          ..sort((GeneralStageWithMatchesData<DateTime> a, GeneralStageWithMatchesData<DateTime> b) => a.title.compareTo(b.title));
         return StagePhaseMatches(
           initiallyExpanded: initilExpand,
           uuid: Uuid().v4(),
@@ -246,17 +246,17 @@ extension ListMatchesX on List<Matche> {
           title: BotolaServices.stageName(elm.title),
           subPhase: (elm.title == AppConstants.LEAGUESTAGE)
               ? gg.mapIndexed(
-                  (iiii, ffff) {
+                  (int iiii, GeneralStageWithMatchesData<DateTime> ffff) {
                     bool thisFinished = ffff.allFinished;
                     bool initilExpand = iiii == 0 ? !thisFinished : gg.elementAt(iiii - 1).allFinished && !thisFinished;
                     List<GeneralStageWithMatchesData<int>> g = GeneralStageWithMatches<int>(
-                      getTitle: (data) => data.matchday,
+                      getTitle: (Matche data) => data.matchday,
                       matches: ffff.matches,
-                      test: (prev, last) => last == prev,
+                      test: (int prev, int last) => last == prev,
                     ).subphases
-                      ..sort((a, b) {
-                        var titleA = a.title;
-                        var titleB = b.title;
+                      ..sort((GeneralStageWithMatchesData<int> a, GeneralStageWithMatchesData<int> b) {
+                        int titleA = a.title;
+                        int titleB = b.title;
                         return Comparable.compare(titleA, titleB);
                       });
                     return StagePhaseMatches(
@@ -264,8 +264,8 @@ extension ListMatchesX on List<Matche> {
                       uuid: Uuid().v4(),
                       initiallyExpanded: initilExpand,
                       title: DateFormat.yMMMM().format(ffff.title),
-                      matches: [],
-                      subPhase: g.mapIndexed((jjjj, gggg) {
+                      matches: <Matche>[],
+                      subPhase: g.mapIndexed((int jjjj, GeneralStageWithMatchesData<int> gggg) {
                         bool thisFinished = gggg.allFinished;
                         bool initilExpand = jjjj == 0 ? !thisFinished : gg.elementAt(jjjj - 1).allFinished && !thisFinished;
                         return StagePhaseMatches(
@@ -273,14 +273,14 @@ extension ListMatchesX on List<Matche> {
                           uuid: Uuid().v4(),
                           initiallyExpanded: initilExpand,
                           globalKey: GlobalKey(debugLabel: Uuid().v6()),
-                          matches: gggg.matches..sort((a, b) => a.matchday.compareTo(b.matchday)),
+                          matches: gggg.matches..sort((Matche a, Matche b) => a.matchday.compareTo(b.matchday)),
                         );
                       }).toList(),
                     );
                   },
                 ).toList()
-              : [],
-          matches: (elm.title == AppConstants.LEAGUESTAGE) ? [] : elm.matches,
+              : <StagePhaseMatches>[],
+          matches: (elm.title == AppConstants.LEAGUESTAGE) ? <Matche>[] : elm.matches,
         );
       },
     ).toList();
@@ -289,24 +289,24 @@ extension ListMatchesX on List<Matche> {
   }
 
   List<StagePhaseMatches> _modelCup(List<Standing> standings) {
-    var g = GeneralStageWithMatches<String>(
-      getTitle: (data) => data.stage,
+    List<GeneralStageWithMatchesData<String>> g = GeneralStageWithMatches<String>(
+      getTitle: (Matche data) => data.stage,
       matches: this,
-      test: (prev, last) => prev == last,
+      test: (String prev, String last) => prev == last,
     ).subphases;
     List<StagePhaseMatches> expandPhaseStage = g.mapIndexed(
-      (index, e) {
+      (int index, GeneralStageWithMatchesData<String> e) {
         bool thisFinished = e.allFinished;
         bool initilExpand = index == 0 ? !thisFinished : g.elementAt(index - 1).allFinished && !thisFinished;
         List<StagePhaseMatches> Function() list = () {
-          var gg = GeneralStageWithMatches<String?>(
-            getTitle: (data) => data.group,
+          List<GeneralStageWithMatchesData<String?>> gg = GeneralStageWithMatches<String?>(
+            getTitle: (Matche data) => data.group,
             matches: e.matches,
-            test: (prev, last) => prev == last,
+            test: (String? prev, String? last) => prev == last,
           ).subphases
-            ..sort((a, b) => a.title?.compareTo(b.title ?? '') ?? 0);
+            ..sort((GeneralStageWithMatchesData<String?> a, GeneralStageWithMatchesData<String?> b) => a.title?.compareTo(b.title ?? '') ?? 0);
           return gg.mapIndexed(
-            (i, f) {
+            (int i, GeneralStageWithMatchesData<String?> f) {
               bool thisFinished = f.allFinished;
               bool initilExpand = i == 0 ? !thisFinished : gg.elementAt(i - 1).allFinished && !thisFinished;
               Standing? groupStanding = standings.firstWhereOrNull((Standing ke) => ke.group == f.title?.replaceAll('GROUP_', 'Group '));
@@ -338,14 +338,14 @@ extension ListMatchesX on List<Matche> {
 
   List<StagePhaseMatches> get _modelLeague {
     List<GeneralStageWithMatchesData<int>> gg = GeneralStageWithMatches<int>(
-      getTitle: (data) => data.matchday,
+      getTitle: (Matche data) => data.matchday,
       matches: this,
-      test: (prev, last) => prev == last,
+      test: (int prev, int last) => prev == last,
     ).subphases
-      ..sort((a, b) => a.title.compareTo(b.title));
+      ..sort((GeneralStageWithMatchesData<int> a, GeneralStageWithMatchesData<int> b) => a.title.compareTo(b.title));
 
     return gg.mapIndexed(
-      (i, e) {
+      (int i, GeneralStageWithMatchesData<int> e) {
         bool thisFinished = e.allFinished;
         bool initilExpand = i == 0 ? !thisFinished : gg.elementAt(i - 1).allFinished && !thisFinished;
         return StagePhaseMatches(
@@ -354,7 +354,7 @@ extension ListMatchesX on List<Matche> {
           initiallyExpanded: initilExpand,
           title: BotolaServices.stageName('Matchday ${e.title}'),
           isSubPhase: false,
-          matches: e.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate)),
+          matches: e.matches..sort((Matche a, Matche b) => a.utcDate.compareTo(b.utcDate)),
         );
       },
     ).toList();
@@ -371,7 +371,7 @@ extension ListMatchesX on List<Matche> {
       case 'LEAGUE':
         return _modelLeague;
       default:
-        return [];
+        return <StagePhaseMatches>[];
     }
   }
 }
@@ -394,18 +394,18 @@ extension DateTimeX on DateTime {
 }
 
 extension ListX<T> on List<T> {
-  List<T> reverse(arabic) {
+  List<T> reverse(bool arabic) {
     return arabic ? reversed.toList() : this;
   }
 
   List<T> joinBy({required T item, T Function(T index)? transformer, bool outline = true}) {
-    var inline = mapIndexed((i, e) => [if (i != 0) item, (transformer ?? (T it) => it)(e)]).toList().expand((ex) => ex).toList();
-    return [if (outline) item, ...inline, if (outline) item];
+    List<T> inline = mapIndexed((int i, T e) => <T>[if (i != 0) item, (transformer ?? (T it) => it)(e)]).toList().expand((List<T> ex) => ex).toList();
+    return <T>[if (outline) item, ...inline, if (outline) item];
   }
 
   List<T> joinByBuilder(T Function(int index) builder, {bool outline = true}) {
-    var inline = mapIndexed((i, e) => [if (i != 0) builder(i), e]).toList().expand((e) => e).toList();
-    return [if (outline) builder(0), ...inline, if (outline) builder(length)];
+    List<T> inline = mapIndexed((int i, T e) => <T>[if (i != 0) builder(i), e]).toList().expand((List<T> e) => e).toList();
+    return <T>[if (outline) builder(0), ...inline, if (outline) builder(length)];
   }
 }
 

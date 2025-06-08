@@ -19,14 +19,14 @@ class MatchDetails extends StatelessWidget {
         title: Text('${matchDetails.matchDetails.homeTeam.name} vs. ${matchDetails.matchDetails.awayTeam.name}'),
       ),
       body: ListView(
-        children: [
+        children: <Widget>[
           matchDetails.matchDetails.matche.view,
           ExpansionTile(
             title: Text('Infos'),
             initiallyExpanded: true,
             children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
                   Expanded(
                     child: Text.rich(
@@ -39,7 +39,7 @@ class MatchDetails extends StatelessWidget {
               ),
               if (matchday != null)
                 Row(
-                  children: [
+                  children: <Widget>[
                     SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.bridge)),
                     Expanded(
                       child: Text.rich(
@@ -52,7 +52,7 @@ class MatchDetails extends StatelessWidget {
                 ),
               if (group != null)
                 Row(
-                  children: [
+                  children: <Widget>[
                     SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.groupArrowsRotate)),
                     Expanded(
                       child: Text.rich(
@@ -64,13 +64,13 @@ class MatchDetails extends StatelessWidget {
                   ],
                 ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.periscope)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
                         text: 'Season: ',
-                        children: [
+                        children: <InlineSpan>[
                           TextSpan(text: DateFormat.yM().format(matchDetails.matchDetails.season.startDate)),
                           TextSpan(text: ' - ${DateFormat.yM().format(matchDetails.matchDetails.season.endDate)}'),
                         ],
@@ -80,25 +80,25 @@ class MatchDetails extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(Icons.pin_drop_rounded)),
                   Expanded(child: Text.rich(TextSpan(text: matchDetails.matchDetails.area.name))),
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(Icons.stairs)),
                   Expanded(child: Text.rich(TextSpan(text: BotolaServices.stageName(stage)))),
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(Icons.date_range)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
                         text: DateFormat.yMMMEd().format(matchDetails.matchDetails.utcDate),
-                        children: [
+                        children: <InlineSpan>[
                           TextSpan(text: ' - '),
                           TextSpan(text: DateFormat.Hm().format(matchDetails.matchDetails.utcDate)),
                         ],
@@ -108,7 +108,7 @@ class MatchDetails extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.satellite)),
                   Expanded(
                     child: Text.rich(
@@ -120,7 +120,7 @@ class MatchDetails extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
                   Expanded(
                     child: Text.rich(
@@ -131,7 +131,7 @@ class MatchDetails extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.planeDeparture)),
                   Expanded(
                     child: Text.rich(
@@ -149,14 +149,14 @@ class MatchDetails extends StatelessWidget {
             title: Text('Competition'),
             children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
                   Expanded(child: Text.rich(TextSpan(text: matchDetails.matchDetails.competition.name))),
                 ],
               ),
               if (winnerSeason != null)
                 Row(
-                  children: [
+                  children: <Widget>[
                     SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.star)),
                     Expanded(child: Text('${winnerSeason.name}(${winnerSeason.founded})')),
                     SizedBox(width: 50.w, child: AppFileImageViewer(url: winnerSeason.crest, width: 50.w)),
@@ -170,8 +170,8 @@ class MatchDetails extends StatelessWidget {
           ExpansionTile(
             title: Text('Head2Head'),
             initiallyExpanded: true,
-            children: [
-              for (var match in matchDetails.head2head.matches.where((e) => e.id != matchDetails.matchDetails.id)) match.view,
+            children: <Widget>[
+              for (Matche match in matchDetails.head2head.matches.where((Matche e) => e.id != matchDetails.matchDetails.id)) match.view,
             ],
           ),
         ],

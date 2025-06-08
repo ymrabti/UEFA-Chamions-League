@@ -42,7 +42,7 @@ ThemeData mainTheme({required bool dark}) {
           error: _errorColor,
           background: bgColor,
         );
-  var primaryColor = dark ? _primaryColorDark : _primaryColorLight;
+  MaterialColor primaryColor = dark ? _primaryColorDark : _primaryColorLight;
   return ThemeData(
     /* primarySwatch: primaryColor,
     colorSchemeSeed: null,
@@ -90,7 +90,7 @@ ThemeData mainTheme({required bool dark}) {
       color: fgColor,
       weight: 500,
       fill: 0.4,
-      shadows: [
+      shadows: <Shadow>[
         BoxShadow(
           color: bgColor.withOpacity(0.5),
         ),
@@ -195,7 +195,7 @@ ThemeData mainTheme({required bool dark}) {
       color: fgColor,
       weight: 500,
       fill: 0.4,
-      shadows: [
+      shadows: <Shadow>[
         BoxShadow(
           color: bgColor.withOpacity(0.5),
         ),

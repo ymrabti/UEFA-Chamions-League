@@ -112,7 +112,7 @@ class BotolaXPerson extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       BotolaXPersonEnum.id.name: id,
       BotolaXPersonEnum.name.name: name,
       BotolaXPersonEnum.firstName.name: firstName,
@@ -202,7 +202,7 @@ enum BotolaXPersonEnum {
 extension BotolaXPersonSort on List<BotolaXPerson> {
   List<BotolaXPerson> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((BotolaXPerson a, BotolaXPerson b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == BotolaXPersonEnum.id.name) {
@@ -375,7 +375,7 @@ class CurrentTeam {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       CurrentTeamEnum.area.name: area.toJson(),
       CurrentTeamEnum.id.name: id,
       CurrentTeamEnum.name.name: name,
@@ -387,7 +387,7 @@ class CurrentTeam {
       CurrentTeamEnum.founded.name: founded,
       CurrentTeamEnum.clubColors.name: clubColors,
       CurrentTeamEnum.venue.name: venue,
-      CurrentTeamEnum.runningCompetitions.name: runningCompetitions.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      CurrentTeamEnum.runningCompetitions.name: runningCompetitions.map<Map<String, dynamic>>((RunningCompetitions data) => data.toJson()).toList(),
       CurrentTeamEnum.contract.name: contract.toJson(),
     };
   }
@@ -405,7 +405,7 @@ class CurrentTeam {
       founded: int.parse('${json[CurrentTeamEnum.founded.name]}'),
       clubColors: json[CurrentTeamEnum.clubColors.name] as String,
       venue: json[CurrentTeamEnum.venue.name] as String?,
-      runningCompetitions: (json[CurrentTeamEnum.runningCompetitions.name] as List).map<RunningCompetitions>((data) => RunningCompetitions.fromJson(data as Map<String, Object?>)).toList(),
+      runningCompetitions: (json[CurrentTeamEnum.runningCompetitions.name] as List<dynamic>).map<RunningCompetitions>((dynamic data) => RunningCompetitions.fromJson(data as Map<String, Object?>)).toList(),
       contract: Contract.fromJson(json[CurrentTeamEnum.contract.name] as Map<String, Object?>),
     );
   }
@@ -475,7 +475,7 @@ enum CurrentTeamEnum {
 extension CurrentTeamSort on List<CurrentTeam> {
   List<CurrentTeam> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((CurrentTeam a, CurrentTeam b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == CurrentTeamEnum.id.name) {

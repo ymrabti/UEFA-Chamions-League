@@ -21,14 +21,14 @@ class BotolaHappening extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       BotolaHappeningEnum.resultSet.name: HappeningresultSet.toJson(),
-      BotolaHappeningEnum.matches.name: matches.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      BotolaHappeningEnum.matches.name: matches.map<Map<String, dynamic>>((Matche data) => data.toJson()).toList(),
     };
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       BotolaHappeningEnum.resultSet.name: HappeningresultSet,
       BotolaHappeningEnum.matches.name: matches,
     };
@@ -36,13 +36,13 @@ class BotolaHappening extends IGenericAppModel {
 
   factory BotolaHappening.fromJson(Map<String, Object?> json) {
     Map<String, Object?> resultSet = json[BotolaHappeningEnum.resultSet.name] as Map<String, Object?>;
-    List matches = json[BotolaHappeningEnum.matches.name] as List;
+    List<dynamic> matches = json[BotolaHappeningEnum.matches.name] as List<dynamic>;
     return BotolaHappening(
       HappeningresultSet: HappeningResultSet.fromJson(
         resultSet,
       ),
-      matches: [
-        for (var data in matches) Matche.fromJson(data as Map<String, Object?>),
+      matches: <Matche>[
+        for (dynamic data in matches) Matche.fromJson(data as Map<String, Object?>),
       ],
     );
   }
@@ -103,14 +103,14 @@ class MatchScoreResult {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       FullTimeEnum.home.name: home,
       FullTimeEnum.away.name: away,
     };
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       FullTimeEnum.home.name: home.toString(),
       FullTimeEnum.away.name: away.toString(),
     };
@@ -155,7 +155,7 @@ enum FullTimeEnum {
 extension FullTimeSort on List<MatchScoreResult> {
   List<MatchScoreResult> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((MatchScoreResult a, MatchScoreResult b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == FullTimeEnum.home.name) {
@@ -214,7 +214,7 @@ class HappeningResultSet {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       HappeningResultSetEnum.count.name: count,
       HappeningResultSetEnum.competitions.name: competitions,
       HappeningResultSetEnum.first.name: first,
@@ -224,7 +224,7 @@ class HappeningResultSet {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       HappeningResultSetEnum.count.name: count.toString(),
       HappeningResultSetEnum.competitions.name: competitions,
       HappeningResultSetEnum.first.name: first,
@@ -285,7 +285,7 @@ enum HappeningResultSetEnum {
 extension HappeningResultSetSort on List<HappeningResultSet> {
   List<HappeningResultSet> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((HappeningResultSet a, HappeningResultSet b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == HappeningResultSetEnum.count.name) {

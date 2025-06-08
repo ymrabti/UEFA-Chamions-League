@@ -30,7 +30,7 @@ class CompetitonIdData {
 class PhaseMatches {
   int matchday;
 
-  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+  bool get allFinished => matches.every((Matche er) => er.status == AppConstants.FINISHED);
   List<Matche> matches;
   PhaseMatches({required this.matchday, required this.matches});
 }
@@ -39,7 +39,7 @@ class PhaseMatches {
 class MonthMatches {
   DateTime month;
   List<Matche> matches;
-  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+  bool get allFinished => matches.every((Matche er) => er.status == AppConstants.FINISHED);
   MonthMatches({required this.month, required this.matches});
 }
 
@@ -47,7 +47,7 @@ class MonthMatches {
 class StageWithMatches {
   String stage;
   List<Matche> matches;
-  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+  bool get allFinished => matches.every((Matche er) => er.status == AppConstants.FINISHED);
   StageWithMatches({
     required this.stage,
     required this.matches,
@@ -65,9 +65,9 @@ class GeneralStageWithMatchesData<T> {
   });
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       'Title': title,
-      'Matches': matches.map((e) => e.toJson()).toList(),
+      'Matches': matches.map((Matche e) => e.toJson()).toList(),
     };
   }
 
@@ -76,7 +76,7 @@ class GeneralStageWithMatchesData<T> {
     return PowerJSON(toJson()).toText();
   }
 
-  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+  bool get allFinished => matches.every((Matche er) => er.status == AppConstants.FINISHED);
 }
 
 // General
@@ -87,17 +87,17 @@ class GeneralStageWithMatches<T> {
   List<Matche> matches;
 
   List<GeneralStageWithMatchesData<T>> get subphases {
-    var localTest = test;
-    if (localTest == null) return [];
+    bool Function(T prevTitle, T currentTitle)? localTest = test;
+    if (localTest == null) return <GeneralStageWithMatchesData<T>>[];
     return matches.fold(
       <GeneralStageWithMatchesData<T>>[],
-      (value, current) {
-        GeneralStageWithMatchesData<T>? prev = value.firstWhereOrNull((kel) => localTest(kel.title, getTitle(current)));
+      (List<GeneralStageWithMatchesData<T>> value, Matche current) {
+        GeneralStageWithMatchesData<T>? prev = value.firstWhereOrNull((GeneralStageWithMatchesData<T> kel) => localTest(kel.title, getTitle(current)));
         if (prev != null) {
           prev.matches.add(current);
           return value;
         } else {
-          return value..add(GeneralStageWithMatchesData<T>(title: getTitle(current), matches: [current]));
+          return value..add(GeneralStageWithMatchesData<T>(title: getTitle(current), matches: <Matche>[current]));
         }
       },
     );
@@ -108,7 +108,7 @@ class GeneralStageWithMatches<T> {
     required this.getTitle,
     this.test,
   });
-  bool get allFinished => matches.every((er) => er.status == AppConstants.FINISHED);
+  bool get allFinished => matches.every((Matche er) => er.status == AppConstants.FINISHED);
 }
 
 // Cup, League, Champions league
@@ -128,13 +128,13 @@ class StagePhaseMatches {
     this.groupStanding,
     this.initiallyExpanded = false,
     this.isSubPhase = true,
-    this.matches = const [],
-    this.subPhase = const [],
+    this.matches = const <Matche>[],
+    this.subPhase = const <StagePhaseMatches>[],
   });
   Widget view(BuildContext context, {Size? splashedSize, String? splashedId, bool? splashing}) {
     Standing? groupStand = groupStanding;
     return Stack(
-      children: [
+      children: <Widget>[
         ExpansionTile(
           key: globalKey,
           title: Text(
@@ -147,18 +147,18 @@ class StagePhaseMatches {
                   ),
           ),
           initiallyExpanded: context.watch<AppState>().getEntryExpansion(uuid),
-          onExpansionChanged: (value) {
+          onExpansionChanged: (bool value) {
             context.read<AppState>().setExpansion(uuid, value);
           },
           childrenPadding: EdgeInsets.only(left: 4),
-          children: [
+          children: <Widget>[
             ...(subPhase.isEmpty
                 ? matches.map(
-                    (e) => e.view,
+                    (Matche e) => e.view,
                   )
-                : [
+                : <Widget>[
                     ...subPhase.map(
-                      (e) => e.view(context, splashedSize: splashedSize, splashedId: splashedId, splashing: splashing),
+                      (StagePhaseMatches e) => e.view(context, splashedSize: splashedSize, splashedId: splashedId, splashing: splashing),
                     ),
                     if (groupStand != null) groupStand.view(),
                   ]),
@@ -219,6 +219,6 @@ class StagePhase {
     this.groupStanding,
     this.initiallyExpanded = false,
     required this.isSubPhase,
-    this.matches = const [],
+    this.matches = const <Matche>[],
   });
 }

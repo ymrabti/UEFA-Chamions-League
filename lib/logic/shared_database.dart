@@ -50,8 +50,8 @@ abstract class SharedPrefsDatabase {
   static Future<Map<String, DataCompetition>> getAvailableCompetitions(Map<String, bool> availableIDs) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    var mapp = availableIDs.keys.map(
-      (e) {
+    Iterable<Future<IGenericAppMap<DataCompetition>?>?> mapp = availableIDs.keys.map(
+      (String e) {
         String? data = prefs.getString(e);
         if (data == null) return null;
         return IGenericAppModel.load<DataCompetition>(e);
@@ -60,10 +60,10 @@ abstract class SharedPrefsDatabase {
     List<IGenericAppMap<DataCompetition>?> map = await Future.wait(mapp.whereNotNull());
     Iterable<DataCompetition> where = map
         .whereNotNull() //
-        .where((d) => d.dateTime.isAfter(competitionExpire))
-        .map((e) => e.value)
+        .where((IGenericAppMap<DataCompetition> d) => d.dateTime.isAfter(competitionExpire))
+        .map((IGenericAppMap<DataCompetition> e) => e.value)
         .whereNotNull();
-    return Map.fromEntries(where.map((e) => MapEntry<String, DataCompetition>(e.id, e)));
+    return Map<String, DataCompetition>.fromEntries(where.map((DataCompetition e) => MapEntry<String, DataCompetition>(e.id, e)));
   }
 
   static Future<String> saveAssetImage(Directory appDirectory) async {
@@ -85,25 +85,24 @@ abstract class SharedPrefsDatabase {
     IGenericAppMap<MapCompetitions>? mapData = await IGenericAppModel.load<MapCompetitions>(
       AppSaveNames.available_competitions_data.name,
     );
-    Map<String, bool> availableCompetitionsIDs = mapData?.value?.data ?? {};
+    Map<String, bool> availableCompetitionsIDs = mapData?.value?.data ?? <String, bool>{};
     Map<String, String> localCrests = mapData?.value?.crests ?? <String, String>{};
     Dio dio = Dio();
     List<MapEntry<String, String>?> urls = await Future.wait(
       imageUrls
           .where(
-            (e) => !localCrests.keys.contains(e),
+            (String e) => !localCrests.keys.contains(e),
           )
           .toList()
           .map(
-        (imageUrl) async {
+        (String imageUrl) async {
           try {
             String bn = basename(imageUrl);
             late String fileName;
             String exte /******/ = extension(imageUrl);
             if (exte == '.svg') {
               fileName = bn.replaceAll('.svg', '.png');
-              var outputPath = '${appDirectory.path}/Botola-Max/$fileName';
-              logg(outputPath);
+              String outputPath = '${appDirectory.path}/Botola-Max/$fileName';
               await SvgTextToPngConverter(imageUrl).convertSvgToPng(
                 outputPath,
               );
@@ -112,10 +111,9 @@ abstract class SharedPrefsDatabase {
               await dio.download(
                 imageUrl,
                 '${appDirectory.path}/Botola-Max/$fileName',
-                onReceiveProgress: (count, total) {
+                onReceiveProgress: (int count, int total) {
                   if (total < 0) return;
                   if (!imageUrl.endsWith('svg')) return;
-                  logg((count * 100 ~/ total), name: 'PROGRESS');
                 },
               );
             }
@@ -158,13 +156,13 @@ abstract class SharedPrefsDatabase {
     }
     if (!context.mounted) return null;
     context.read<AppState>().cleanExpansion();
-    List<Matche> list = dataMatches.matcheModel.matches..sort((a, b) => a.utcDate.compareTo(b.utcDate));
-    var standings = dataMatches.standingModel.standings;
-    var stagePhaseData = list.stagePhaseData(code: code, standings: standings, type: type);
+    List<Matche> list = dataMatches.matcheModel.matches..sort((Matche a, Matche b) => a.utcDate.compareTo(b.utcDate));
+    List<Standing> standings = dataMatches.standingModel.standings;
+    List<StagePhaseMatches> stagePhaseData = list.stagePhaseData(code: code, standings: standings, type: type);
     List<StagePhase> expd = stagePhaseData.extractStagePhasesWithFold();
-    var stagedData = expd.map((e) => MapEntry(e.uuid, e.initiallyExpanded));
-    var first1 = expd.firstWhereOrNull((e) => e.initiallyExpanded && e.isSubPhase);
-    var first2 = expd.firstWhereOrNull((e) => e.initiallyExpanded);
+    Iterable<MapEntry<String, bool>> stagedData = expd.map((StagePhase e) => MapEntry<String, bool>(e.uuid, e.initiallyExpanded));
+    StagePhase? first1 = expd.firstWhereOrNull((StagePhase e) => e.initiallyExpanded && e.isSubPhase);
+    StagePhase? first2 = expd.firstWhereOrNull((StagePhase e) => e.initiallyExpanded);
     StagePhase? expanded = first1 ?? first2;
     context.read<AppState>().setLoading(false);
     return RefreshCompetiton(
@@ -177,7 +175,7 @@ abstract class SharedPrefsDatabase {
 }
 
 abstract class BotolaServices {
-  static String stageName(title) {
+  static String stageName(String title) {
     switch (title) {
       case AppConstants.LEAGUESTAGE:
         return "League stage";
@@ -278,7 +276,7 @@ abstract class BotolaServices {
   }
 
   static String durationMatch(String status, {String? matchStat}) {
-    if (['TIMED', 'SCHEDULED'].contains(matchStat)) return '';
+    if (<String>['TIMED', 'SCHEDULED'].contains(matchStat)) return '';
     switch (status) {
       case 'PENALTY_SHOOTOUT':
         return " : Penalty shootout";
@@ -295,14 +293,14 @@ abstract class BotolaServices {
   }
 
   static Future<void> deleteFolderRecursively(String folderPath) async {
-    final directory = Directory(folderPath);
+    final Directory directory = Directory(folderPath);
 
     if (await directory.exists()) {
       try {
         // List all files and subdirectories inside the folder
-        final contents = directory.listSync();
+        final List<FileSystemEntity> contents = directory.listSync();
         logg(contents.length, name: 'FOLDER LENGTH');
-        for (var fileOrDir in contents) {
+        for (FileSystemEntity fileOrDir in contents) {
           // Delete each file and directory inside the folder
           await fileOrDir.delete(recursive: true);
         }

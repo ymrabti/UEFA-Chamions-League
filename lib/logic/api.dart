@@ -14,7 +14,7 @@ enum AppSaveNames {
 
 abstract class AppLogic {
   static const String _CL_API = 'https://api.football-data.org/v4';
-  static final Map<String, String> _headers = {'X-Auth-Token': token};
+  static final Map<String, String> _headers = <String, String>{'X-Auth-Token': token};
 
   static Future<DataCompetition?> _getCompetition(String competionID) async {
     BotolaCompetition? competition = await _getCompetitionId(competionID);
@@ -42,7 +42,7 @@ abstract class AppLogic {
     String competionID, [
     bool getLocal = true,
   ]) async {
-    IGenericAppMap? localAppCompetitions = await IGenericAppModel.load<DataCompetition>(competionID);
+    IGenericAppMap<DataCompetition>? localAppCompetitions = await IGenericAppModel.load<DataCompetition>(competionID);
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
     if (dateTime == null || value == null || DateTime.now().isAfter(dateTime.add(getLocal ? Duration(days: 1) : Duration(minutes: 10)))) {
@@ -60,7 +60,7 @@ abstract class AppLogic {
     String name, [
     Duration duration = const Duration(days: 1),
   ]) async {
-    IGenericAppMap? localAppCompetitions = await IGenericAppModel.load<T>(name);
+    IGenericAppMap<T>? localAppCompetitions = await IGenericAppModel.load<T>(name);
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
     if (dateTime == null || value == null || dateTime.isBefore(DateTime.now().subtract(duration))) {
@@ -138,10 +138,10 @@ abstract class AppLogic {
   }
 
   static Future<BotolaCompetition?> _getCompetitionId(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID'), headers: _headers);
 
     if (getGet.statusCode == 200) {
-      var fromJson = BotolaCompetition.fromJson(jsonDecode(getGet.body));
+      BotolaCompetition fromJson = BotolaCompetition.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     logg(getGet.body);
@@ -149,37 +149,37 @@ abstract class AppLogic {
   }
 
   static Future<BotolaStandings?> _getStandings(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/standings'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/standings'), headers: _headers);
 
     if (getGet.statusCode == 200) {
-      var fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
+      BotolaStandings fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaMatches?> _getMatches(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/matches'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/matches'), headers: _headers);
     if (getGet.statusCode == 200) {
-      var fromJson = BotolaMatches.fromJson(jsonDecode(getGet.body));
+      BotolaMatches fromJson = BotolaMatches.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaScorers?> _getScorers(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/scorers'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/scorers'), headers: _headers);
     if (getGet.statusCode == 200) {
-      var fromJson = BotolaScorers.fromJson(jsonDecode(getGet.body));
+      BotolaScorers fromJson = BotolaScorers.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaTeams?> _getTeams(String competionID) async {
-    var getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/teams'), headers: _headers);
+    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/teams'), headers: _headers);
     if (getGet.statusCode == 200) {
-      var fromJson = BotolaTeams.fromJson(jsonDecode(getGet.body));
+      BotolaTeams fromJson = BotolaTeams.fromJson(jsonDecode(getGet.body));
       return fromJson;
     }
     return null;
@@ -219,7 +219,7 @@ class DataCompetition extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       DataCompetitionEnum.id.name: id,
       DataCompetitionEnum.matches.name: matcheModel.toJson(),
       DataCompetitionEnum.standings.name: standingModel.toJson(),

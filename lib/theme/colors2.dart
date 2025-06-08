@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-MaterialColor primaryColor = MaterialColor(0xfff51d24, {
+MaterialColor primaryColor = MaterialColor(0xfff51d24, <int, Color>{
   50: Color(0xffffeaed),
   100: Color(0xffffcbd0),
   200: Color(0xfffb9694),
@@ -12,7 +12,7 @@ MaterialColor primaryColor = MaterialColor(0xfff51d24, {
   800: Color(0xffd70016),
   900: Color(0xffc90003),
 });
-MaterialColor Complementary = MaterialColor(0xff1df5ee, {
+MaterialColor Complementary = MaterialColor(0xff1df5ee, <int, Color>{
   50: Color(0xffd8fdfa),
   100: Color(0xff9af9f3),
   200: Color(0xff1df5ee),
@@ -24,7 +24,7 @@ MaterialColor Complementary = MaterialColor(0xff1df5ee, {
   800: Color(0xff00a29d),
   900: Color(0xff007d6e),
 });
-MaterialColor analogous1Color = MaterialColor(0xfff51d90, {
+MaterialColor analogous1Color = MaterialColor(0xfff51d90, <int, Color>{
   50: Color(0xfffce3f0),
   100: Color(0xfff8b9da),
   200: Color(0xfff68ac1),
@@ -36,7 +36,7 @@ MaterialColor analogous1Color = MaterialColor(0xfff51d90, {
   800: Color(0xffb8006b),
   900: Color(0xff900063),
 });
-MaterialColor analogous2Color = MaterialColor(0xfff5821d, {
+MaterialColor analogous2Color = MaterialColor(0xfff5821d, <int, Color>{
   50: Color(0xfffffde8),
   100: Color(0xfffff9c5),
   200: Color(0xfffff59e),
@@ -48,7 +48,7 @@ MaterialColor analogous2Color = MaterialColor(0xfff5821d, {
   800: Color(0xfffaaa2b),
   900: Color(0xfff5821d),
 });
-MaterialColor triadic1Color = MaterialColor(0xfff5ee1d, {
+MaterialColor triadic1Color = MaterialColor(0xfff5ee1d, <int, Color>{
   50: Color(0xfffefde6),
   100: Color(0xfffcfac1),
   200: Color(0xfffaf797),
@@ -60,7 +60,7 @@ MaterialColor triadic1Color = MaterialColor(0xfff5ee1d, {
   800: Color(0xfff6aa00),
   900: Color(0xfff67f00),
 });
-MaterialColor triadic2Color = MaterialColor(0xff24f51d, {
+MaterialColor triadic2Color = MaterialColor(0xff24f51d, <int, Color>{
   50: Color(0xffedffe9),
   100: Color(0xffd2fec8),
   200: Color(0xffb1fea2),

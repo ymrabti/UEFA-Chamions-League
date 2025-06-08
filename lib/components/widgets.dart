@@ -56,8 +56,8 @@ class AppFileImageViewer extends StatelessWidget {
       height: height,
       color: color,
       fit: boxFit,
-      loadingBuilder: (context, child, loadingProgress) {
-        var loading = loadingProgress;
+      loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+        ImageChunkEvent? loading = loadingProgress;
         if (loading == null) return child;
         int? expectedTotalBytes = loading.expectedTotalBytes;
         if (expectedTotalBytes == null) return child;
@@ -68,7 +68,7 @@ class AppFileImageViewer extends StatelessWidget {
       alignment: Alignment.center,
       colorBlendMode: blendMode,
       // frameBuilder: (context, child, frame, wasSynchronouslyLoaded) => wasSynchronouslyLoaded ? child : CupertinoActivityIndicator(),
-      errorBuilder: (context, error, stackTrace) {
+      errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
         log(error.toString());
         return FittedBox(
           child: Image.asset(
@@ -83,7 +83,7 @@ class AppFileImageViewer extends StatelessWidget {
   }
 
   ImageProvider<Object> _imageSource(String? e) {
-    var img = e;
+    String? img = e;
     if (img == null) {
       return AssetImage(
         'assets/logo-dark.png',
@@ -108,7 +108,7 @@ class WidgetWithWaiter extends StatelessWidget {
           context.read<AppState>().setLoading(false);
         },
         child: Stack(
-          children: [
+          children: <Widget>[
             child,
             if (context.watch<AppState>().loading)
               AbsorbPointer(
@@ -166,7 +166,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isConnected = [
+    bool isConnected = <ConnectivityResult>[
       ConnectivityResult.mobile,
       ConnectivityResult.wifi,
       ConnectivityResult.bluetooth,
@@ -276,7 +276,7 @@ class PlayerPosition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personChalkboard)),
         Expanded(child: Text.rich(TextSpan(text: position))),
       ],
@@ -296,15 +296,15 @@ class BotolaContract extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var ce = contractEnd;
+    DateTime? ce = contractEnd;
     return Row(
-      children: [
+      children: <Widget>[
         SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.fileContract)),
         Expanded(
           child: Text.rich(
             TextSpan(
               text: DateFormat.yMMMM().format(contractStart),
-              children: [
+              children: <InlineSpan>[
                 TextSpan(text: ' - '),
                 if (ce != null) TextSpan(text: DateFormat.yMMMM().format(ce)),
               ],
@@ -327,7 +327,7 @@ class BotolaPersonAge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing)),
         Expanded(
           child: Text.rich(
@@ -352,7 +352,7 @@ class BotolaNationality extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
         Expanded(child: Text.rich(TextSpan(text: nationality))),
       ],

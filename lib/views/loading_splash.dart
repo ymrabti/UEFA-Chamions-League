@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 Future<int> _delayed(int input) {
-  return Future.delayed(Duration(milliseconds: 500), () => input);
+  return Future<int>.delayed(Duration(milliseconds: 500), () => input);
 }
 
 class SplashScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
     FutureOr<void> Function(T item) action,
     int percent,
   ) async {
-    await Future.forEach(elements, (item) async {
+    await Future.forEach(elements, (T item) async {
       await action(item);
       _progressPlus(totale: elements.length, percent: percent);
     });
@@ -46,26 +46,26 @@ class _SplashScreenState extends State<SplashScreen> {
     ElBotolaChampionsList? competitions = await AppLogic.getCompetitions();
     if (competitions == null) return;
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    BotolaHappening? today = await AppLogic.getTodayMatches(competitions.competitions.map((e) => e.id));
+    BotolaHappening? today = await AppLogic.getTodayMatches(competitions.competitions.map((TheCompetition e) => e.id));
     if (today == null) return;
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    List<String> emblems = competitions.competitions.map((e) => e.emblem).toList();
-    List<String> areas = competitions.competitions.map((e) => e.area.flag).whereNotNull().toList();
-    List<String> tcrests = [
-      ...today.matches.map((e) => [e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _)
+    List<String> emblems = competitions.competitions.map((TheCompetition e) => e.emblem).toList();
+    List<String> areas = competitions.competitions.map((TheCompetition e) => e.area.flag).whereNotNull().toList();
+    List<String> tcrests = <String>[
+      ...today.matches.map((Matche e) => <String>[e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _)
     ];
-    List<String> imageUrls = [...emblems, ...tcrests, ...areas];
+    List<String> imageUrls = <String>[...emblems, ...tcrests, ...areas];
     FallBackMap fallBackAndMap = await SharedPrefsDatabase.updateLocalCrests(imageUrls);
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
     Map<String, String> allFileCrests = fallBackAndMap.map;
     Map<String, DataCompetition> compts = await SharedPrefsDatabase.getAvailableCompetitions(fallBackAndMap.availableIds);
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
-    await forEachList(List.generate(10, (i) => i), (e) async => await _delayed(e), kDebugMode ? 80 : 0);
+    await forEachList(List<int>.generate(10, (int i) => i), (int e) async => await _delayed(e), kDebugMode ? 80 : 0);
     logg('✔ ✔ ✔ ✔');
     if (!mounted) return;
     context.read<AppState>().setData = compts;
     context.read<AppState>().setMapCrests = allFileCrests;
-    Future.delayed(d, () => Get.offAll(() => HomeScreen(competitions, today)));
+    Future<void>.delayed(d, () => Get.offAll(() => HomeScreen(competitions, today)));
   }
 
   void _progressPlus({required int totale, required int percent}) {
@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: ScaffoldBuilder(
           backgroundColor: Color(0xff18282f),
           body: Stack(
-            children: [
+            children: <Widget>[
               Center(
                 child: Container(
                   width: 250,
@@ -106,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       Text("Loading"),
                       SizedBox(height: 12),
                       SizedBox(
@@ -145,12 +145,12 @@ class DataRuntimeFunction<T> {
   });
 }
 
-Future<DataRuntimeFunction> measureFunctionRuntime<T>(FutureOr<T> Function() function) async {
-  final stopwatch = Stopwatch()..start();
+Future<DataRuntimeFunction<T>> measureFunctionRuntime<T>(FutureOr<T> Function() function) async {
+  final Stopwatch stopwatch = Stopwatch()..start();
   T data = await function();
   stopwatch.stop();
   logg((stopwatch.elapsed.inMilliseconds / 1000).toStringAsFixed(2).padLeft(5, '0'));
-  return DataRuntimeFunction(runtime: stopwatch.elapsed, data: data);
+  return DataRuntimeFunction<T>(runtime: stopwatch.elapsed, data: data);
 }
 
 class ProgressData {

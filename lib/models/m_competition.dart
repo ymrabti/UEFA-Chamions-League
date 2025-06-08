@@ -718,7 +718,7 @@ class BotolaCompetition {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       BotolaCompetitionEnum.area.name: area.toJson(),
       BotolaCompetitionEnum.id.name: id,
       BotolaCompetitionEnum.name.name: name,
@@ -726,7 +726,7 @@ class BotolaCompetition {
       BotolaCompetitionEnum.type.name: type,
       BotolaCompetitionEnum.emblem.name: emblem,
       BotolaCompetitionEnum.currentSeason.name: currentSeason.toJson(),
-      BotolaCompetitionEnum.seasons.name: seasons.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      BotolaCompetitionEnum.seasons.name: seasons.map<Map<String, dynamic>>((Seasons data) => data.toJson()).toList(),
       BotolaCompetitionEnum.lastUpdated.name: lastUpdated,
     };
   }
@@ -740,7 +740,7 @@ class BotolaCompetition {
       type: json[BotolaCompetitionEnum.type.name] as String,
       emblem: json[BotolaCompetitionEnum.emblem.name] as String,
       currentSeason: CurrentSeason.fromJson(json[BotolaCompetitionEnum.currentSeason.name] as Map<String, Object?>),
-      seasons: (json[BotolaCompetitionEnum.seasons.name] as List).map<Seasons>((data) => Seasons.fromJson(data as Map<String, Object?>)).toList(),
+      seasons: (json[BotolaCompetitionEnum.seasons.name] as List<dynamic>).map<Seasons>((dynamic data) => Seasons.fromJson(data as Map<String, Object?>)).toList(),
       lastUpdated: DateTime.parse('${json[BotolaCompetitionEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
     );
   }
@@ -809,7 +809,7 @@ enum BotolaCompetitionEnum {
 extension BotolaCompetitionSort on List<BotolaCompetition> {
   List<BotolaCompetition> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((BotolaCompetition a, BotolaCompetition b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == BotolaCompetitionEnum.id.name) {
@@ -906,7 +906,7 @@ class Seasons {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       SeasonsEnum.id.name: id,
       SeasonsEnum.startDate.name: startDate,
       SeasonsEnum.endDate.name: endDate,
@@ -967,7 +967,7 @@ enum SeasonsEnum {
 extension SeasonsSort on List<Seasons> {
   List<Seasons> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((Seasons a, Seasons b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == SeasonsEnum.id.name) {
@@ -1046,7 +1046,7 @@ class CurrentSeason {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       CurrentSeasonEnum.id.name: id,
       CurrentSeasonEnum.startDate.name: startDate,
       CurrentSeasonEnum.endDate.name: endDate,
@@ -1111,7 +1111,7 @@ enum CurrentSeasonEnum {
 extension CurrentSeasonSort on List<CurrentSeason> {
   List<CurrentSeason> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((CurrentSeason a, CurrentSeason b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == CurrentSeasonEnum.id.name) {

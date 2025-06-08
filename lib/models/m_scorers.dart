@@ -35,17 +35,17 @@ class BotolaScorers {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       BotolaScorersEnum.count.name: count,
       BotolaScorersEnum.filters.name: filters.toJson(),
       BotolaScorersEnum.competition.name: competition.toJson(),
       BotolaScorersEnum.season.name: season.toJson(),
-      BotolaScorersEnum.scorers.name: scorers.map<Map<String, Object?>>((data) => data.toJson()).toList(),
+      BotolaScorersEnum.scorers.name: scorers.map<Map<String, Object?>>((Scorers data) => data.toJson()).toList(),
     };
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       BotolaScorersEnum.count.name: count.toString(),
       BotolaScorersEnum.filters.name: filters,
       BotolaScorersEnum.competition.name: competition,
@@ -60,7 +60,7 @@ class BotolaScorers {
       filters: Filters.fromJson(json[BotolaScorersEnum.filters.name] as Map<String, Object?>),
       competition: Competition.fromJson(json[BotolaScorersEnum.competition.name] as Map<String, Object?>),
       season: Season.fromJson(json[BotolaScorersEnum.season.name] as Map<String, Object?>),
-      scorers: (json[BotolaScorersEnum.scorers.name] as List).map<Scorers>((data) => Scorers.fromJson(data as Map<String, Object?>)).toList(),
+      scorers: (json[BotolaScorersEnum.scorers.name] as List<dynamic>).map<Scorers>((dynamic data) => Scorers.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -111,7 +111,7 @@ class BotolaScorers_Views {
 extension BotolaScorersSort on List<BotolaScorers> {
   List<BotolaScorers> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((BotolaScorers a, BotolaScorers b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == BotolaScorersEnum.count.name) {
@@ -168,7 +168,7 @@ class Scorers {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       ScorersEnum.player.name: player.toJson(),
       ScorersEnum.team.name: team.toJson(),
       ScorersEnum.playedMatches.name: playedMatches,
@@ -179,7 +179,7 @@ class Scorers {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       ScorersEnum.player.name: player,
       ScorersEnum.team.name: team,
       ScorersEnum.playedMatches.name: playedMatches.toString(),
@@ -244,7 +244,7 @@ enum ScorersEnum {
 extension ScorersSort on List<Scorers> {
   List<Scorers> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((Scorers a, Scorers b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == ScorersEnum.playedMatches.name) {
@@ -342,7 +342,7 @@ class Player {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       PlayerEnum.id.name: id,
       PlayerEnum.name.name: name,
       PlayerEnum.firstName.name: firstName,
@@ -357,7 +357,7 @@ class Player {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       PlayerEnum.id.name: id.toString(),
       PlayerEnum.name.name: name,
       PlayerEnum.firstName.name: firstName,

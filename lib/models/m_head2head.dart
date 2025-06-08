@@ -217,19 +217,19 @@ class MatchHead2HeadModel extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       MatchHead2HeadModelEnum.resultSet.name: resultSet.toJson(),
       MatchHead2HeadModelEnum.aggregates.name: aggregates?.toJson(),
-      MatchHead2HeadModelEnum.matches.name: matches.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      MatchHead2HeadModelEnum.matches.name: matches.map<Map<String, dynamic>>((Matche data) => data.toJson()).toList(),
     };
   }
 
   factory MatchHead2HeadModel.fromJson(Map<String, Object?> json) {
-    var jsonAggregates = json[MatchHead2HeadModelEnum.aggregates.name] as Map<String, Object?>?;
+    Map<String, Object?>? jsonAggregates = json[MatchHead2HeadModelEnum.aggregates.name] as Map<String, Object?>?;
     return MatchHead2HeadModel(
       resultSet: H2HResultSet.fromJson(json[MatchHead2HeadModelEnum.resultSet.name] as Map<String, Object?>),
       aggregates: jsonAggregates == null ? null : Aggregates.fromJson(jsonAggregates),
-      matches: (json[MatchHead2HeadModelEnum.matches.name] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
+      matches: (json[MatchHead2HeadModelEnum.matches.name] as List<dynamic>).map<Matche>((dynamic data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -301,7 +301,7 @@ class Season {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       SeasonEnum.id.name: id,
       SeasonEnum.startDate.name: startDate,
       SeasonEnum.endDate.name: endDate,
@@ -424,7 +424,7 @@ class Winner {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       WinnerEnum.id.name: id,
       WinnerEnum.name.name: name,
       WinnerEnum.shortName.name: shortName,
@@ -541,7 +541,7 @@ class Aggregates {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       AggregatesEnum.numberOfMatches.name: numberOfMatches,
       AggregatesEnum.totalGoals.name: totalGoals,
       AggregatesEnum.homeTeam.name: homeTeam.toJson(),
@@ -623,7 +623,7 @@ class H2HResultSet {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       ResultSetEnum.count.name: count,
       ResultSetEnum.competitions.name: competitions,
       ResultSetEnum.first.name: first,

@@ -22,15 +22,15 @@ class BotolaMatches {
   }
 
   Map<String, Object?> toJson() {
-    return {'filters': filters.toJson(), 'resultSet': resultSet.toJson(), 'competition': competition.toJson(), 'matches': matches.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
+    return <String, Object?>{'filters': filters.toJson(), 'resultSet': resultSet.toJson(), 'competition': competition.toJson(), 'matches': matches.map<Map<String, dynamic>>((Matche data) => data.toJson()).toList()};
   }
 
   static BotolaMatches fromJson(Map<String, Object?> json) {
     return BotolaMatches(
-      filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
-      resultSet: json['resultSet'] == null ? ResultSet.fromJson({}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>),
-      competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
-      matches: json['matches'] == null ? [] : (json['matches'] as List).map<Matche>((data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
+      filters: json['filters'] == null ? Filters.fromJson(<String, Object?>{}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
+      resultSet: json['resultSet'] == null ? ResultSet.fromJson(<String, Object?>{}) : ResultSet.fromJson(json['resultSet'] as Map<String, Object?>),
+      competition: json['competition'] == null ? Competition.fromJson(<String, Object?>{}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
+      matches: json['matches'] == null ? <Matche>[] : (json['matches'] as List<dynamic>).map<Matche>((dynamic data) => Matche.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -117,7 +117,7 @@ class Matche {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       'area': area.toJson(),
       'competition': competition.toJson(),
       'season': season.toJson(),
@@ -131,16 +131,16 @@ class Matche {
       'homeTeam': homeTeam.toJson(),
       'awayTeam': awayTeam.toJson(),
       'score': score.toJson(),
-      'referees': referees.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      'referees': referees.map<Map<String, dynamic>>((Referees data) => data.toJson()).toList(),
     };
   }
 
   static Matche fromJson(Map<String, Object?> json) {
-    var id2 = json['id'] == null ? 0 : json['id'] as int;
+    int id2 = json['id'] == null ? 0 : json['id'] as int;
     return Matche(
-      area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
-      competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
-      season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
+      area: json['area'] == null ? Area.fromJson(<String, Object?>{}) : Area.fromJson(json['area'] as Map<String, Object?>),
+      competition: json['competition'] == null ? Competition.fromJson(<String, Object?>{}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
+      season: json['season'] == null ? Season.fromJson(<String, Object?>{}) : Season.fromJson(json['season'] as Map<String, Object?>),
       id: id2,
       utcDate: DateTime.parse(json['utcDate'] as String).add(DateTime.now().timeZoneOffset),
       status: json['status'] == null ? '' : json['status'] as String,
@@ -148,14 +148,14 @@ class Matche {
       stage: json['stage'] == null ? '' : json['stage'] as String,
       group: json['group'] as String?,
       lastUpdated: DateTime.parse(json['lastUpdated'] as String).add(DateTime.now().timeZoneOffset),
-      homeTeam: json['homeTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
-      awayTeam: json['awayTeam'] == null ? Team.fromJson({}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
-      score: json['score'] == null ? Score.fromJson({}) : Score.fromJson(json['score'] as Map<String, Object?>),
+      homeTeam: json['homeTeam'] == null ? Team.fromJson(<String, Object?>{}) : Team.fromJson(json['homeTeam'] as Map<String, Object?>),
+      awayTeam: json['awayTeam'] == null ? Team.fromJson(<String, Object?>{}) : Team.fromJson(json['awayTeam'] as Map<String, Object?>),
+      score: json['score'] == null ? Score.fromJson(<String, Object?>{}) : Score.fromJson(json['score'] as Map<String, Object?>),
       referees: json['referees'] == null
-          ? []
-          : (json['referees'] as List)
+          ? <Referees>[]
+          : (json['referees'] as List<dynamic>)
               .map<Referees>(
-                (data) => Referees.fromJson(data as Map<String, Object?>),
+                (dynamic data) => Referees.fromJson(data as Map<String, Object?>),
               )
               .toList(),
     );
@@ -226,7 +226,7 @@ class Referees {
   }
 
   Map<String, Object?> toJson() {
-    return {'id': id, 'name': name, 'type': type, 'nationality': nationality};
+    return <String, Object?>{'id': id, 'name': name, 'type': type, 'nationality': nationality};
   }
 
   static Referees fromJson(Map<String, Object?> json) {
@@ -294,7 +294,7 @@ class Score {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       'winner': winner,
       'duration': duration,
       'fullTime': fullTime.toJson(),
@@ -363,7 +363,7 @@ class Competition {
   }
 
   Map<String, Object?> toJson() {
-    return {'id': id, 'name': name, 'code': code, 'type': type, 'emblem': emblem};
+    return <String, Object?>{'id': id, 'name': name, 'code': code, 'type': type, 'emblem': emblem};
   }
 
   static Competition fromJson(Map<String, Object?> json) {
@@ -408,7 +408,7 @@ class ResultSet {
   }
 
   Map<String, Object?> toJson() {
-    return {'count': count, 'first': first, 'last': last, 'played': played};
+    return <String, Object?>{'count': count, 'first': first, 'last': last, 'played': played};
   }
 
   static ResultSet fromJson(Map<String, Object?> json) {
@@ -439,7 +439,7 @@ class Filters {
   }
 
   Map<String, Object?> toJson() {
-    return {'season': season};
+    return <String, Object?>{'season': season};
   }
 
   static Filters fromJson(Map<String, Object?> json) {

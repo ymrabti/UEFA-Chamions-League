@@ -199,7 +199,7 @@ class MatchDetailsModel extends IGenericAppModel {
       );
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       MatchDetailsModelEnum.area.name: area.toJson(),
       MatchDetailsModelEnum.competition.name: competition.toJson(),
       MatchDetailsModelEnum.season.name: season.toJson(),
@@ -214,7 +214,7 @@ class MatchDetailsModel extends IGenericAppModel {
       MatchDetailsModelEnum.homeTeam.name: homeTeam.toJson(),
       MatchDetailsModelEnum.awayTeam.name: awayTeam.toJson(),
       MatchDetailsModelEnum.score.name: score.toJson(),
-      MatchDetailsModelEnum.referees.name: referees.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      MatchDetailsModelEnum.referees.name: referees.map<Map<String, dynamic>>((Referees data) => data.toJson()).toList(),
     };
   }
 
@@ -234,7 +234,7 @@ class MatchDetailsModel extends IGenericAppModel {
       homeTeam: Team.fromJson(json[MatchDetailsModelEnum.homeTeam.name] as Map<String, Object?>),
       awayTeam: Team.fromJson(json[MatchDetailsModelEnum.awayTeam.name] as Map<String, Object?>),
       score: Score.fromJson(json[MatchDetailsModelEnum.score.name] as Map<String, Object?>),
-      referees: (json[MatchDetailsModelEnum.referees.name] as List).map<Referees>((data) => Referees.fromJson(data as Map<String, Object?>)).toList(),
+      referees: (json[MatchDetailsModelEnum.referees.name] as List<dynamic>).map<Referees>((dynamic data) => Referees.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 

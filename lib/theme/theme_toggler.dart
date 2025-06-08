@@ -18,7 +18,7 @@ class _ThemeModeTogglerState extends State<ThemeModeToggler> {
   Widget build(BuildContext context) {
     Duration duration = Duration(milliseconds: 500);
     return ThemeSwitcher(
-      builder: (context) {
+      builder: (BuildContext context) {
         return AnimatedSwitcher(
           duration: duration,
           reverseDuration: duration,
@@ -73,7 +73,7 @@ class CustomThemeSwitchingArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return ThemeSwitchingArea(
       child: Builder(
-        builder: ((context) => child),
+        builder: ((BuildContext context) => child),
       ),
     );
   }

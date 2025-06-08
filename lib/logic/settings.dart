@@ -57,7 +57,7 @@ class SettingsController with ChangeNotifier {
 
 class _SettingsService {
   Future<Settings> _getSettings() async {
-    var __settings = await IGenericAppModel.load<Settings>(AppSaveNames.settings.name);
+    IGenericAppMap<Settings>? __settings = await IGenericAppModel.load<Settings>(AppSaveNames.settings.name);
     return __settings?.value ?? Settings._defaultSettings();
   }
 }
@@ -81,13 +81,13 @@ class Settings extends IGenericAppModel {
 
   @override
   Map<String, String?> toJson() {
-    return {
+    return <String, String?>{
       SharedPreferencesKeys.brightness.name: brightness.name,
     };
   }
 
   factory Settings.fromJson(Map<String, Object?> json) {
-    var bright = json[SharedPreferencesKeys.brightness.name] as String?;
+    String? bright = json[SharedPreferencesKeys.brightness.name] as String?;
     return Settings(
       brightness: bright == Brightness.light.name ? Brightness.light : Brightness.dark,
     );

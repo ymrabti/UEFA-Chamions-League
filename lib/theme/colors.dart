@@ -22,7 +22,7 @@ extension ColorX on Color {
   }
 }
 
-MaterialColor _primaryColorLight = MaterialColor(0xff00cafc, {
+MaterialColor _primaryColorLight = MaterialColor(0xff00cafc, <int, Color>{
   50: Color(0xffdff6fe),
   100: Color(0xfface8fc),
   200: Color(0xff70d9fc),
@@ -34,7 +34,7 @@ MaterialColor _primaryColorLight = MaterialColor(0xff00cafc, {
   800: Color(0xff007ec9),
   900: Color(0xff005ea9),
 });
-MaterialColor _secondaryColorLight = MaterialColor(0xff004cfc, {
+MaterialColor _secondaryColorLight = MaterialColor(0xff004cfc, <int, Color>{
   50: Color(0xffe9eaff),
   100: Color(0xffc7cbff),
   200: Color(0xff9fa9ff),
@@ -47,7 +47,7 @@ MaterialColor _secondaryColorLight = MaterialColor(0xff004cfc, {
   900: Color(0xff0007c9),
 });
 // // // //
-MaterialColor _primaryColorDark = MaterialColor(0xff003846, {
+MaterialColor _primaryColorDark = MaterialColor(0xff003846, <int, Color>{
   50: Color(0xffd6f4ff),
   100: Color(0xffb6deeb),
   200: Color(0xff97c5d5),
@@ -59,7 +59,7 @@ MaterialColor _primaryColorDark = MaterialColor(0xff003846, {
   800: Color(0xff164d5e),
   900: Color(0xff003846),
 });
-MaterialColor _secondaryColorDark = MaterialColor(0xff001546, {
+MaterialColor _secondaryColorDark = MaterialColor(0xff001546, <int, Color>{
   50: Color(0xffe4e6ee),
   100: Color(0xffbac1d6),
   200: Color(0xff8e99ba),
@@ -72,7 +72,7 @@ MaterialColor _secondaryColorDark = MaterialColor(0xff001546, {
   900: Color(0xff001546),
 });
 //
-MaterialColor textColor = MaterialColor(0xff393939, {
+MaterialColor textColor = MaterialColor(0xff393939, <int, Color>{
   50: Color(0xfff9f9f9),
   100: Color(0xfff1f1f1),
   200: Color(0xffe8e8e8),

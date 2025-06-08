@@ -15,18 +15,18 @@ class GoalRankk extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // var matchTimeLocal = DateFormat.MMMMd(Get.locale).format(matchTime);
-    var goalsPure = goals.where((e) => e.team.crest.isNotEmpty);
-    List<GoalRankingPerTeam> sortDownToUpReceived = goalsPure.map((e) => e).toList()..sort((a, b) => a.allReceived - b.allReceived);
+    Iterable<GoalRankingPerTeam> goalsPure = goals.where((GoalRankingPerTeam e) => e.team.crest.isNotEmpty);
+    List<GoalRankingPerTeam> sortDownToUpReceived = goalsPure.map((GoalRankingPerTeam e) => e).toList()..sort((GoalRankingPerTeam a, GoalRankingPerTeam b) => a.allReceived - b.allReceived);
     List<GoalRankingPerTeam> sortUpToDownReceived = sortDownToUpReceived.reversed.toList();
     GoalRankingPerTeam leastReceived = sortDownToUpReceived.first;
     GoalRankingPerTeam mostReceived = sortUpToDownReceived.first;
     // // //
-    List<GoalRankingPerTeam> sortUpToDownScored = goalsPure.map((e) => e).toList()..sort((a, b) => a.allScooreed - b.allScooreed);
+    List<GoalRankingPerTeam> sortUpToDownScored = goalsPure.map((GoalRankingPerTeam e) => e).toList()..sort((GoalRankingPerTeam a, GoalRankingPerTeam b) => a.allScooreed - b.allScooreed);
     List<GoalRankingPerTeam> sortDownToUpScored = sortUpToDownScored.reversed.toList();
     GoalRankingPerTeam leastScored = sortUpToDownScored.first;
     GoalRankingPerTeam mostScored = sortDownToUpScored.first;
     // // //
-    List<GoalRankingPerTeam> sortDownToUpScoreDifference = goalsPure.map((e) => e).toList()..sort((a, b) => a.difference - b.difference);
+    List<GoalRankingPerTeam> sortDownToUpScoreDifference = goalsPure.map((GoalRankingPerTeam e) => e).toList()..sort((GoalRankingPerTeam a, GoalRankingPerTeam b) => a.difference - b.difference);
     List<GoalRankingPerTeam> sortUpToDownScoreDifference = sortDownToUpScoreDifference.reversed.toList();
     GoalRankingPerTeam leastDifference = sortDownToUpScoreDifference.first;
     GoalRankingPerTeam mostDifference = sortUpToDownScoreDifference.first;
@@ -34,7 +34,7 @@ class GoalRankk extends StatelessWidget {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
+      children: <Widget>[
         ExpansionTile(
           maintainState: true,
           title: const Text(
@@ -42,7 +42,7 @@ class GoalRankk extends StatelessWidget {
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           initiallyExpanded: true,
-          children: sortDownToUpScored.mapIndexed((index, teamLeft) {
+          children: sortDownToUpScored.mapIndexed((int index, GoalRankingPerTeam teamLeft) {
             GoalRankingPerTeam teamRight = sortDownToUpReceived[index];
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
@@ -51,7 +51,7 @@ class GoalRankk extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       RoundedTeam(team: teamLeft, left: false, tag: 'Statistics'),
                       CenterContent(
                         valueLeft: teamLeft.allScooreed,
@@ -73,13 +73,13 @@ class GoalRankk extends StatelessWidget {
             'Quick statistics',
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          children: [
+          children: <Widget>[
             SizedBox(
               height: 100,
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                 child: Row(
-                  children: [
+                  children: <Widget>[
                     RoundedTeam(team: mostScored, left: false, tag: 'mostScored'),
                     CenterContent(
                       textLeft: 'لأكثر تسجيلا', //
@@ -99,7 +99,7 @@ class GoalRankk extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       RoundedTeam(team: leastScored, left: false, tag: 'leastScored'),
                       CenterContent(
                         textLeft: 'الأقل تسجيلا',
@@ -120,7 +120,7 @@ class GoalRankk extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       RoundedTeam(team: leastDifference, left: false, tag: 'leastDifference'),
                       CenterContent(
                         textLeft: 'Less difference',
@@ -143,7 +143,7 @@ class GoalRankk extends StatelessWidget {
           ),
           maintainState: true,
           initiallyExpanded: true,
-          children: [
+          children: <Widget>[
             GoalStatistic(text: 'regular time', home: goalRanking.scoredRTHome, away: goalRanking.scoredRTAway),
             GoalStatistic(text: 'extra time', home: goalRanking.scoredETHome, away: goalRanking.scoredETAway),
             GoalStatistic(text: 'penalty shootout', home: goalRanking.scoredPTHome, away: goalRanking.scoredPTAway),
@@ -191,12 +191,12 @@ class GoalStatistic extends StatelessWidget {
           visible: total,
           replacement: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               Text.rich(
                 TextSpan(
                   text: 'The total number of goals scored during ',
                   style: TextStyle(),
-                  children: [
+                  children: <InlineSpan>[
                     TextSpan(
                       text: text,
                       style: TextStyle(
@@ -213,12 +213,12 @@ class GoalStatistic extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               Row(
-                children: [
+                children: <Widget>[
                   Expanded(
                     child: Text.rich(
                       TextSpan(
                         text: 'Home',
-                        children: [
+                        children: <InlineSpan>[
                           TextSpan(text: ' : '),
                           TextSpan(
                             text: '$home',
@@ -241,7 +241,7 @@ class GoalStatistic extends StatelessWidget {
                     child: Text.rich(
                       TextSpan(
                         text: 'Away',
-                        children: [
+                        children: <InlineSpan>[
                           TextSpan(text: ' : '),
                           TextSpan(
                             text: '$away',
@@ -267,7 +267,7 @@ class GoalStatistic extends StatelessWidget {
           child: Text.rich(
             TextSpan(
               text: 'Total goals : ',
-              children: [
+              children: <InlineSpan>[
                 TextSpan(
                   text: '$home',
                   style: TextStyle(
@@ -318,13 +318,13 @@ class CenterContent extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Row(
-            children: [
+            children: <Widget>[
               Expanded(
                 flex: 1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     Text(textLeft, textAlign: TextAlign.right),
                     Text('$valueLeft', textAlign: TextAlign.right),
                   ],
@@ -335,7 +335,7 @@ class CenterContent extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     Text(textRight, textAlign: TextAlign.right),
                     Text('$valueRight', textAlign: TextAlign.left),
                   ],

@@ -37,7 +37,7 @@ class RoundedTeam extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+            children: <Widget>[
               TeamAvatar(
                 team: team.team,
                 tag: '${left ? 'LEFT' : 'RIGHT'}${team.team.name}$tag',
@@ -82,7 +82,7 @@ class TeamAvatar extends StatelessWidget {
                 Icons.sports_soccer_sharp,
                 size: size - 8,
                 color: Colors.white,
-                shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+                shadows: <Shadow>[Shadow(blurRadius: 5, color: Colors.white)],
               );
             } else {
               return AppFileImageViewer(
@@ -188,13 +188,13 @@ class TeamDetails extends StatelessWidget {
       ),
       body: ListView(
         physics: BouncingScrollPhysics(),
-        children: [
+        children: <Widget>[
           ExpansionTile(
             title: Text('Infos'),
             initiallyExpanded: true,
             children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(Icons.pin_drop_rounded)),
                   Expanded(child: Text.rich(TextSpan(text: team.area.name))),
                   InkWell(
@@ -218,13 +218,13 @@ class TeamDetails extends StatelessWidget {
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.idBadge)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
                         text: team.name,
-                        children: [
+                        children: <InlineSpan>[
                           TextSpan(text: ' - '),
                           TextSpan(text: team.shortName),
                           TextSpan(text: ' - '),
@@ -237,25 +237,25 @@ class TeamDetails extends StatelessWidget {
               ),
               if (founded != null)
                 Row(
-                  children: [
+                  children: <Widget>[
                     SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.starOfLife)),
                     Expanded(child: Text.rich(TextSpan(text: founded.toString()))),
                   ],
                 ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.addressCard)),
                   Expanded(child: Text.rich(TextSpan(text: team.address))),
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
                   Expanded(child: Text.rich(TextSpan(text: team.venue))),
                 ],
               ),
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.paintRoller)),
                   Expanded(child: Text.rich(TextSpan(text: team.clubColors))),
                 ],
@@ -270,7 +270,7 @@ class TeamDetails extends StatelessWidget {
             initiallyExpanded: true,
             children: <Widget>[
               Row(
-                children: [
+                children: <Widget>[
                   SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personBooth)),
                   Expanded(child: Text.rich(TextSpan(text: team.coach.name))),
                 ],
@@ -293,14 +293,14 @@ class TeamDetails extends StatelessWidget {
             title: Text('Squad'),
             initiallyExpanded: false,
             children: <Widget>[
-              for (var player in team.squad) TeamSquadMember(player: player),
+              for (Squad player in team.squad) TeamSquadMember(player: player),
             ].joinBy(item: Gap(12.w)),
           ),
           ExpansionTile(
             title: Text('Running Competitions'),
             initiallyExpanded: true,
             children: <Widget>[
-              for (var runnin in team.runningCompetitions) TeamRunningCompetition(runnin: runnin),
+              for (RunningCompetitions runnin in team.runningCompetitions) TeamRunningCompetition(runnin: runnin),
             ].joinBy(item: Gap(12.w)),
           ),
         ],
@@ -323,7 +323,7 @@ class TeamRunningCompetition extends StatelessWidget {
       code: runnin.code,
       type: runnin.type,
       child: Row(
-        children: [
+        children: <Widget>[
           SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
           Expanded(child: Text.rich(TextSpan(text: runnin.name))),
           Container(
@@ -357,9 +357,9 @@ class TeamSquadMember extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       DateTime? playerBirth = player.dateOfBirth;
-      var position = player.position;
+      String? position = player.position;
       return ExpansionTile(
         title: Text(player.name),
         initiallyExpanded: false,
@@ -383,7 +383,7 @@ class BootolaLinq extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Row(
-        children: [
+        children: <Widget>[
           SizedBox(
             width: 50.w,
             child: Icon(

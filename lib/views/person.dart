@@ -26,7 +26,7 @@ class BotolaPerson extends StatelessWidget {
           if (startContact != null) BotolaContract(contractStart: startContact, contractEnd: endContact),
           PlayerShirtNumber(shirtNumber: shirtNumber),
           Row(
-            children: [
+            children: <Widget>[
               SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.peopleGroup)),
               Expanded(
                 child: TeamDetailsEntry(
@@ -56,13 +56,13 @@ class PlayerShirtNumber extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: <Widget>[
         SizedBox(width: 50.w, child: Icon(CupertinoIcons.number_circle)),
         Expanded(
           child: Text.rich(
             TextSpan(
               text: 'Shirt Number: ',
-              children: [
+              children: <InlineSpan>[
                 TextSpan(text: shirtNumber.toString()),
               ],
             ),

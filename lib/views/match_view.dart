@@ -31,7 +31,7 @@ class MatchView extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(
-          children: [
+          children: <Widget>[
             Expanded(
               flex: 1,
               child: Container(
@@ -46,7 +46,7 @@ class MatchView extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                  children: <Widget>[
                     TeamAvatar(
                       team: Team(
                         crest: match.awayTeam.crest,
@@ -92,12 +92,12 @@ class MatchView extends StatelessWidget {
                   alignment: Alignment.center,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
+                    children: <Widget>[
                       SizedBox(height: 8),
                       Text('${BotolaServices.statusMatch(matchStat)}${BotolaServices.durationMatch(machDura, matchStat: matchStat)}'),
                       Expanded(
                         child: Row(
-                          children: [
+                          children: <Widget>[
                             Expanded(
                               flex: 1,
                               child: Text(
@@ -110,7 +110,7 @@ class MatchView extends StatelessWidget {
                               flex: 3,
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
-                                children: [
+                                children: <Widget>[
                                   if (matchTime.hour + matchTime.minute != 0) Text(BotolaServices.convertNumbers(localeTime)),
                                   Text(BotolaServices.convertNumbers(localeDate)),
                                 ],
@@ -146,7 +146,7 @@ class MatchView extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: [
+                  children: <Widget>[
                     TeamAvatar(
                       team: Team(
                         crest: match.homeTeam.crest,

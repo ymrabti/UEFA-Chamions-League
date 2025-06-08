@@ -36,7 +36,7 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          actions: [
+          actions: <Widget>[
             ThemeModeToggler(),
             if (kDebugMode)
               InkWell(
@@ -60,7 +60,7 @@ class HomeScreenState extends State<HomeScreen> {
 
   Widget bodyLV() {
     return Column(
-      children: [
+      children: <Widget>[
         Container(color: Theme.of(context).colorScheme.primary, child: bottom()),
         Expanded(
           child: SingleChildScrollView(
@@ -75,15 +75,15 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Builder bodyCSV() {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       List<Widget> chuldren = children();
       return CustomScrollView(
         physics: BouncingScrollPhysics(),
-        slivers: [
+        slivers: <Widget>[
           SliverAppBar(
             //   expandedHeight: 200.0,
             leading: Builder(
-              builder: (context) {
+              builder: (BuildContext context) {
                 String? comp = _competition?.emblem;
                 if (comp == null) {
                   return SizedBox();
@@ -122,30 +122,30 @@ class HomeScreenState extends State<HomeScreen> {
 
   List<Widget> children() {
     List<TheCompetition> competitions = widget.competitions.competitions;
-    return [
+    return <Widget>[
       ExpansionTile(
         title: Text('Available Competitions'),
         initiallyExpanded: true,
         maintainState: true,
-        children: [for (TheCompetition comp in competitions) comp.view()],
+        children: <Widget>[for (TheCompetition comp in competitions) comp.view()],
       ),
-      for (var compMatches in getTodaySubPhases) _matchToday(compMatches),
+      for (GeneralStageWithMatchesData<Competition> compMatches in getTodaySubPhases) _matchToday(compMatches),
     ];
   }
 
   Builder _matchToday(GeneralStageWithMatchesData<Competition> e) {
     return Builder(
-      builder: (context) {
+      builder: (BuildContext context) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Stack(
-            children: [
+            children: <Widget>[
               ExpansionTile(
                 key: e.title.globalKey,
                 maintainState: true,
                 title: Text(e.title.name),
                 initiallyExpanded: !e.allFinished,
-                children: e.matches.map((f) => f.view).toList(),
+                children: e.matches.map((Matche f) => f.view).toList(),
               ),
               if (_competition?.code == e.title.code && _splashing)
                 Positioned.fill(
@@ -168,9 +168,9 @@ class HomeScreenState extends State<HomeScreen> {
 
   Builder bottom() {
     return Builder(
-      builder: (context) {
+      builder: (BuildContext context) {
         return Stack(
-          children: [
+          children: <Widget>[
             /* ClipPath(
               clipper: Customshape(),
               child: Container(
@@ -187,7 +187,7 @@ class HomeScreenState extends State<HomeScreen> {
   }
 
   Builder dropDown() {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       return DropdownButton<Competition>(
         isExpanded: true,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(12), bottomRight: Radius.circular(12)),
@@ -199,12 +199,12 @@ class HomeScreenState extends State<HomeScreen> {
         dropdownColor: Theme.of(context).colorScheme.primary,
         items: getTodaySubPhases
             .map(
-              (e) => DropdownMenuItem<Competition>(
+              (GeneralStageWithMatchesData<Competition> e) => DropdownMenuItem<Competition>(
                 value: e.title,
                 child: Card(
                   color: Theme.of(context).colorScheme.primary,
                   child: Row(
-                    children: [
+                    children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: AppFileImageViewer(
@@ -225,7 +225,7 @@ class HomeScreenState extends State<HomeScreen> {
               ),
             )
             .toList(),
-        onChanged: (value) {
+        onChanged: (Competition? value) {
           setState(() {});
           _competition = value;
           scrollToTile(value);
@@ -262,8 +262,8 @@ class HomeScreenState extends State<HomeScreen> {
       currentContext,
       duration: Duration(seconds: 1),
       curve: Curves.easeInOut,
-    ).then((value) {
-      Future.delayed(
+    ).then((void value) {
+      Future<void>.delayed(
         Duration(milliseconds: 400),
         () {
           _splashing = false;
@@ -275,9 +275,9 @@ class HomeScreenState extends State<HomeScreen> {
 
   List<GeneralStageWithMatchesData<Competition>> get getTodaySubPhases {
     return GeneralStageWithMatches<Competition>(
-      getTitle: (data) => data.competition,
+      getTitle: (Matche data) => data.competition,
       matches: widget.today.matches,
-      test: (prev, last) => prev.code == last.code,
+      test: (Competition prev, Competition last) => prev.code == last.code,
     ).subphases;
   }
 }

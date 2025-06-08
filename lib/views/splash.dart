@@ -20,7 +20,7 @@ class _SplashPageState extends State<SplashPage> {
   bool _ended = false;
   @override
   void initState() {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setPreferredOrientations(<DeviceOrientation>[DeviceOrientation.portraitUp]);
     _controller = VideoPlayerController.asset('assets/uefa-cl-intro.mp4') //
       ..initialize().then((_) {
         if (kDebugMode) {
@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
           _controller.setVolume(0);
           _controller.setPlaybackSpeed(3);
         }
-        _controller.play().then((value) => setState(() {}));
+        _controller.play().then((void value) => setState(() {}));
       });
 
     _controller.addListener(() async {

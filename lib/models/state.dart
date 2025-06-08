@@ -2,15 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:botola_max/lib.dart';
 
 class AppState extends ChangeNotifier {
-  Map<String, DataCompetition> data = {};
-  Map<String, String> _mapCrests = {};
+  Map<String, DataCompetition> data = <String, DataCompetition>{};
+  Map<String, String> _mapCrests = <String, String>{};
 
   set setData(Map<String, DataCompetition> datum) => data = datum;
 
-  get getMapCrests => _mapCrests;
+  Map<String, String> get getMapCrests => _mapCrests;
 
   set setMapCrests(Map<String, String> newCrests) {
     _mapCrests = newCrests;
+    notifyListeners();
+  }
+
+  double _visiblePercentage = 100;
+  double get visiblePercentage => _visiblePercentage;
+  set visiblePercent(double p) {
+    _visiblePercentage = p;
     notifyListeners();
   }
 
@@ -21,9 +28,9 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Map<String, bool> expansion = {};
+  Map<String, bool> expansion = <String, bool>{};
   void setExpansion(String compID, bool datum) {
-    expansion.addAll({compID: datum});
+    expansion.addAll(<String, bool>{compID: datum});
     notifyListeners();
   }
 
@@ -46,12 +53,12 @@ class AppState extends ChangeNotifier {
   }
 
   Future<void> addCompetition(String compID, DataCompetition datum) async {
-    data.addAll({compID: datum});
-    var lcrests = datum.teams.teams.map((e) => e.crest).toList();
+    data.addAll(<String, DataCompetition>{compID: datum});
+    List<String> lcrests = datum.teams.teams.map((Teams e) => e.crest).toList();
     FallBackMap locateds = await SharedPrefsDatabase.updateLocalCrests(lcrests);
 
     MapCompetitions dataClass = MapCompetitions(
-      data.map((key, value) => MapEntry(key, true)),
+      data.map((String key, DataCompetition value) => MapEntry<String, bool>(key, true)),
       _mapCrests..addAll(locateds.map),
     );
 
@@ -76,9 +83,9 @@ class MapCompetitions extends IGenericAppModel {
   MapCompetitions(this.data, this.crests);
   @override
   Map<String, Object?> toJson() {
-    return {
-      'data': data.map((key, value) {
-        return MapEntry(key, value);
+    return <String, Object?>{
+      'data': data.map((String key, bool value) {
+        return MapEntry<String, bool>(key, value);
       }),
       'crests': crests,
     };

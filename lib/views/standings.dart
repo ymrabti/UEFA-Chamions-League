@@ -13,7 +13,7 @@ class TableStanding extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(18.0),
       child: Column(
-        children: [
+        children: <Widget>[
           Container(
             decoration: BoxDecoration(
               color: Theme.of(context).primaryColor,
@@ -45,7 +45,7 @@ class TableStanding extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
-                children: [
+                children: <Widget>[
                   Expanded(flex: 1, child: Text('#', style: textStyle, textAlign: TextAlign.center)),
                   Expanded(flex: 2, child: Text('Team', style: textStyle, textAlign: TextAlign.center)),
                   Expanded(flex: 1, child: Text('P', style: textStyle, textAlign: TextAlign.center)),
@@ -68,21 +68,21 @@ class TableStanding extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: standing.table.mapIndexed(
-                  (index, e) {
+                  (int index, Tabla e) {
                     return Container(
                       width: Get.width,
                       alignment: Alignment.center,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
-                          children: [
+                          children: <Widget>[
                             Expanded(flex: 1, child: Text('${index + 1}', textAlign: TextAlign.center)),
                             Expanded(
                               flex: 2,
                               child: Row(
-                                children: [
+                                children: <Widget>[
                                   Stack(
-                                    children: [
+                                    children: <Widget>[
                                       TeamAvatar(
                                         team: e.team,
                                         tag: e.team.crest,
@@ -94,7 +94,7 @@ class TableStanding extends StatelessWidget {
                                             Icons.verified,
                                             color: Theme.of(context).primaryColor,
                                             size: 15,
-                                            shadows: [Shadow(blurRadius: 5, color: Colors.white)],
+                                            shadows: <Shadow>[Shadow(blurRadius: 5, color: Colors.white)],
                                           ),
                                         ),
                                     ],

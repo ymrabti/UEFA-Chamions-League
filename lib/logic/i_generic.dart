@@ -16,7 +16,7 @@ class IGenericAppMap<T extends IGenericAppModel> {
     this.value,
   });
   static IGenericAppMap<T> fromJson<T extends IGenericAppModel>(Map<String, Object?> map) {
-    var iGenericAppMap = IGenericAppMap(
+    IGenericAppMap<T> iGenericAppMap = IGenericAppMap<T>(
       dateTime: DateTime.fromMillisecondsSinceEpoch(
         map[IGenricEnry.datetime.name] as int,
       ),
@@ -32,10 +32,10 @@ abstract class IGenericAppModel {
   Future<void> save(String name) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String textSaved = PowerJSON(
-      Map.fromEntries(
-        [
-          MapEntry(IGenricEnry.datetime.name, DateTime.now().millisecondsSinceEpoch),
-          MapEntry(IGenricEnry.value.name, toJson()),
+      Map<String, Object?>.fromEntries(
+        <MapEntry<String, Object?>>[
+          MapEntry<String, Object?>(IGenricEnry.datetime.name, DateTime.now().millisecondsSinceEpoch),
+          MapEntry<String, Object?>(IGenricEnry.value.name, toJson()),
         ],
       ),
     ).toText();

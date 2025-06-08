@@ -36,12 +36,12 @@ class BotolaTeams {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       BotolaMaxTeamsEnum.count.name: count,
       BotolaMaxTeamsEnum.filters.name: filters?.toJson(),
       BotolaMaxTeamsEnum.competition.name: competition.toJson(),
       BotolaMaxTeamsEnum.season.name: season.toJson(),
-      BotolaMaxTeamsEnum.teams.name: teams.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      BotolaMaxTeamsEnum.teams.name: teams.map<Map<String, dynamic>>((Teams data) => data.toJson()).toList(),
     };
   }
 
@@ -52,7 +52,7 @@ class BotolaTeams {
       filters: filtersJson == null ? null : Filters.fromJson(filtersJson),
       competition: Competition.fromJson(json[BotolaMaxTeamsEnum.competition.name] as Map<String, Object?>),
       season: Season.fromJson(json[BotolaMaxTeamsEnum.season.name] as Map<String, Object?>),
-      teams: (json[BotolaMaxTeamsEnum.teams.name] as List).map<Teams>((data) => Teams.fromJson(data as Map<String, Object?>)).toList(),
+      teams: (json[BotolaMaxTeamsEnum.teams.name] as List<dynamic>).map<Teams>((dynamic data) => Teams.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -185,7 +185,7 @@ class Teams extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       TeamsEnum.area.name: area.toJson(),
       TeamsEnum.id.name: id,
       TeamsEnum.name.name: name,
@@ -197,16 +197,16 @@ class Teams extends IGenericAppModel {
       TeamsEnum.founded.name: founded,
       TeamsEnum.clubColors.name: clubColors,
       TeamsEnum.venue.name: venue,
-      TeamsEnum.runningCompetitions.name: runningCompetitions.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      TeamsEnum.runningCompetitions.name: runningCompetitions.map<Map<String, dynamic>>((RunningCompetitions data) => data.toJson()).toList(),
       TeamsEnum.coach.name: coach.toJson(),
-      TeamsEnum.squad.name: squad.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      TeamsEnum.squad.name: squad.map<Map<String, dynamic>>((Squad data) => data.toJson()).toList(),
       TeamsEnum.staff.name: staff,
       TeamsEnum.lastUpdated.name: lastUpdated,
     };
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       TeamsEnum.area.name: area,
       TeamsEnum.id.name: id.toString(),
       TeamsEnum.name.name: name,
@@ -239,10 +239,10 @@ class Teams extends IGenericAppModel {
       founded: int.tryParse('${json[TeamsEnum.founded.name]}'),
       clubColors: json[TeamsEnum.clubColors.name] as String?,
       venue: json[TeamsEnum.venue.name] as String?,
-      runningCompetitions: (json[TeamsEnum.runningCompetitions.name] as List).map<RunningCompetitions>((data) => RunningCompetitions.fromJson(data as Map<String, Object?>)).toList(),
+      runningCompetitions: (json[TeamsEnum.runningCompetitions.name] as List<dynamic>).map<RunningCompetitions>((dynamic data) => RunningCompetitions.fromJson(data as Map<String, Object?>)).toList(),
       coach: Coach.fromJson(json[TeamsEnum.coach.name] as Map<String, Object?>),
-      squad: (json[TeamsEnum.squad.name] as List).map<Squad>((data) => Squad.fromJson(data as Map<String, Object?>)).toList(),
-      staff: (json[TeamsEnum.staff.name] as List<Object?>).map((el) => el).toList(),
+      squad: (json[TeamsEnum.squad.name] as List<dynamic>).map<Squad>((dynamic data) => Squad.fromJson(data as Map<String, Object?>)).toList(),
+      staff: (json[TeamsEnum.staff.name] as List<Object?>).map((Object? el) => el).toList(),
       lastUpdated: DateTime.parse('${json[TeamsEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),
     );
   }
@@ -359,7 +359,7 @@ class Squad {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       SquadEnum.id.name: id,
       SquadEnum.name.name: name,
       SquadEnum.position.name: position,
@@ -369,7 +369,7 @@ class Squad {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       SquadEnum.id.name: id.toString(),
       SquadEnum.name.name: name,
       SquadEnum.position.name: position,
@@ -435,7 +435,7 @@ class Squad_Views {
 extension SquadSort on List<Squad> {
   List<Squad> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((Squad a, Squad b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == SquadEnum.id.name) {
@@ -538,7 +538,7 @@ class Coach {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       CoachEnum.id.name: id,
       CoachEnum.firstName.name: firstName,
       CoachEnum.lastName.name: lastName,
@@ -550,7 +550,7 @@ class Coach {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       CoachEnum.id.name: id.toString(),
       CoachEnum.firstName.name: firstName,
       CoachEnum.lastName.name: lastName,
@@ -647,14 +647,14 @@ class Contract {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       ContractEnum.start.name: start,
       ContractEnum.until.name: until,
     };
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       ContractEnum.start.name: start,
       ContractEnum.until.name: until,
     };
@@ -705,7 +705,7 @@ class Contract_Views {
 extension ContractSort on List<Contract> {
   List<Contract> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((Contract a, Contract b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == ContractEnum.start.name) {
@@ -770,7 +770,7 @@ class RunningCompetitions {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       RunningCompetitionsEnum.id.name: id,
       RunningCompetitionsEnum.name.name: name,
       RunningCompetitionsEnum.code.name: code,
@@ -780,7 +780,7 @@ class RunningCompetitions {
   }
 
   Map<String, Object?> toMap() {
-    return {
+    return <String, Object?>{
       RunningCompetitionsEnum.id.name: id.toString(),
       RunningCompetitionsEnum.name.name: name,
       RunningCompetitionsEnum.code.name: code,

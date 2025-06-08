@@ -31,16 +31,16 @@ class BotolaStandings {
   }
 
   Map<String, Object?> toJson() {
-    return {'filters': filters.toJson(), 'area': area.toJson(), 'competition': competition.toJson(), 'season': season.toJson(), 'standings': standings.map<Map<String, dynamic>>((data) => data.toJson()).toList()};
+    return <String, Object?>{'filters': filters.toJson(), 'area': area.toJson(), 'competition': competition.toJson(), 'season': season.toJson(), 'standings': standings.map<Map<String, dynamic>>((Standing data) => data.toJson()).toList()};
   }
 
   static BotolaStandings fromJson(Map<String, Object?> json) {
     return BotolaStandings(
-      filters: json['filters'] == null ? Filters.fromJson({}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
-      area: json['area'] == null ? Area.fromJson({}) : Area.fromJson(json['area'] as Map<String, Object?>),
-      competition: json['competition'] == null ? Competition.fromJson({}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
-      season: json['season'] == null ? Season.fromJson({}) : Season.fromJson(json['season'] as Map<String, Object?>),
-      standings: json['standings'] == null ? [] : (json['standings'] as List).map<Standing>((data) => Standing.fromJson(data as Map<String, Object?>)).toList(),
+      filters: json['filters'] == null ? Filters.fromJson(<String, Object?>{}) : Filters.fromJson(json['filters'] as Map<String, Object?>),
+      area: json['area'] == null ? Area.fromJson(<String, Object?>{}) : Area.fromJson(json['area'] as Map<String, Object?>),
+      competition: json['competition'] == null ? Competition.fromJson(<String, Object?>{}) : Competition.fromJson(json['competition'] as Map<String, Object?>),
+      season: json['season'] == null ? Season.fromJson(<String, Object?>{}) : Season.fromJson(json['season'] as Map<String, Object?>),
+      standings: json['standings'] == null ? <Standing>[] : (json['standings'] as List<dynamic>).map<Standing>((dynamic data) => Standing.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -71,11 +71,11 @@ class Standing {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       'stage': stage,
       'type': type,
       'group': group,
-      'table': table.map<Map<String, dynamic>>((data) => data.toJson()).toList(),
+      'table': table.map<Map<String, dynamic>>((Tabla data) => data.toJson()).toList(),
     };
   }
 
@@ -86,7 +86,7 @@ class Standing {
       stage: json['stage'] == null ? '' : json['stage'] as String,
       type: json['type'] == null ? '' : json['type'] as String,
       group: json['group'] == null ? '' : json['group'] as String,
-      table: json['table'] == null ? [] : (json['table'] as List).map<Tabla>((data) => Tabla.fromJson(data as Map<String, Object?>)).toList(),
+      table: json['table'] == null ? <Tabla>[] : (json['table'] as List<dynamic>).map<Tabla>((dynamic data) => Tabla.fromJson(data as Map<String, Object?>)).toList(),
     );
   }
 
@@ -148,7 +148,7 @@ class Tabla {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       'position': position,
       'team': team.toJson(),
       'playedGames': playedGames,
@@ -166,7 +166,7 @@ class Tabla {
   static Tabla fromJson(Map<String, Object?> json) {
     return Tabla(
       position: json['position'] == null ? 0 : json['position'] as int,
-      team: json['team'] == null ? Team.fromJson({}) : Team.fromJson(json['team'] as Map<String, Object?>),
+      team: json['team'] == null ? Team.fromJson(<String, Object?>{}) : Team.fromJson(json['team'] as Map<String, Object?>),
       playedGames: json['playedGames'] == null ? 0 : json['playedGames'] as int,
       form: json['form'] as dynamic,
       won: json['won'] == null ? 0 : json['won'] as int,
@@ -220,7 +220,7 @@ class Team {
   }
 
   Map<String, Object?> toJson() {
-    return {'id': id, 'name': name, 'shortName': shortName, 'tla': tla, 'crest': crest};
+    return <String, Object?>{'id': id, 'name': name, 'shortName': shortName, 'tla': tla, 'crest': crest};
   }
 
   static Team fromJson(Map<String, Object?> json) {

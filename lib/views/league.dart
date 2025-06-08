@@ -6,9 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 // import 'package:just_audio/just_audio.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-final List<String> elbrem = ['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
+final List<String> elbrem = <String>['PL', 'CL', 'FL1', 'DED', 'CLI', 'PD', 'WC'];
 
 class AppLeague extends StatefulWidget {
   const AppLeague({
@@ -21,7 +22,6 @@ class AppLeague extends StatefulWidget {
 }
 
 class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMixin {
-  double _visiblePercentage = 100.0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
   bool _splashing = false;
@@ -31,7 +31,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
     await player.setVolume(0.15);
     // await player.setLoopMode(LoopMode.all);
     await player.play(AssetSource(anthem));
-    player.onPlayerStateChanged.listen((event) {
+    player.onPlayerStateChanged.listen((PlayerState event) {
       if (event == PlayerState.completed) {
         player.seek(Duration.zero);
         player.resume();
@@ -55,13 +55,13 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
       duration: const Duration(milliseconds: 500), // Animation duration
       vsync: this,
     );
-    unawaited(SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]));
+    unawaited(SystemChrome.setPreferredOrientations(<DeviceOrientation>[DeviceOrientation.portraitUp]));
     WidgetsBinding.instance.addPostFrameCallback((_) => scrollToTile());
     super.initState();
   }
 
   @override
-  didChangeDependencies() {
+  void didChangeDependencies() {
     super.didChangeDependencies();
   }
 
@@ -90,7 +90,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        actions: [
+        actions: <Widget>[
           if (anthem.isNotEmpty)
             InkWell(
               onTap: () async {
@@ -173,8 +173,8 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
           if (!mounted) return;
           if (refreshCompetition == null) return;
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => AppLeague(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => AppLeague(
                 competition: refreshCompetition,
               ),
             ),
@@ -182,17 +182,17 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
         },
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification notification) {
-            if (notification is ScrollStartNotification) {
-            } else if (notification is ScrollUpdateNotification) {
-            } else if (notification is ScrollEndNotification) {}
-            setState(() {});
-            return notification is ScrollEndNotification;
+            bool sst = notification is UserScrollNotification;
+            if (sst) {
+              setState(() {});
+            }
+            return sst;
           },
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 _brand(),
-                for (var match in widget.competition.stagePhaseData)
+                for (StagePhaseMatches match in widget.competition.stagePhaseData)
                   match.view(
                     context,
                     //   splashedSize:getRenderBox(),
@@ -216,11 +216,11 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   }
 
   Builder _brand() {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       return ClipPath(
         clipper: Customshape(),
         child: Stack(
-          children: [
+          children: <Widget>[
             Container(
               height: 200,
               width: MediaQuery.of(context).size.width,
@@ -228,7 +228,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 lovoVD(),
                 Expanded(
                   //   width: Get.width * .75,
@@ -250,19 +250,20 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
     });
   }
 
-  VisibilityDetector lovoVD() {
-    return VisibilityDetector(
-      key: keyTextSlogan,
-      onVisibilityChanged: (VisibilityInfo visibilityInfo) {
-        double visiblePercentage = visibilityInfo.visibleFraction * 100;
-        _visiblePercentage = visiblePercentage;
-      },
-      child: _logoCompetition(),
-    );
+  Widget lovoVD() {
+    return Builder(builder: (BuildContext context) {
+      return VisibilityDetector(
+        key: keyTextSlogan,
+        onVisibilityChanged: (VisibilityInfo visibilityInfo) {
+          context.read<AppState>().visiblePercent = visibilityInfo.visibleFraction * 100;
+        },
+        child: _logoCompetition(),
+      );
+    });
   }
 
   Widget _logoCompetition() {
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: SizedBox(
@@ -287,14 +288,16 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   }
 
   Widget _animated(Widget child) {
-    return AnimatedSwitcher(
-      duration: Duration(milliseconds: 200),
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
-      child: _visiblePercentage > 10 ? null : child,
-    );
+    return Builder(builder: (BuildContext context) {
+      return AnimatedSwitcher(
+        duration: Duration(milliseconds: 200),
+        transitionBuilder: (Widget child, Animation<double> animation) => FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+        child: context.watch<AppState>().visiblePercentage > 30 ? null : child,
+      );
+    });
   }
 
   Size? getRenderBox() {
@@ -317,8 +320,8 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
       currentContext,
       duration: Duration(seconds: 1),
       curve: Curves.easeInOut,
-    ).then((value) {
-      Future.delayed(
+    ).then((void value) {
+      Future<void>.delayed(
         Duration(milliseconds: 400),
         () {
           _splashing = false;

@@ -16,7 +16,6 @@ final DateTime competitionExpire = DateTime.now().subtract(Duration(hours: 24));
 final GlobalKey keyTextSlogan = GlobalKey();
 
 Future<void> main() async {
-  await IGenericAppModel.clearAll();
   WidgetsFlutterBinding.ensureInitialized();
   if ((BotolaPlatform.isAndroid || BotolaPlatform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
@@ -26,21 +25,21 @@ Future<void> main() async {
   runApp(
     ScreenUtilInit(
       designSize: Size(360.0, 806.0),
-      child: ChangeNotifierProvider(
-        create: (context) {
+      child: ChangeNotifierProvider<AppState>(
+        create: (BuildContext context) {
           return AppState(settingsController.fallback);
         },
         child: ThemeProvider(
           initTheme: mainTheme(dark: settingsController.isDark),
           duration: Duration(seconds: 1),
-          builder: (context, theme) {
+          builder: (BuildContext context, ThemeData theme) {
             return GetMaterialApp(
               title: 'Botola Max',
               locale: const Locale('en'),
               debugShowCheckedModeBanner: false,
               theme: theme,
               home: Builder(
-                builder: (context) {
+                builder: (BuildContext context) {
                   Get.put<SettingsController>(settingsController, tag: SharedPreferencesKeys.settingController.name);
                   return SplashScreen();
                 },
@@ -66,7 +65,7 @@ class AppCheckInitial extends StatefulWidget {
 class _AppCheckInitialState extends State<AppCheckInitial> {
   @override
   Widget build(BuildContext context) {
-    bool isConnected = [
+    bool isConnected = <ConnectivityResult>[
       ConnectivityResult.mobile,
       ConnectivityResult.wifi,
       ConnectivityResult.bluetooth,
@@ -88,11 +87,11 @@ class BotolaOffline extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+      children: <Widget>[
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
             const Icon(Icons.signal_wifi_connected_no_internet_4_sharp).toCard(),
             const Gap(20),
             const Icon(Icons.signal_cellular_connected_no_internet_4_bar_rounded).toCard(),

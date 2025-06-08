@@ -8,7 +8,7 @@ class CompetitionScorersPage extends StatelessWidget {
   final BotolaScorers scorers;
   @override
   Widget build(BuildContext context) {
-    final ascensorWidget = context.findAncestorWidgetOfExactType<HomeScreen>();
+    final HomeScreen? ascensorWidget = context.findAncestorWidgetOfExactType<HomeScreen>();
 
     if (ascensorWidget != null) {
       // You can now access properties of ascensorWidget
@@ -34,7 +34,7 @@ class CompetitionScorersPage extends StatelessWidget {
       ),
       body: ListView(
         children: scorers.scorers.mapIndexed(
-          (i, e) {
+          (int i, Scorers e) {
             int? penalties = e.penalties;
             int? assists = e.assists;
             int? shirtNumber = e.player.shirtNumber;
@@ -57,11 +57,11 @@ class CompetitionScorersPage extends StatelessWidget {
                     child: Text('#${i + 1}'),
                   ),
                 ),
-                children: [
+                children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      children: [
+                      children: <Widget>[
                         AppFileImageViewer(
                           url: (e.team.crest),
                           width: 36,
@@ -72,13 +72,13 @@ class CompetitionScorersPage extends StatelessWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 3.0),
                                 child: Text.rich(
                                   TextSpan(
                                     text: 'Position',
-                                    children: [
+                                    children: <InlineSpan>[
                                       TextSpan(text: ': '),
                                       TextSpan(
                                         text: e.player.section,
@@ -107,7 +107,7 @@ class CompetitionScorersPage extends StatelessWidget {
                                 child: Text.rich(
                                   TextSpan(
                                     text: 'Home',
-                                    children: [
+                                    children: <InlineSpan>[
                                       TextSpan(text: ': '),
                                       TextSpan(
                                         text: e.player.nationality,
@@ -130,7 +130,7 @@ class CompetitionScorersPage extends StatelessWidget {
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
+                          children: <Widget>[
                             Text(
                               'Played matches ${e.playedMatches}',
                               style: TextStyle(fontSize: 10),

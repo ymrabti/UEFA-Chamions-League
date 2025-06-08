@@ -27,16 +27,16 @@ class ElBotolaChampionsList extends IGenericAppModel {
 
   @override
   Map<String, Object?> toJson() {
-    return Map.fromEntries([
-      MapEntry(
+    return Map<String, Object?>.fromEntries(<MapEntry<String, Object?>>[
+      MapEntry<String, Object?>(
         ElBotolaChampionsListEnum.count.name,
         count,
       ),
-      MapEntry(
+      MapEntry<String, Object?>(
         ElBotolaChampionsListEnum.competitions.name,
         competitions
             .map<Map<String, Object?>>(
-              (data) => data.toJson(),
+              (TheCompetition data) => data.toJson(),
             )
             .toList(),
       ),
@@ -46,9 +46,9 @@ class ElBotolaChampionsList extends IGenericAppModel {
   factory ElBotolaChampionsList.fromJson(Map<String, Object?> json) {
     return ElBotolaChampionsList(
       count: int.parse('${json[ElBotolaChampionsListEnum.count.name]}'),
-      competitions: (json[ElBotolaChampionsListEnum.competitions.name] as List)
+      competitions: (json[ElBotolaChampionsListEnum.competitions.name] as List<dynamic>)
           .map<TheCompetition>(
-            (data) => TheCompetition.fromJson(data as Map<String, Object?>),
+            (dynamic data) => TheCompetition.fromJson(data as Map<String, Object?>),
           )
           .toList(),
     );
@@ -86,7 +86,7 @@ enum ElBotolaChampionsListEnum {
 extension ElBotolaChampionsListSort on List<ElBotolaChampionsList> {
   List<ElBotolaChampionsList> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((ElBotolaChampionsList a, ElBotolaChampionsList b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == ElBotolaChampionsListEnum.count.name) {
@@ -178,7 +178,7 @@ class TheCompetition {
       () => AppLeague(
         competition: refreshCompetition,
       ),
-      arguments: {'competition-id': code},
+      arguments: <String, String>{'competition-id': code},
     );
   }
 
@@ -186,7 +186,7 @@ class TheCompetition {
     TheCompetition theCompitition = this;
     String startYear = DateFormat.y().format(theCompitition.currentSeason.startDate);
     String endYear = DateFormat.y().format(theCompitition.currentSeason.endDate);
-    return Builder(builder: (context) {
+    return Builder(builder: (BuildContext context) {
       return Card(
         margin: EdgeInsets.symmetric(vertical: 12, horizontal: 12),
         child: InkWell(
@@ -194,7 +194,7 @@ class TheCompetition {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 8.0),
             child: Row(
-              children: [
+              children: <Widget>[
                 AppFileImageViewer(
                   width: 80.r,
                   height: 80.r,
@@ -208,12 +208,12 @@ class TheCompetition {
                   child: Text.rich(
                     TextSpan(
                       text: theCompitition.name,
-                      children: [
+                      children: <InlineSpan>[
                         TextSpan(
                           text: ' (${theCompitition.code})',
                           style: TextStyle(fontSize: 10),
                         ),
-                        if (theCompitition.type == 'LEAGUE') ...[
+                        if (theCompitition.type == 'LEAGUE') ...<InlineSpan>[
                           TextSpan(
                             text: '\nMatchday: ',
                             style: TextStyle(fontSize: 10),
@@ -248,7 +248,7 @@ class TheCompetition {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       CompetitionsEnum.id.name: id,
       CompetitionsEnum.area.name: area.toJson(),
       CompetitionsEnum.name.name: name,
@@ -333,7 +333,7 @@ enum CompetitionsEnum {
 extension CompetitionsSort on List<TheCompetition> {
   List<TheCompetition> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((TheCompetition a, TheCompetition b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == CompetitionsEnum.id.name) {
@@ -449,7 +449,7 @@ class Area {
   }
 
   Map<String, Object?> toJson() {
-    return {
+    return <String, Object?>{
       AreaEnum.id.name: id,
       AreaEnum.name.name: name,
       AreaEnum.code.name: code,
@@ -504,7 +504,7 @@ enum AreaEnum {
 extension AreaSort on List<Area> {
   List<Area> sorty(String caseField, {bool desc = false}) {
     return this
-      ..sort((a, b) {
+      ..sort((Area a, Area b) {
         int fact = (desc ? -1 : 1);
 
         if (caseField == AreaEnum.id.name) {
