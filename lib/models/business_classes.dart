@@ -6,16 +6,16 @@ import 'package:provider/provider.dart';
 class FallBackMap {
   Map<String, String> map;
   Map<String, bool> availableIds;
-  FallBackMap(
-    this.map,
-    this.availableIds,
-  );
+  FallBackMap({
+    required this.map,
+    required this.availableIds,
+  });
 }
 
-typedef FallBackAndMap = ({
+/* typedef FallBackAndMap = ({
   Map<String, String> map,
   Map<String, bool> availableIds,
-});
+}); */
 
 class CompetitonIdData {
   String id;

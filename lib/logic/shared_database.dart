@@ -3,10 +3,11 @@ import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:botola_max/lib.dart';
-import 'package:path/path.dart' show basename;
+import 'package:path/path.dart' show basename, extension;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,25 +22,27 @@ class SvgTextToPngConverter {
 
   Future<void> convertSvgToPng(String outputPath) async {
     try {
-      PictureInfo pictureInfo = await pictInfo();
+      PictureInfo pictureInfo = await vg.loadPicture(
+        SvgNetworkLoader(url),
+        Get.context,
+        clipViewbox: false,
+      );
 
-      Image? image = pictureInfo.picture.toImageSync(pictureInfo.size.width.floor(), pictureInfo.size.height.floor());
-
+      Image? image = pictureInfo.picture.toImageSync(
+        pictureInfo.size.width.floor(),
+        pictureInfo.size.height.floor(),
+      );
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List? pngBytes = byteData?.buffer.asUint8List();
 
       if (pngBytes == null) return;
       File file = File(outputPath);
       file.writeAsBytesSync(pngBytes);
-      //   pictureInfo.picture.dispose();
+      pictureInfo.picture.dispose();
       return;
     } catch (e) {
       //   return null;
     }
-  }
-
-  Future<PictureInfo> pictInfo() async {
-    return await vg.loadPicture(SvgNetworkLoader(url), null);
   }
 }
 
@@ -77,15 +80,11 @@ abstract class SharedPrefsDatabase {
     return filePath;
   }
 
-  static Future<FallBackAndMap> downloadCrests(List<String> imageUrls) async {
+  static Future<FallBackMap> updateLocalCrests(List<String> imageUrls) async {
     Directory appDirectory = await getApplicationDocumentsDirectory();
-
-    FallBackMap mapAll = await updateLocalCrests(imageUrls, appDirectory);
-    return (map: mapAll.map, availableIds: mapAll.availableIds);
-  }
-
-  static Future<FallBackMap> updateLocalCrests(List<String> imageUrls, Directory appDirectory) async {
-    IGenericAppMap<MapCompetitions>? mapData = await IGenericAppModel.load<MapCompetitions>(AppSaveNames.available_competitions_data.name);
+    IGenericAppMap<MapCompetitions>? mapData = await IGenericAppModel.load<MapCompetitions>(
+      AppSaveNames.available_competitions_data.name,
+    );
     Map<String, bool> availableCompetitionsIDs = mapData?.value?.data ?? {};
     Map<String, String> localCrests = mapData?.value?.crests ?? <String, String>{};
     Dio dio = Dio();
@@ -96,39 +95,47 @@ abstract class SharedPrefsDatabase {
           )
           .toList()
           .map(
-        (e) {
-          return _downloadImages(dio, appDirectory, e);
+        (imageUrl) async {
+          try {
+            String bn = basename(imageUrl);
+            late String fileName;
+            String exte /******/ = extension(imageUrl);
+            if (exte == '.svg') {
+              fileName = bn.replaceAll('.svg', '.png');
+              var outputPath = '${appDirectory.path}/Botola-Max/$fileName';
+              logg(outputPath);
+              await SvgTextToPngConverter(imageUrl).convertSvgToPng(
+                outputPath,
+              );
+            } else {
+              fileName = bn;
+              await dio.download(
+                imageUrl,
+                '${appDirectory.path}/Botola-Max/$fileName',
+                onReceiveProgress: (count, total) {
+                  if (total < 0) return;
+                  if (!imageUrl.endsWith('svg')) return;
+                  logg((count * 100 ~/ total), name: 'PROGRESS');
+                },
+              );
+            }
+
+            return MapEntry<String, String>(imageUrl, '${appDirectory.path}/Botola-Max/$fileName');
+          } catch (e) {
+            logg('Failed to download $imageUrl: $e');
+          }
+          return null;
         },
       ),
     );
     Map<String, String> mapNew = Map<String, String>.fromEntries(urls.whereNotNull());
     Map<String, String> mapAll = mapNew..addAll(localCrests);
     if (mapNew.isNotEmpty) {
-      await MapCompetitions(availableCompetitionsIDs, mapAll).save(AppSaveNames.available_competitions_data.name);
+      await MapCompetitions(availableCompetitionsIDs, mapAll).save(
+        AppSaveNames.available_competitions_data.name,
+      );
     }
-    return FallBackMap(mapAll, availableCompetitionsIDs);
-  }
-
-  static Future<MapEntry<String, String>?> _downloadImages(Dio dio, Directory appDirectory, String imageUrl) async {
-    try {
-      // Get the file name from the URL
-      String fileName /***/ = basename(imageUrl);
-
-      // Create a file path in the app's private directory
-      String savePath = '${appDirectory.path}/Botola-Max/$fileName' /* .replaceAll('.svg', '.png') */;
-
-      // if (exte == '.svg') {
-      // String exte /******/ = extension(imageUrl);
-      // await SvgTextToPngConverter(imageUrl).convertSvgToPng(savePath);
-      // } else {
-      await dio.download(imageUrl, savePath);
-      // }
-
-      return MapEntry<String, String>(imageUrl, savePath);
-    } catch (e) {
-      logg('Failed to download $imageUrl: $e');
-    }
-    return null;
+    return FallBackMap(map: mapAll, availableIds: availableCompetitionsIDs);
   }
 
   static Future<RefreshCompetiton?> refreshCompetition({

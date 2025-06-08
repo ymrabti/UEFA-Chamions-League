@@ -101,7 +101,7 @@ class Teams extends IGenericAppModel {
 
   final String name;
 
-  final String shortName;
+  final String? shortName;
 
   final String tla;
 
@@ -231,7 +231,7 @@ class Teams extends IGenericAppModel {
       area: Area.fromJson(json[TeamsEnum.area.name] as Map<String, Object?>),
       id: int.parse('${json[TeamsEnum.id.name]}'),
       name: json[TeamsEnum.name.name] as String,
-      shortName: json[TeamsEnum.shortName.name] as String,
+      shortName: json[TeamsEnum.shortName.name] as String?,
       tla: json[TeamsEnum.tla.name] as String,
       crest: json[TeamsEnum.crest.name] as String,
       address: json[TeamsEnum.address.name] as String,

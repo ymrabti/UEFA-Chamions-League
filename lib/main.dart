@@ -16,6 +16,7 @@ final DateTime competitionExpire = DateTime.now().subtract(Duration(hours: 24));
 final GlobalKey keyTextSlogan = GlobalKey();
 
 Future<void> main() async {
+  await IGenericAppModel.clearAll();
   WidgetsFlutterBinding.ensureInitialized();
   if ((BotolaPlatform.isAndroid || BotolaPlatform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
@@ -27,7 +28,7 @@ Future<void> main() async {
       designSize: Size(360.0, 806.0),
       child: ChangeNotifierProvider(
         create: (context) {
-          return AppState.empty(settingsController.fallback);
+          return AppState(settingsController.fallback);
         },
         child: ThemeProvider(
           initTheme: mainTheme(dark: settingsController.isDark),

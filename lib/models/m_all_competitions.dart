@@ -1,5 +1,6 @@
 import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -195,10 +196,12 @@ class TheCompetition {
             child: Row(
               children: [
                 AppFileImageViewer(
-                  width: 40,
-                  height: 40,
+                  width: 80.r,
+                  height: 80.r,
                   url: (theCompitition.emblem),
-                  color: elbrem.contains(theCompitition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+                  color: elbrem.contains(theCompitition.code) //
+                      ? Theme.of(context).colorScheme.background.invers(true)
+                      : null,
                 ),
                 Gap(12),
                 Expanded(

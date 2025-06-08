@@ -76,9 +76,16 @@ class _SplashPageState extends State<SplashPage> {
             ? AnimatedOpacity(
                 opacity: _visible ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 1000),
-                child: AspectRatio(aspectRatio: _controller.value.aspectRatio, child: VideoPlayer(_controller)),
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                ),
               ) //
-            : Container(color: Theme.of(context).primaryColor, width: Get.width, height: Get.height),
+            : Container(
+                color: Theme.of(context).primaryColor,
+                width: Get.width,
+                height: Get.height,
+              ),
       ),
     );
   }

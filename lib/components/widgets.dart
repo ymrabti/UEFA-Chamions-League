@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart' show SvgPicture;
+import 'package:flutter_svg/flutter_svg.dart' show SvgPicture, SvgTheme;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -31,18 +31,18 @@ class AppFileImageViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String? lurl = url;
-    if (lurl == null) return Image.asset('assets/logo-light.png');
-    String img = context.watch<AppState>() /*  */ .exchangeCrest(lurl);
+    if (lurl == null) return Image.asset('assets/logo-dark.png', width: width, height: height);
+    String img = context.watch<AppState>().exchangeCrest(lurl);
     if (img.endsWith('.svg')) {
       return SvgPicture.file(
         File(img),
         width: width,
         height: height,
         fit: boxFit,
-        // ignore: deprecated_member_use
-        color: color,
-        // colorFilter: ColorFilter.mode(color ?? Colors.transparent, BlendMode.overlay),
-        // theme: SvgTheme(currentColor: color ?? Colors.white),
+        /* ignore: deprecated_member_use
+        color: color, */
+        colorFilter: ColorFilter.mode(color ?? Colors.transparent, BlendMode.overlay),
+        theme: SvgTheme(currentColor: color ?? Colors.white),
       );
     } else {
       return _image(img);
@@ -53,8 +53,8 @@ class AppFileImageViewer extends StatelessWidget {
     return Image(
       image: _imageSource(url),
       width: width,
-      color: color,
       height: height,
+      color: color,
       fit: boxFit,
       loadingBuilder: (context, child, loadingProgress) {
         var loading = loadingProgress;
@@ -71,7 +71,12 @@ class AppFileImageViewer extends StatelessWidget {
       errorBuilder: (context, error, stackTrace) {
         log(error.toString());
         return FittedBox(
-          child: Image.asset('assets/logo-light.png'),
+          child: Image.asset(
+            'assets/logo-dark.png',
+            color: Colors.red,
+            width: width,
+            height: height,
+          ),
         );
       },
     );
@@ -81,7 +86,7 @@ class AppFileImageViewer extends StatelessWidget {
     var img = e;
     if (img == null) {
       return AssetImage(
-        'assets/logo-light.png',
+        'assets/logo-dark.png',
       );
     }
     return FileImage(File(img));
@@ -169,7 +174,7 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
     ].contains(_connectivityResult);
     return isConnected
         ? WidgetWithWaiter(
-            child: Scaffold /*  */ (
+            child: Scaffold(
               backgroundColor: widget.backgroundColor,
               appBar: widget.appBar,
               body: widget.body,

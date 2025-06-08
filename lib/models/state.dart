@@ -1,18 +1,18 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:botola_max/lib.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AppState extends ChangeNotifier {
   Map<String, DataCompetition> data = {};
-  Map<String, String> mapCrests = {};
+  Map<String, String> _mapCrests = {};
 
   set setData(Map<String, DataCompetition> datum) => data = datum;
 
-  get getMapCrests => mapCrests;
+  get getMapCrests => _mapCrests;
 
-  set setMapCrests(Map<String, String> mapCrests) => this.mapCrests = mapCrests;
+  set setMapCrests(Map<String, String> newCrests) {
+    _mapCrests = newCrests;
+    notifyListeners();
+  }
 
   final String fallback;
   bool loading = false;
@@ -38,7 +38,7 @@ class AppState extends ChangeNotifier {
   }
 
   String exchangeCrest(String url) {
-    return mapCrests[url] ?? fallback;
+    return _mapCrests[url] ?? fallback;
   }
 
   bool getEntryExpansion(String uuid) {
@@ -47,12 +47,14 @@ class AppState extends ChangeNotifier {
 
   Future<void> addCompetition(String compID, DataCompetition datum) async {
     data.addAll({compID: datum});
-    Directory appDirectory = await getApplicationDocumentsDirectory();
-    FallBackMap locateds = await SharedPrefsDatabase.updateLocalCrests(datum.teams.teams.map((e) => e.crest).toList(), appDirectory);
+    var lcrests = datum.teams.teams.map((e) => e.crest).toList();
+    FallBackMap locateds = await SharedPrefsDatabase.updateLocalCrests(lcrests);
+
     MapCompetitions dataClass = MapCompetitions(
       data.map((key, value) => MapEntry(key, true)),
-      mapCrests..addAll(locateds.map),
+      _mapCrests..addAll(locateds.map),
     );
+
     await dataClass.save(AppSaveNames.available_competitions_data.name);
     notifyListeners();
   }
@@ -64,23 +66,7 @@ class AppState extends ChangeNotifier {
     return dataAt as DataCompetition;
   }
 
-  AppState(
-    this.fallback,
-    Map<String, DataCompetition> dataMap,
-    Map<String, String> crests,
-  ) {
-    data = Map.from(dataMap);
-    mapCrests = Map.from(crests);
-  }
-
-  AppState.empty(
-    this.fallback, [
-    Map<String, DataCompetition> dataMap = const {},
-    Map<String, String> crests = const {},
-  ]) {
-    data = Map.from(dataMap);
-    mapCrests = Map.from(crests);
-  }
+  AppState(this.fallback);
 }
 
 class MapCompetitions extends IGenericAppModel {

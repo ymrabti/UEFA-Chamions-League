@@ -24,7 +24,6 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
   double _visiblePercentage = 100.0;
   late AnimationController _controller;
   final AudioPlayer player = AudioPlayer();
-  bool zoomed = false;
   bool _splashing = false;
 
   Future<void> startAudio(String anthem) async {
@@ -312,24 +311,18 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
     if (globalKey == null) return;
     BuildContext? currentContext = _getContext(globalKey);
     if (currentContext == null) return;
-    setState(() {
-      _splashing = true;
-    });
-    if (zoomed) return;
+    _splashing = true;
+    setState(() {});
     Scrollable.ensureVisible(
       currentContext,
       duration: Duration(seconds: 1),
       curve: Curves.easeInOut,
     ).then((value) {
-      setState(() {
-        zoomed = true;
-      });
       Future.delayed(
         Duration(milliseconds: 400),
         () {
-          setState(() {
-            _splashing = false;
-          });
+          _splashing = false;
+          setState(() {});
         },
       );
     });

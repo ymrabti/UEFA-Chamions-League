@@ -82,7 +82,7 @@ extension ListStagePhaseMatchesX on List<StagePhaseMatches> {
     void flatten(StagePhaseMatches spm) {
       // Convert StagePhaseMatches to StagePhase and add to the list
       stagePhases.add(
-        StagePhase /*  */ (
+        StagePhase(
           initiallyExpanded: spm.initiallyExpanded,
           groupStanding: spm.groupStanding,
           isSubPhase: spm.isSubPhase,
