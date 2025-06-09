@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-// import 'package:just_audio/just_audio.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -78,7 +77,7 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             url: widget.competition.dataCompetition.theCompetition.emblem,
             width: 40,
             color: elbrem.contains(competitionCode)
-                ? Theme.of(context).colorScheme.background.invers(
+                ? Theme.of(context).colorScheme.surface.invers(
                       true,
                     )
                 : null,
@@ -180,28 +179,19 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
             ),
           );
         },
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification notification) {
-            bool sst = notification is UserScrollNotification;
-            if (sst) {
-              setState(() {});
-            }
-            return sst;
-          },
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                _brand(),
-                for (StagePhaseMatches match in widget.competition.stagePhaseData)
-                  match.view(
-                    context,
-                    //   splashedSize:getRenderBox(),
-                    splashedId: widget.competition.expanded?.uuid,
-                    splashing: _splashing,
-                  ),
-                _rank(snapData),
-              ],
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              _brand(),
+              for (StagePhaseMatches match in widget.competition.stagePhaseData)
+                match.view(
+                  context,
+                  //   splashedSize:getRenderBox(),
+                  splashedId: widget.competition.expanded?.uuid,
+                  splashing: _splashing,
+                ),
+              _rank(snapData),
+            ],
           ),
         ),
       ),
@@ -255,7 +245,9 @@ class _AppLeagueState extends State<AppLeague> with SingleTickerProviderStateMix
       return VisibilityDetector(
         key: keyTextSlogan,
         onVisibilityChanged: (VisibilityInfo visibilityInfo) {
-          context.read<AppState>().visiblePercent = visibilityInfo.visibleFraction * 100;
+          double p = visibilityInfo.visibleFraction * 100;
+          if (p % 5 != 0) return;
+          context.read<AppState>().visiblePercent = p;
         },
         child: _logoCompetition(),
       );
@@ -365,7 +357,7 @@ class LeagueStandings extends StatelessWidget {
           child: AppFileImageViewer(
             url: (model.emblem),
             width: 40,
-            color: elbrem.contains(model.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+            color: elbrem.contains(model.code) ? Theme.of(context).colorScheme.surface.invers(true) : null,
           ),
         ),
         title: Padding(

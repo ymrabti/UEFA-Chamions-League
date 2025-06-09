@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.ymrabtiapps.botola_max"
-    compileSdkVersion 34
+    compileSdkVersion 35
     ndkVersion flutter.ndkVersion
     // cls && gradlew clean && gradlew build
     compileOptions {
@@ -37,7 +37,7 @@ android {
     
     defaultConfig {
         applicationId "com.ymrabtiapps.botola_max"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName

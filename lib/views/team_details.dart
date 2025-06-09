@@ -329,14 +329,14 @@ class TeamRunningCompetition extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: Theme.of(context).colorScheme.background.darker(20),
+              color: Theme.of(context).colorScheme.surface.darker(20),
             ),
             padding: EdgeInsets.all(8.r),
             child: SizedBox(
               width: 50.w,
               child: AppFileImageViewer(
                 url: runnin.emblem,
-                color: elbrem.contains(runnin.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+                color: elbrem.contains(runnin.code) ? Theme.of(context).colorScheme.surface.invers(true) : null,
               ),
             ),
           ),

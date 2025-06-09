@@ -168,7 +168,7 @@ class StagePhaseMatches {
           Positioned.fill(
             child: ColorFiltered(
               colorFilter: ColorFilter.mode(
-                Theme.of(context).primaryColor.withOpacity(0.7),
+                Theme.of(context).primaryColor.withValues(alpha: 0.7),
                 Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
               ),
               child: Container(

@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:botola_max/lib.dart';
 
@@ -8,6 +9,13 @@ class AppState extends ChangeNotifier {
   set setData(Map<String, DataCompetition> datum) => data = datum;
 
   Map<String, String> get getMapCrests => _mapCrests;
+
+  List<ConnectivityResult> _connectivityResult;
+  List<ConnectivityResult> get connectivityResult => _connectivityResult;
+  set connectivityResult(List<ConnectivityResult> conn) {
+    _connectivityResult = conn;
+    notifyListeners();
+  }
 
   set setMapCrests(Map<String, String> newCrests) {
     _mapCrests = newCrests;
@@ -73,7 +81,7 @@ class AppState extends ChangeNotifier {
     return dataAt as DataCompetition;
   }
 
-  AppState(this.fallback);
+  AppState(this.fallback, this._connectivityResult);
 }
 
 class MapCompetitions extends IGenericAppModel {

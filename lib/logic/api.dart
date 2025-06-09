@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:botola_max/lib.dart';
-import 'package:http/http.dart' show Response, get;
+import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
 enum AppSaveNames {
@@ -27,7 +26,9 @@ abstract class AppLogic {
             scorers /* *****/ == null ||
             teams /* *******/ == null ||
             competition /* */ == null //
-        ) return null;
+        ) {
+      return null;
+    }
     return DataCompetition(
       id: competionID,
       matcheModel: matches,
@@ -50,7 +51,6 @@ abstract class AppLogic {
       await fromJson?.save(competionID);
       return fromJson as DataCompetition?;
     } else {
-      logg(DateTime.now().difference(dateTime).inHours, name: 'LOCAL_DATA_DIFFERENCE');
       return value as DataCompetition?;
     }
   }
@@ -64,13 +64,14 @@ abstract class AppLogic {
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
     if (dateTime == null || value == null || dateTime.isBefore(DateTime.now().subtract(duration))) {
-      Response getGet = await get(Uri.parse('$_CL_API/$path'), headers: _headers);
+      Response<Map<String, Object?>> getGet = await Dio().getUri(Uri.parse('$_CL_API/$path'), options: Options(headers: _headers));
       if (getGet.statusCode == 200) {
-        IGenericAppModel? fromJson = IGenericAppModel.fromJson<T>(jsonDecode(getGet.body));
+        Map<String, Object?>? data = getGet.data;
+        if (data == null) return null;
+        IGenericAppModel? fromJson = IGenericAppModel.fromJson<T>(data);
         await fromJson?.save(name);
         return fromJson as T;
       }
-      logg(getGet.body, name: name);
     } else {
       return value as T;
     }
@@ -138,48 +139,72 @@ abstract class AppLogic {
   }
 
   static Future<BotolaCompetition?> _getCompetitionId(String competionID) async {
-    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID'), headers: _headers);
+    Response<Map<String, Object?>> getGet = await Dio().getUri(
+      Uri.parse('$_CL_API/competitions/$competionID'),
+      options: Options(headers: _headers),
+    );
 
     if (getGet.statusCode == 200) {
-      BotolaCompetition fromJson = BotolaCompetition.fromJson(jsonDecode(getGet.body));
+      Map<String, Object?>? data = getGet.data;
+      if (data == null) return null;
+      BotolaCompetition fromJson = BotolaCompetition.fromJson(data);
       return fromJson;
     }
-    logg(getGet.body);
     return null;
   }
 
   static Future<BotolaStandings?> _getStandings(String competionID) async {
-    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/standings'), headers: _headers);
+    Response<Map<String, Object?>> getGet = await Dio().getUri(
+      Uri.parse('$_CL_API/competitions/$competionID/standings'),
+      options: Options(headers: _headers),
+    );
 
     if (getGet.statusCode == 200) {
-      BotolaStandings fromJson = BotolaStandings.fromJson(jsonDecode(getGet.body));
+      Map<String, Object?>? data = getGet.data;
+      if (data == null) return null;
+      BotolaStandings fromJson = BotolaStandings.fromJson(data);
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaMatches?> _getMatches(String competionID) async {
-    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/matches'), headers: _headers);
+    Response<Map<String, Object?>> getGet = await Dio().getUri(
+      Uri.parse('$_CL_API/competitions/$competionID/matches'),
+      options: Options(headers: _headers),
+    );
     if (getGet.statusCode == 200) {
-      BotolaMatches fromJson = BotolaMatches.fromJson(jsonDecode(getGet.body));
+      Map<String, Object?>? data = getGet.data;
+      if (data == null) return null;
+      BotolaMatches fromJson = BotolaMatches.fromJson(data);
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaScorers?> _getScorers(String competionID) async {
-    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/scorers'), headers: _headers);
+    Response<Map<String, Object?>> getGet = await Dio().getUri(
+      Uri.parse('$_CL_API/competitions/$competionID/scorers'),
+      options: Options(headers: _headers),
+    );
     if (getGet.statusCode == 200) {
-      BotolaScorers fromJson = BotolaScorers.fromJson(jsonDecode(getGet.body));
+      Map<String, Object?>? data = getGet.data;
+      if (data == null) return null;
+      BotolaScorers fromJson = BotolaScorers.fromJson(data);
       return fromJson;
     }
     return null;
   }
 
   static Future<BotolaTeams?> _getTeams(String competionID) async {
-    Response getGet = await get(Uri.parse('$_CL_API/competitions/$competionID/teams'), headers: _headers);
+    Response<Map<String, Object?>> getGet = await Dio().getUri(
+      Uri.parse('$_CL_API/competitions/$competionID/teams'),
+      options: Options(headers: _headers),
+    );
     if (getGet.statusCode == 200) {
-      BotolaTeams fromJson = BotolaTeams.fromJson(jsonDecode(getGet.body));
+      Map<String, Object?>? data = getGet.data;
+      if (data == null) return null;
+      BotolaTeams fromJson = BotolaTeams.fromJson(data);
       return fromJson;
     }
     return null;
@@ -241,7 +266,7 @@ class DataCompetition extends IGenericAppModel {
   }
 }
 
-void logg(Object? message, {String name = 'BOTOLA'}) {
+void logg(Object? message, {String name = 'BOTOLA_MAX'}) {
   log('$message', name: name);
 }
 

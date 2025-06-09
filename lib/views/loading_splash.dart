@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:animated_flip_counter/animated_flip_counter.dart';
 import 'package:botola_max/lib.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -50,7 +49,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (today == null) return;
     _progressPlus(totale: 1, percent: kDebugMode ? 5 : 25);
     List<String> emblems = competitions.competitions.map((TheCompetition e) => e.emblem).toList();
-    List<String> areas = competitions.competitions.map((TheCompetition e) => e.area.flag).whereNotNull().toList();
+    List<String> areas = competitions.competitions.map((TheCompetition e) => e.area.flag).whereType<String>().toList();
     List<String> tcrests = <String>[
       ...today.matches.map((Matche e) => <String>[e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _)
     ];
@@ -84,8 +83,8 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: WillPopScope(
-        onWillPop: () async => false,
+      child: PopScope(
+        canPop: false,
         child: ScaffoldBuilder(
           backgroundColor: Color(0xff18282f),
           body: Stack(

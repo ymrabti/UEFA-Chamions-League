@@ -2,6 +2,7 @@ library theme;
 
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
+import "package:intl/intl.dart";
 part 'colors.dart';
 
 const Color transparent = Colors.transparent;
@@ -34,13 +35,13 @@ ThemeData mainTheme({required bool dark}) {
           primary: _primaryColorDark,
           secondary: _secondaryColorDark,
           error: _errorColor,
-          background: bgColor,
+          surface: bgColor,
         )
       : ColorScheme.light(
           primary: _primaryColorLight,
           secondary: _secondaryColorLight,
           error: _errorColor,
-          background: bgColor,
+          surface: bgColor,
         );
   MaterialColor primaryColor = dark ? _primaryColorDark : _primaryColorLight;
   return ThemeData(
@@ -59,7 +60,7 @@ ThemeData mainTheme({required bool dark}) {
     cardTheme: CardTheme(
       color: bgColor,
       elevation: 3,
-      shadowColor: fgColor.withOpacity(0.3),
+      shadowColor: fgColor.withValues(alpha: 0.3),
       shape: Border(),
     ),
     appBarTheme: AppBarTheme(
@@ -92,7 +93,7 @@ ThemeData mainTheme({required bool dark}) {
       fill: 0.4,
       shadows: <Shadow>[
         BoxShadow(
-          color: bgColor.withOpacity(0.5),
+          color: bgColor.withValues(alpha: 0.5),
         ),
       ],
       opticalSize: 64,
@@ -117,7 +118,7 @@ ThemeData mainTheme({required bool dark}) {
     hintColor: null,
     focusColor: null,
     hoverColor: null,
-    shadowColor: fgColor.withOpacity(.035),
+    shadowColor: fgColor.withValues(alpha: .035),
     splashColor: null,
     canvasColor: null,
     dividerColor: null,
@@ -138,7 +139,6 @@ ThemeData mainTheme({required bool dark}) {
     ),
     bottomNavigationBarTheme: null,
     bottomSheetTheme: null,
-    buttonBarTheme: null,
     buttonTheme: null,
     checkboxTheme: null,
     chipTheme: null,
@@ -197,7 +197,7 @@ ThemeData mainTheme({required bool dark}) {
       fill: 0.4,
       shadows: <Shadow>[
         BoxShadow(
-          color: bgColor.withOpacity(0.5),
+          color: bgColor.withValues(alpha: 0.5),
         ),
       ],
       opticalSize: 64,

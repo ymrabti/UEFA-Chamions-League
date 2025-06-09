@@ -200,7 +200,7 @@ class TheCompetition {
                   height: 80.r,
                   url: (theCompitition.emblem),
                   color: elbrem.contains(theCompitition.code) //
-                      ? Theme.of(context).colorScheme.background.invers(true)
+                      ? Theme.of(context).colorScheme.surface.invers(true)
                       : null,
                 ),
                 Gap(12),

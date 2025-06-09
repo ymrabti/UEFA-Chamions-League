@@ -22,8 +22,8 @@ class HomeScreenState extends State<HomeScreen> {
   bool _splashing = false;
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: ScaffoldBuilder(
         appBar: AppBar(
           title: Text('Botola Max'),
@@ -89,7 +89,7 @@ class HomeScreenState extends State<HomeScreen> {
                   return SizedBox();
                 } else {
                   bool condition = elbrem.contains(_competition?.code);
-                  Color bg = Theme.of(context).colorScheme.background;
+                  Color bg = Theme.of(context).colorScheme.surface;
                   return Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: AppFileImageViewer(
@@ -151,7 +151,7 @@ class HomeScreenState extends State<HomeScreen> {
                 Positioned.fill(
                   child: ColorFiltered(
                     colorFilter: ColorFilter.mode(
-                      Theme.of(context).primaryColor.withOpacity(0.7),
+                      Theme.of(context).primaryColor.withValues(alpha: 0.7),
                       Theme.of(context).brightness == Brightness.dark ? BlendMode.lighten : BlendMode.multiply,
                     ),
                     child: Container(
@@ -209,7 +209,7 @@ class HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: AppFileImageViewer(
                           url: (e.title.emblem),
-                          color: elbrem.contains(e.title.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+                          color: elbrem.contains(e.title.code) ? Theme.of(context).colorScheme.surface.invers(true) : null,
                         ),
                       ),
                       Gap(20),

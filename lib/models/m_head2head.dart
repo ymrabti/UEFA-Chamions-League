@@ -364,17 +364,17 @@ class Winner {
 
   final String name;
 
-  final String shortName;
+  final String? shortName;
 
-  final String tla;
+  final String? tla;
 
   final String crest;
 
   final String address;
 
-  final String website;
+  final String? website;
 
-  final int founded;
+  final int? founded;
 
   final String? clubColors;
 
@@ -443,12 +443,12 @@ class Winner {
     return Winner(
       id: int.parse('${json[WinnerEnum.id.name]}'),
       name: json[WinnerEnum.name.name] as String,
-      shortName: json[WinnerEnum.shortName.name] as String,
-      tla: json[WinnerEnum.tla.name] as String,
+      shortName: json[WinnerEnum.shortName.name] as String?,
+      tla: json[WinnerEnum.tla.name] as String?,
       crest: json[WinnerEnum.crest.name] as String,
       address: json[WinnerEnum.address.name] as String,
-      website: json[WinnerEnum.website.name] as String,
-      founded: int.parse('${json[WinnerEnum.founded.name]}'),
+      website: json[WinnerEnum.website.name] as String?,
+      founded: int.tryParse('${json[WinnerEnum.founded.name]}'),
       clubColors: json[WinnerEnum.clubColors.name] as String?,
       venue: json[WinnerEnum.venue.name] as String?,
       lastUpdated: DateTime.parse('${json[WinnerEnum.lastUpdated.name]}').add(DateTime.now().timeZoneOffset),

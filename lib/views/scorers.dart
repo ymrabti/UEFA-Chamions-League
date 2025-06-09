@@ -24,7 +24,7 @@ class CompetitionScorersPage extends StatelessWidget {
           child: AppFileImageViewer(
             url: (scorers.competition.emblem),
             width: 40,
-            color: elbrem.contains(scorers.competition.code) ? Theme.of(context).colorScheme.background.invers(true) : null,
+            color: elbrem.contains(scorers.competition.code) ? Theme.of(context).colorScheme.surface.invers(true) : null,
           ),
         ),
         title: Padding(

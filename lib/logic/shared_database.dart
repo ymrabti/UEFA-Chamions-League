@@ -1,18 +1,17 @@
 import 'dart:async';
-import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'dart:ui';
 import 'package:botola_max/lib.dart';
 import 'package:path/path.dart' show basename, extension;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_svg/flutter_svg.dart' hide SvgPicture;
-import 'dart:ui' show Image, ImageByteFormat;
 import 'dart:io';
 
 class SvgTextToPngConverter {
@@ -20,17 +19,57 @@ class SvgTextToPngConverter {
 
   SvgTextToPngConverter(this.url);
 
-  Future<void> convertSvgToPng(String outputPath) async {
+  Future<void> convertSvgToPng(String outputPath, {int targetWidth = 512}) async {
+    final SvgNetworkLoader svgLoader = SvgNetworkLoader(url);
+
+    final PictureInfo pictureInfo = await vg.loadPicture(
+      svgLoader,
+      null, // Provide BuildContext if needed for SVG rendering
+      clipViewbox: false,
+    );
+
+    final Size originalSize = pictureInfo.size;
+    final double scale = targetWidth / originalSize.width;
+    final int targetHeight = (originalSize.height * scale).floor();
+
+    final PictureRecorder recorder = PictureRecorder();
+    final Canvas canvas = Canvas(recorder);
+
+    // Scale the canvas to upscale the SVG
+    canvas.scale(scale);
+
+    // ✅ Directly draw the Picture here
+    canvas.drawPicture(pictureInfo.picture);
+
+    final Picture picture = recorder.endRecording();
+    final Image image = await picture.toImage(targetWidth, targetHeight);
+    final ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
+    final Uint8List? pngBytes = byteData?.buffer.asUint8List();
+
+    if (pngBytes == null) return;
+
+    final File file = File(outputPath);
+    file.writeAsBytesSync(pngBytes);
+
+    pictureInfo.picture.dispose();
+  }
+
+  Future<void> renderSvgToFile(String outputPath) async {
     try {
+      SvgNetworkLoader svgNetworkLoader = SvgNetworkLoader(url);
+      /* ByteData bites = await svgNetworkLoader.loadBytes(Get.context);
+      ByteData? byteData = bites; 
+      Uint8List? pngBytes = byteData.buffer.asUint8List();*/
       PictureInfo pictureInfo = await vg.loadPicture(
-        SvgNetworkLoader(url),
+        svgNetworkLoader,
         Get.context,
         clipViewbox: false,
       );
-
+      int width = pictureInfo.size.width.floor();
+      int heigh = pictureInfo.size.height.floor();
       Image? image = pictureInfo.picture.toImageSync(
-        pictureInfo.size.width.floor(),
-        pictureInfo.size.height.floor(),
+        width,
+        heigh,
       );
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List? pngBytes = byteData?.buffer.asUint8List();
@@ -41,7 +80,7 @@ class SvgTextToPngConverter {
       pictureInfo.picture.dispose();
       return;
     } catch (e) {
-      //   return null;
+      log(e.toString());
     }
   }
 }
@@ -57,12 +96,12 @@ abstract class SharedPrefsDatabase {
         return IGenericAppModel.load<DataCompetition>(e);
       },
     );
-    List<IGenericAppMap<DataCompetition>?> map = await Future.wait(mapp.whereNotNull());
+    List<IGenericAppMap<DataCompetition>?> map = await Future.wait(mapp.whereType());
     Iterable<DataCompetition> where = map
-        .whereNotNull() //
+        .whereType<IGenericAppMap<DataCompetition>>() //
         .where((IGenericAppMap<DataCompetition> d) => d.dateTime.isAfter(competitionExpire))
         .map((IGenericAppMap<DataCompetition> e) => e.value)
-        .whereNotNull();
+        .whereType<DataCompetition>();
     return Map<String, DataCompetition>.fromEntries(where.map((DataCompetition e) => MapEntry<String, DataCompetition>(e.id, e)));
   }
 
@@ -126,7 +165,7 @@ abstract class SharedPrefsDatabase {
         },
       ),
     );
-    Map<String, String> mapNew = Map<String, String>.fromEntries(urls.whereNotNull());
+    Map<String, String> mapNew = Map<String, String>.fromEntries(urls.whereType<MapEntry<String, String>>());
     Map<String, String> mapAll = mapNew..addAll(localCrests);
     if (mapNew.isNotEmpty) {
       await MapCompetitions(availableCompetitionsIDs, mapAll).save(

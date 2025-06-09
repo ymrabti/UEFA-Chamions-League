@@ -113,7 +113,7 @@ class WidgetWithWaiter extends StatelessWidget {
             if (context.watch<AppState>().loading)
               AbsorbPointer(
                 child: Container(
-                  color: Theme.of(context).cardColor.withOpacity(0.4),
+                  color: Theme.of(context).cardColor.withValues(alpha: 0.4),
                   width: Get.width,
                   height: Get.height,
                   child: Center(
@@ -127,6 +127,23 @@ class WidgetWithWaiter extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+final Connectivity connectivity = Connectivity();
+
+extension InternetConnected on List<ConnectivityResult> {
+  bool get disConnected => !isConnected;
+  bool get isConnected {
+    return <ConnectivityResult>[
+      ConnectivityResult.mobile,
+      ConnectivityResult.wifi,
+      ConnectivityResult.bluetooth,
+      ConnectivityResult.vpn,
+      ConnectivityResult.ethernet,
+    ].any(
+      (ConnectivityResult e) => contains(e),
     );
   }
 }
@@ -146,19 +163,14 @@ class ScaffoldBuilder extends StatefulWidget {
   State<ScaffoldBuilder> createState() => _ScaffoldBuilderState();
 }
 
-final Connectivity connectivity = Connectivity();
-
-Stream<ConnectivityResult> subscription = connectivity.onConnectivityChanged;
+Stream<List<ConnectivityResult>> subscription = connectivity.onConnectivityChanged;
 
 class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
-  ConnectivityResult _connectivityResult = ConnectivityResult.wifi;
   @override
   void initState() {
-    subscription.listen((ConnectivityResult result) {
+    subscription.listen((List<ConnectivityResult> result) {
       if (!mounted) return;
-      setState(() {
-        _connectivityResult = result;
-      });
+      context.read<AppState>().connectivityResult = result;
     });
 
     super.initState();
@@ -166,21 +178,18 @@ class _ScaffoldBuilderState extends State<ScaffoldBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    bool isConnected = <ConnectivityResult>[
-      ConnectivityResult.mobile,
-      ConnectivityResult.wifi,
-      ConnectivityResult.bluetooth,
-      ConnectivityResult.vpn,
-    ].contains(_connectivityResult);
-    return isConnected
-        ? WidgetWithWaiter(
-            child: Scaffold(
-              backgroundColor: widget.backgroundColor,
-              appBar: widget.appBar,
-              body: widget.body,
-            ),
-          )
-        : BotolaOffline();
+    bool isConnected = context.watch<AppState>().connectivityResult.isConnected;
+    if (isConnected) {
+      return WidgetWithWaiter(
+        child: Scaffold(
+          backgroundColor: widget.backgroundColor,
+          appBar: widget.appBar,
+          body: widget.body,
+        ),
+      );
+    } else {
+      return BotolaOffline();
+    }
   }
 }
 

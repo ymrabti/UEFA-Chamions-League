@@ -22,12 +22,14 @@ Future<void> main() async {
   }
   final SettingsController settingsController = SettingsController();
   await settingsController.loadSettings();
+  // await IGenericAppModel.clearAll();
+  List<ConnectivityResult> initialConnectivity = await connectivity.checkConnectivity();
   runApp(
     ScreenUtilInit(
       designSize: Size(360.0, 806.0),
       child: ChangeNotifierProvider<AppState>(
         create: (BuildContext context) {
-          return AppState(settingsController.fallback);
+          return AppState(settingsController.fallback, initialConnectivity);
         },
         child: ThemeProvider(
           initTheme: mainTheme(dark: settingsController.isDark),

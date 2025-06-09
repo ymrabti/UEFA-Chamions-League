@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:botola_max/lib.dart';
 
@@ -32,12 +31,10 @@ abstract class IGenericAppModel {
   Future<void> save(String name) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String textSaved = PowerJSON(
-      Map<String, Object?>.fromEntries(
-        <MapEntry<String, Object?>>[
-          MapEntry<String, Object?>(IGenricEnry.datetime.name, DateTime.now().millisecondsSinceEpoch),
-          MapEntry<String, Object?>(IGenricEnry.value.name, toJson()),
-        ],
-      ),
+      <String, Object?>{
+        IGenricEnry.datetime.name: DateTime.now().millisecondsSinceEpoch,
+        IGenricEnry.value.name: toJson(),
+      },
     ).toText();
     await prefs.setString(name, textSaved);
   }
@@ -61,6 +58,7 @@ abstract class IGenericAppModel {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? string = prefs.getString(name);
     if (string == null) return null;
+    logg(string.toString(), name: 'IGERNERIC LOAD');
     Map<String, Object?> json = jsonDecode(string);
     return IGenericAppMap.fromJson<T>(json);
   }

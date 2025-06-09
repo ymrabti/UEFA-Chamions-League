@@ -1,16 +1,52 @@
 part of 'main_theme.dart';
 
+extension NumberFormatter on num {
+  String toThousands() {
+    final NumberFormat formatter = NumberFormat.decimalPattern('fr');
+    return formatter.format(this);
+  }
+
+  int boundRGB() {
+    if (this > 255) {
+      return 255;
+    } else {
+      if (this < 0) {
+        return 0;
+      } else {
+        return round();
+      }
+    }
+  }
+}
+
 extension ColorX on Color {
   Color invers(bool reverse) {
-    return reverse ? Color.fromRGBO(255 - red, 255 - green, 255 - blue, opacity) : this;
+    return reverse
+        ? Color.from(
+            red: (1 - r),
+            green: (1 - g),
+            blue: (1 - b),
+            alpha: a,
+          )
+        : this;
   }
 
   Color darker(int value) {
-    return Color.fromRGBO(red - value, green - value, blue - value, opacity);
+    return Color.fromARGB(
+      (a * 255).round(),
+      (r * 255 - value).boundRGB(),
+      (g * 255 - value).boundRGB(),
+      (b * 255 - value).boundRGB(),
+    );
   }
 
   Color lighter(int value) {
-    return Color.fromRGBO(red + value, green + value, blue + value, opacity);
+    return Color.fromARGB(
+      (a * 255).round(),
+      (r * 255 + value).boundRGB(),
+      (g * 255 + value).boundRGB(),
+      (b * 255 + value).boundRGB(),
+    );
   }
 
   Color skin(bool dark, int value) {
