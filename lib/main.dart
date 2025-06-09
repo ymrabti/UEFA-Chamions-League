@@ -20,9 +20,9 @@ Future<void> main() async {
   if ((BotolaPlatform.isAndroid || BotolaPlatform.isIOS) && kDebugMode) {
     await WakelockPlus.enable();
   }
+  // await IGenericAppModel.clearAll();
   final SettingsController settingsController = SettingsController();
   await settingsController.loadSettings();
-  // await IGenericAppModel.clearAll();
   List<ConnectivityResult> initialConnectivity = await connectivity.checkConnectivity();
   runApp(
     ScreenUtilInit(

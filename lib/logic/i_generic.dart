@@ -58,7 +58,6 @@ abstract class IGenericAppModel {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? string = prefs.getString(name);
     if (string == null) return null;
-    logg(string.toString(), name: 'IGERNERIC LOAD');
     Map<String, Object?> json = jsonDecode(string);
     return IGenericAppMap.fromJson<T>(json);
   }
