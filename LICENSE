@@ -1,22 +1,11 @@
-GNU GENERAL PUBLIC LICENSE
-Version 3, 29 June 2007
+This project is licensed under a Commercial License.
 
-Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
-Everyone is permitted to copy and distribute verbatim copies
-of this license document, but changing it is not allowed.
+Copyright (c) 2025 [Youmtinet]
 
-Preamble
+Permission is granted to purchasers of this software to use it in accordance with the Commercial License terms.
 
-The GNU General Public License is a free, copyleft license for
-software and other kinds of works.
+This includes the right to use the software in commercial applications, including for client work.
 
-The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works. By contrast,
-the GNU General Public License is intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users. We, the Free Software Foundation, use the
-GNU General Public License for most of our software; it applies also to
-any other work released this way by its authors. You can apply it to
-your programs, too.
+Redistribution, sublicensing, or resale of the source code (in full or part), including as a boilerplate, template, or starter kit, is strictly prohibited.
 
-[...full license text continues. For the complete license, see: https://www.gnu.org/licenses/gpl-3.0.txt ...]
+See the full license in the COMMERCIAL_LICENSE.md file included with this package.
