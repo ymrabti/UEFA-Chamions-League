@@ -49,7 +49,7 @@ extension ColorX on Color {
     );
   }
 
-  Color skin(bool dark, int value) {
+  Color contrast(bool dark, int value) {
     return dark ? lighter(value) : darker(value);
   }
 

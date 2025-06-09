@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:botola_max/lib.dart';
 import 'package:gap/gap.dart';
@@ -38,19 +37,6 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           actions: <Widget>[
             ThemeModeToggler(),
-            if (kDebugMode)
-              InkWell(
-                onTap: () {},
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.textsms,
-                      color: Theme.of(context).primaryColorLight,
-                    ),
-                  ),
-                ),
-              )
           ],
         ),
         body: bodyLV(),

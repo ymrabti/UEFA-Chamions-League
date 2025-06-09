@@ -368,11 +368,10 @@ class LeagueStandings extends StatelessWidget {
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Column(
-          children: standings.standingModel.standings
-              .map(
-                (Standing e) => e.view(),
-              )
-              .toList(),
+          children: <Widget>[
+            for (Standing tableStanding in standings.standingModel.standings) //
+              tableStanding.view(),
+          ],
         ),
       ),
     );

@@ -154,7 +154,7 @@ class StagePhaseMatches {
           children: <Widget>[
             ...(subPhase.isEmpty
                 ? matches.map(
-                    (Matche e) => e.view,
+                    (Matche match) => match.view,
                   )
                 : <Widget>[
                     ...subPhase.map(

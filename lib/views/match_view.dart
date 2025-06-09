@@ -86,7 +86,7 @@ class MatchView extends StatelessWidget {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.skin(dark, dark ? 20 : 10),
+                    color: Theme.of(context).primaryColor.contrast(dark, dark ? 20 : -10).withBlue(255),
                   ),
                   alignment: Alignment.center,
                   child: Column(

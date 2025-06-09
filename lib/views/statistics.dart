@@ -307,11 +307,12 @@ class CenterContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool dark = Theme.of(context).brightness == Brightness.dark;
     return Expanded(
       flex: 3,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 50),
+          color: Theme.of(context).primaryColor.contrast(dark, dark ? 20 : -10).withBlue(255),
         ),
         height: 100,
         alignment: Alignment.center,

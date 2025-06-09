@@ -33,7 +33,6 @@ Future<void> main() async {
         },
         child: ThemeProvider(
           initTheme: mainTheme(dark: settingsController.isDark),
-          duration: Duration(seconds: 1),
           builder: (BuildContext context, ThemeData theme) {
             return GetMaterialApp(
               title: 'Botola Max',

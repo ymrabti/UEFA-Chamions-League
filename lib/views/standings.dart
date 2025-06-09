@@ -59,7 +59,7 @@ class TableStanding extends StatelessWidget {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.skin(Theme.of(context).brightness == Brightness.dark, 40),
+              color: Theme.of(context).primaryColor.contrast(Theme.of(context).brightness == Brightness.dark, 40),
             ),
             width: Get.width,
             alignment: Alignment.center,
