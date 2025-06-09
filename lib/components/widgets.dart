@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart' show SvgPicture, SvgTheme;
@@ -111,15 +112,22 @@ class WidgetWithWaiter extends StatelessWidget {
           children: <Widget>[
             child,
             if (context.watch<AppState>().loading)
-              AbsorbPointer(
-                child: Container(
-                  color: Theme.of(context).cardColor.withValues(alpha: 0.4),
-                  width: Get.width,
-                  height: Get.height,
-                  child: Center(
-                    child: LoadingAnimationWidget.discreteCircle(
-                      color: Theme.of(context).primaryColor,
-                      size: 125,
+              InkWell(
+                onDoubleTap: () {
+                  if (kDebugMode) {
+                    context.read<AppState>().setLoading(false);
+                  }
+                },
+                child: AbsorbPointer(
+                  child: Container(
+                    color: Theme.of(context).cardColor.withValues(alpha: 0.4),
+                    width: Get.width,
+                    height: Get.height,
+                    child: Center(
+                      child: LoadingAnimationWidget.discreteCircle(
+                        color: Theme.of(context).primaryColor,
+                        size: 125,
+                      ),
                     ),
                   ),
                 ),

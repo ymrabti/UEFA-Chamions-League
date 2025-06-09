@@ -63,8 +63,13 @@ abstract class AppLogic {
     IGenericAppMap<T>? localAppCompetitions = await IGenericAppModel.load<T>(name);
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
-    if (dateTime == null || value == null || dateTime.isBefore(DateTime.now().subtract(duration))) {
-      Response<Map<String, Object?>> getGet = await Dio().getUri(Uri.parse('$_CL_API/$path'), options: Options(headers: _headers));
+    DateTime subtract = DateTime.now().subtract(duration);
+    logg('$_CL_API/$path');
+    if (dateTime == null || value == null || dateTime.isBefore(subtract)) {
+      Response<Map<String, Object?>> getGet = await Dio().getUri(
+        Uri.parse('$_CL_API/$path'),
+        options: Options(headers: _headers),
+      );
       if (getGet.statusCode == 200) {
         Map<String, Object?>? data = getGet.data;
         if (data == null) return null;

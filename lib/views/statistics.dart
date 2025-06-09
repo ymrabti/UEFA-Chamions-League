@@ -312,7 +312,7 @@ class CenterContent extends StatelessWidget {
       flex: 3,
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.contrast(dark, dark ? 20 : -10).withBlue(255),
+          color: Theme.of(context).primaryColor.contrast(dark, dark ? 20 : -10),
         ),
         height: 100,
         alignment: Alignment.center,

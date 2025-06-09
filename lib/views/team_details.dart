@@ -174,16 +174,19 @@ class TeamDetails extends StatelessWidget {
     // int? coachID = team.coach.id;
     return ScaffoldBuilder(
       appBar: AppBar(
-        leading: InkWell(
-          onTap: () async {
-            await Get.to<void>(
-              () => ScaffoldBuilder(
-                body: InteractiveCrest(crest: crest, tag: tag),
-              ),
-            );
-          },
-          child: AppFileImageViewer(url: crest),
-        ),
+        actions: <Widget>[
+          InkWell(
+            onTap: () async {
+              await Get.to<void>(
+                () => ScaffoldBuilder(
+                  appBar: AppBar(),
+                  body: InteractiveCrest(crest: crest, tag: tag),
+                ),
+              );
+            },
+            child: AppFileImageViewer(url: crest),
+          )
+        ],
         title: Text(team.name),
       ),
       body: ListView(

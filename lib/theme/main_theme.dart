@@ -67,7 +67,7 @@ ThemeData mainTheme({required bool dark}) {
       color: primaryColor,
       foregroundColor: fgColor,
       elevation: 0,
-      centerTitle: true,
+      centerTitle: false,
       scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
         color: fgColor,
