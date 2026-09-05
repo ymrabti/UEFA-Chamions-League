@@ -11,7 +11,7 @@ Future<int> _delayed(int input) {
 }
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
     List<String> emblems = competitions.competitions.map((TheCompetition e) => e.emblem).toList();
     List<String> areas = competitions.competitions.map((TheCompetition e) => e.area.flag).whereType<String>().toList();
     List<String> tcrests = <String>[
-      ...today.matches.map((Matche e) => <String>[e.homeTeam.crest, e.awayTeam.crest]).expand((_) => _)
+      ...today.matches.map((Matche e) => <String>[e.homeTeam.crest, e.awayTeam.crest]).expand((List<String> e) => e)
     ];
     List<String> imageUrls = <String>[...emblems, ...tcrests, ...areas];
     FallBackMap fallBackAndMap = await SharedPrefsDatabase.updateLocalCrests(imageUrls);

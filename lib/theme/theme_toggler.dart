@@ -5,6 +5,7 @@ import "package:botola_max/lib.dart";
 import "package:get/get.dart";
 
 class ThemeModeToggler extends StatefulWidget {
+  // ignore: use_super_parameters
   ThemeModeToggler({Key? key}) : super(key: key);
 
   @override
@@ -65,9 +66,9 @@ class _ThemeModeTogglerState extends State<ThemeModeToggler> {
 
 class CustomThemeSwitchingArea extends StatelessWidget {
   CustomThemeSwitchingArea({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
   final Widget child;
   @override
   Widget build(BuildContext context) {

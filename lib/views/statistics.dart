@@ -170,12 +170,12 @@ class GoalRankk extends StatelessWidget {
 
 class GoalStatistic extends StatelessWidget {
   const GoalStatistic({
-    Key? key,
+    super.key,
     required this.text,
     required this.home,
     required this.away,
     this.total = false,
-  }) : super(key: key);
+  });
 
   final String text;
   final bool total;
@@ -293,12 +293,12 @@ class GoalStatistic extends StatelessWidget {
 
 class CenterContent extends StatelessWidget {
   const CenterContent({
-    Key? key,
+    super.key,
     required this.valueLeft,
     required this.valueRight,
     required this.textLeft,
     required this.textRight,
-  }) : super(key: key);
+  });
 
   final int valueLeft;
   final int valueRight;

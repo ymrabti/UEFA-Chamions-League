@@ -8,11 +8,11 @@ import 'package:provider/provider.dart';
 
 class RoundedTeam extends StatelessWidget {
   const RoundedTeam({
-    Key? key,
+    super.key,
     required this.team,
     required this.tag,
     this.left = true,
-  }) : super(key: key);
+  });
 
   final GoalRankingPerTeam team;
   final String tag;
@@ -57,10 +57,10 @@ class RoundedTeam extends StatelessWidget {
 
 class TeamAvatar extends StatelessWidget {
   const TeamAvatar({
-    Key? key,
+    super.key,
     required this.tag,
     required this.team,
-  }) : super(key: key);
+  });
   final String tag;
   final Team team;
 

@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({Key? key, required this.seek}) : super(key: key);
+  const SplashPage({super.key, required this.seek});
 
   final bool seek;
   @override
