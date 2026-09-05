@@ -52,19 +52,18 @@ ThemeData mainTheme({required bool dark}) {
     fontFamily: 'AppFont',
     brightness: dark ? Brightness.dark : Brightness.light,
     scaffoldBackgroundColor: bgColor,
-    dialogBackgroundColor: transparent,
     useMaterial3: true,
     typography: Typography(platform: TargetPlatform.iOS),
     colorScheme: colorScheme,
     cardColor: bgColor,
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: bgColor,
       elevation: 3,
       shadowColor: fgColor.withValues(alpha: 0.3),
       shape: Border(),
     ),
     appBarTheme: AppBarTheme(
-      color: primaryColor,
+      backgroundColor: primaryColor,
       foregroundColor: fgColor,
       elevation: 0,
       centerTitle: false,
@@ -127,14 +126,13 @@ ThemeData mainTheme({required bool dark}) {
     primaryColorLight: _primaryColorLight,
     disabledColor: null,
     highlightColor: null,
-    indicatorColor: null,
     secondaryHeaderColor: null,
     unselectedWidgetColor: null,
     applyElevationOverlayColor: null,
     actionIconTheme: null,
     badgeTheme: null,
     bannerTheme: null,
-    bottomAppBarTheme: BottomAppBarTheme(
+    bottomAppBarTheme: BottomAppBarThemeData(
       elevation: 0,
     ),
     bottomNavigationBarTheme: null,
@@ -145,7 +143,7 @@ ThemeData mainTheme({required bool dark}) {
     cupertinoOverrideTheme: null,
     dataTableTheme: null,
     datePickerTheme: null,
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: bgColor.inputFillColor(35, dark),
       elevation: 0,
       shape: RoundedRectangleBorder(),
@@ -212,7 +210,8 @@ ThemeData mainTheme({required bool dark}) {
     snackBarTheme: null,
     splashFactory: null,
     switchTheme: null,
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: TabBarThemeData(
+      indicatorColor: null,
       unselectedLabelColor: fgColor,
       indicatorSize: TabBarIndicatorSize.label,
       indicator: BoxDecoration(

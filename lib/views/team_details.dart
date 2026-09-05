@@ -222,7 +222,7 @@ class TeamDetails extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.idBadge)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.idBadge.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
@@ -241,25 +241,25 @@ class TeamDetails extends StatelessWidget {
               if (founded != null)
                 Row(
                   children: <Widget>[
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.starOfLife)),
+                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.starOfLife.data)),
                     Expanded(child: Text.rich(TextSpan(text: founded.toString()))),
                   ],
                 ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.addressCard)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.addressCard.data)),
                   Expanded(child: Text.rich(TextSpan(text: team.address))),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house.data)),
                   Expanded(child: Text.rich(TextSpan(text: team.venue))),
                 ],
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.paintRoller)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.paintRoller.data)),
                   Expanded(child: Text.rich(TextSpan(text: team.clubColors))),
                 ],
               ),
@@ -274,7 +274,7 @@ class TeamDetails extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personBooth)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personBooth.data)),
                   Expanded(child: Text.rich(TextSpan(text: team.coach.name))),
                 ],
               ),
@@ -327,7 +327,7 @@ class TeamRunningCompetition extends StatelessWidget {
       type: runnin.type,
       child: Row(
         children: <Widget>[
-          SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
+          SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy.data)),
           Expanded(child: Text.rich(TextSpan(text: runnin.name))),
           Container(
             decoration: BoxDecoration(
@@ -391,7 +391,7 @@ class BootolaLinq extends StatelessWidget {
             width: 50.w,
             child: Icon(
               // ignore: deprecated_member_use
-              FontAwesomeIcons.externalLink,
+              FontAwesomeIcons.externalLink.data,
               color: Colors.blue.shade700,
             ),
           ),

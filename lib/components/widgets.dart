@@ -294,7 +294,7 @@ class PlayerPosition extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personChalkboard)),
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.personChalkboard.data)),
         Expanded(child: Text.rich(TextSpan(text: position))),
       ],
     );
@@ -316,7 +316,7 @@ class BotolaContract extends StatelessWidget {
     DateTime? ce = contractEnd;
     return Row(
       children: <Widget>[
-        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.fileContract)),
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.fileContract.data)),
         Expanded(
           child: Text.rich(
             TextSpan(
@@ -345,7 +345,7 @@ class BotolaPersonAge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing)),
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.lifeRing.data)),
         Expanded(
           child: Text.rich(
             TextSpan(
@@ -370,7 +370,7 @@ class BotolaNationality extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
+        SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house.data)),
         Expanded(child: Text.rich(TextSpan(text: nationality))),
       ],
     );

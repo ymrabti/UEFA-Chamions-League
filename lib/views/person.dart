@@ -27,7 +27,7 @@ class BotolaPerson extends StatelessWidget {
           PlayerShirtNumber(shirtNumber: shirtNumber),
           Row(
             children: <Widget>[
-              SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.peopleGroup)),
+              SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.peopleGroup.data)),
               Expanded(
                 child: TeamDetailsEntry(
                   id: player.currentTeam.id,

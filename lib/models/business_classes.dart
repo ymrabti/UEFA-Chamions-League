@@ -2,6 +2,7 @@ import 'package:botola_max/lib.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class FallBackMap {
   Map<String, String> map;
@@ -200,7 +201,7 @@ class StagePhaseMatches {
     // Create a matrix for the blend mode effect, using the color
     return Matrix4.identity()
       ..setEntry(3, 2, 0.001) // Perspective control
-      ..translate(0.0, 0.0, 0.0);
+      ..translateByVector3(Vector3(0.0, 0.0, 0.0));
   }
 }
 

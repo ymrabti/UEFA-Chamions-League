@@ -27,7 +27,7 @@ class MatchDetails extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
@@ -40,7 +40,7 @@ class MatchDetails extends StatelessWidget {
               if (matchday != null)
                 Row(
                   children: <Widget>[
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.bridge)),
+                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.bridge.data)),
                     Expanded(
                       child: Text.rich(
                         TextSpan(
@@ -53,7 +53,7 @@ class MatchDetails extends StatelessWidget {
               if (group != null)
                 Row(
                   children: <Widget>[
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.groupArrowsRotate)),
+                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.groupArrowsRotate.data)),
                     Expanded(
                       child: Text.rich(
                         TextSpan(
@@ -65,7 +65,7 @@ class MatchDetails extends StatelessWidget {
                 ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.periscope)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.periscope.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
@@ -109,7 +109,7 @@ class MatchDetails extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.satellite)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.satellite.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(
@@ -121,7 +121,7 @@ class MatchDetails extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.house.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(text: matchDetails.matchDetails.homeTeam.name),
@@ -132,7 +132,7 @@ class MatchDetails extends StatelessWidget {
               ),
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.planeDeparture)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.planeDeparture.data)),
                   Expanded(
                     child: Text.rich(
                       TextSpan(text: matchDetails.matchDetails.awayTeam.name),
@@ -150,14 +150,14 @@ class MatchDetails extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy)),
+                  SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.trophy.data)),
                   Expanded(child: Text.rich(TextSpan(text: matchDetails.matchDetails.competition.name))),
                 ],
               ),
               if (winnerSeason != null)
                 Row(
                   children: <Widget>[
-                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.star)),
+                    SizedBox(width: 50.w, child: Icon(FontAwesomeIcons.star.data)),
                     Expanded(child: Text('${winnerSeason.name}(${winnerSeason.founded})')),
                     SizedBox(width: 50.w, child: AppFileImageViewer(url: winnerSeason.crest, width: 50.w)),
                     Gap(12.w),
