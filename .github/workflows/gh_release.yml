@@ -34,7 +34,7 @@ jobs:
 
             - name: write lib/credentials.dart
               run: |
-                echo "const String apiKey = '${{ secrets.API_KEY }}';" > lib/credentials.dart
+                echo "const String token = '${{ secrets.API_KEY }}';" > lib/credentials.dart
 
             - name: Build APK
               run: flutter build apk --release
