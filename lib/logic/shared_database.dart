@@ -187,11 +187,16 @@ abstract class SharedPrefsDatabase {
     if (exist && getLocal) {
       dataMatches = context.read<AppState>().getCompetition(code);
     } else {
-      DataCompetition? dataCompetition = await AppLogic.getCompetitionByID(code, false);
-      if (dataCompetition == null) return null;
-      dataMatches = dataCompetition;
-      if (!context.mounted) return null;
-      await context.read<AppState>().addCompetition(code, dataMatches);
+      try {
+        DataCompetition? dataCompetition = await AppLogic.getCompetitionByID(code, false);
+        if (dataCompetition == null) return null;
+        dataMatches = dataCompetition;
+        if (!context.mounted) return null;
+        await context.read<AppState>().addCompetition(code, dataMatches);
+      } on Exception catch (e) {
+        log(e.toString());
+        rethrow;
+      }
     }
     if (!context.mounted) return null;
     context.read<AppState>().cleanExpansion();

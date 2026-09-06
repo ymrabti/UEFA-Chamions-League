@@ -12,7 +12,7 @@ enum AppSaveNames {
 }
 
 abstract class AppLogic {
-  static const String _CL_API = 'https://api.football-data.org/v4';
+  static const String _CL_API = 'http://api.football-data.org/v4';
   static final Map<String, String> _headers = <String, String>{'X-Auth-Token': token};
 
   static Future<DataCompetition?> _getCompetition(String competionID) async {
@@ -64,7 +64,6 @@ abstract class AppLogic {
     DateTime? dateTime = localAppCompetitions?.dateTime;
     IGenericAppModel? value = localAppCompetitions?.value;
     DateTime subtract = DateTime.now().subtract(duration);
-    logg('$_CL_API/$path');
     if (dateTime == null || value == null || dateTime.isBefore(subtract)) {
       Response<Map<String, Object?>> getGet = await Dio().getUri(
         Uri.parse('$_CL_API/$path'),
@@ -159,9 +158,16 @@ abstract class AppLogic {
   }
 
   static Future<BotolaStandings?> _getStandings(String competionID) async {
-    Response<Map<String, Object?>> getGet = await Dio().getUri(
+    Response<dynamic> getGet = await Dio(BaseOptions(
+      baseUrl: _CL_API,
+      validateStatus: (int? status) {
+        return true; // Allow all
+      },
+    )).getUri(
       Uri.parse('$_CL_API/competitions/$competionID/standings'),
-      options: Options(headers: _headers),
+      options: Options(
+        headers: _headers,
+      ),
     );
 
     if (getGet.statusCode == 200) {
