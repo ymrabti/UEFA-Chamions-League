@@ -47,6 +47,11 @@ jobs:
             - name: Stage universal APK
               run: mkdir -p release-apks && cp build/app/outputs/apk/release/*-universal.apk release-apks/
 
+            - name: rewrite version.properties # split v1.2.3+5
+              run: |
+                echo "versionName=${GITHUB_REF#refs/tags/}" > version.properties
+                echo "versionCode=${GITHUB_RUN_NUMBER}" >> version.properties
+
             - name: Build Split APKs
               run: flutter build apk --split-per-abi --release
 
