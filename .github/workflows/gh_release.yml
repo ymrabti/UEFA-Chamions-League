@@ -39,11 +39,17 @@ jobs:
             - name: Build APK
               run: flutter build apk --release
 
+            - name: Stage universal APK
+              run: mkdir -p release-apks && cp build/app/outputs/apk/release/*-universal.apk release-apks/
+
             - name: Build Split APKs
               run: flutter build apk --split-per-abi --release
 
+            - name: Stage split APKs
+              run: cp build/app/outputs/apk/release/*.apk release-apks/
+
             - name: List APK files
-              run: ls -la build/app/outputs/apk/release/
+              run: ls -la release-apks/
 
             - name: Get tag name
               id: tag
@@ -52,7 +58,7 @@ jobs:
             - name: Create GitHub Release (Optional)
               uses: softprops/action-gh-release@v1
               with:
-                  files: build/app/outputs/apk/release/*.apk
+                  files: release-apks/*.apk
                   generate_release_notes: true
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
